@@ -1,3 +1,8 @@
+Angular webclient that integrates a Unity WebGL app.
+Parts of the code are based on the following tutorials:
+https://jasonwatmore.com/post/2018/10/29/angular-7-user-registration-and-login-example-tutorial  
+https://medium.com/@ryanchenkie_40935/angular-authentication-using-route-guards-bf7a4ca13ae3  
+  
 ASSETS:  
 -------------------  
   
