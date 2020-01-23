@@ -1,0 +1,12 @@
+<div class="flex-row padded-row flex-nowrap">
+  <div class="padded-col" *ngIf="!enableEditing">
+    <app-game-window
+      title="MoSi Viewer"
+      appLocation="../../assets/Unity/Build/webviewer.json"
+      appWidth="960px"
+      appHeight="600px">
+    </app-game-window>
+    <div id="motionLabel">Click on a motion in the list to play it.</div>
+  </div>
+  <app-sidebar [ngClass]="data" (modalCall)="changeActiveModal($event)"></app-sidebar>
+</div>

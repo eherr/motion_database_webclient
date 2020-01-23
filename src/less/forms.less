@@ -1,0 +1,109 @@
+
+input, select, textarea {
+    border: 1px solid darken(@accent-bg, 10%);
+    font-size: .9em;
+    padding: 6px;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+textarea{
+  resize: vertical;
+}
+
+select{
+  padding: 5px;
+  background: @primary-bg;
+}
+
+textarea{
+  padding: 4px;
+  font-family: Arial, Helvetica, sans-serif;
+
+}
+
+label{
+  margin: 4px 2px;
+  color: @secondary-text;
+}
+
+button{
+  background: darken(@accent-bg, 10%);
+  border: none;
+  font-size: .9em;
+  padding: 9px 15px;
+
+    &:hover{
+      background: darken(@accent-bg, 25%);
+    }
+}
+
+.full-width-control {
+    display: block;
+    max-width: 100%;
+    width: 100%;
+}
+
+.field-group{
+  padding: 10px 5px 0 5px;
+
+  &-last{
+    padding-bottom: 15px;
+  }
+
+  &-flush{
+    padding: 5px 0;
+  }
+}
+
+.input-group{
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-align: stretch;
+  -ms-flex-align: stretch;
+      align-items: stretch;
+  width: 100%;
+
+  &-prepend,
+  &-append{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    border: 1px solid darken(@accent-bg, 10%);
+    background: @accent-bg;
+  }
+
+  &-prepend{
+    margin-right: -1px;
+  }
+
+  &-append{
+    margin-left: -1px;
+  }
+
+  &-text{
+    padding: 5px;
+  }
+}
+
+.group-input{
+    -webkit-box-flex: 1;
+        -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+  margin: 0;
+  min-width: 0;
+  width: 0;
+}
+
+.alert{
+  margin: .25em;
+  padding: .75em;
+
+  &-danger{
+    background: #ff96b1;
+    border: 1px solid #d65173;
+    color: #520216;
+  }
+}

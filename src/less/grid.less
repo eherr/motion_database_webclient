@@ -1,0 +1,72 @@
+.form-row,
+.flex-row{
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  width: 100%;
+}
+
+.padded-col,
+.padded-row{
+  padding: .5rem;
+}
+
+.fill-col{
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+}
+
+.flex-nowrap{
+  flex-wrap: nowrap;
+}
+
+.align{
+  &-middle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &-right{
+    display: flex;
+    justify-content: flex-end;
+    align-items: baseline;
+  }
+}
+
+.flex--cols(@n, @i: 1) when (@i =< @n){
+    //n is the number of cols in the grid
+    @base-width: (1 / @n);
+    @h: round(@n / @i); //the position in the row based on #n
+
+    .col-@{i}{
+      width: round(percentage((@base-width * @i)), 4); //xx,yyyy%
+    }
+
+    /* remove some superfluous padding in uniform rows */
+    .form-row-uniform{
+      .col-@{i}{
+        /*every nth element, starting from the first*/
+        &:nth-child(@{h}n+1){
+            padding-left: 0;
+          }
+
+        /*every nth, starting from the nth*/
+        &:nth-child(@{h}n){
+           padding-right: 0;
+          }
+
+        /*last element if it's not the last in row - this makes underfilled cols line up vertically*/
+          &:last-child:not(:nth-child(@{h}n)){
+           padding-right: .25em;
+          }
+      }
+    }
+
+    // Continue the iteration
+    .flex--cols(@n,(@i + 1));
+}
+
+.flex--cols(14);

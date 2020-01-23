@@ -1,0 +1,58 @@
+@import "../../less/colors";
+
+
+.webgl-content{ margin-bottom: .5em; position: relative; z-index: 99}
+#gameContainer{ z-index: 999; width: 100%; height: 100%;}
+
+#loading-overlay{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 2;
+}
+
+#loading-box{
+  width: 100%;
+  height: 20px;
+  position: absolute;
+  top: 50%;
+  margin-top: -10px;
+  text-align: center;
+  z-index: 9999;
+}
+
+div#bg-bar {
+  position: absolute;
+  width: 200px;
+  margin-left: -100px;
+  left: 50%;
+  height: 5px;
+  display: block;
+  background-color: darken(@primary-bg, 60%);
+  border-radius: 2px;
+}
+
+div#progress-bar {
+  left: 50%;
+  position: absolute;
+  margin-left: -100px;
+  width: 0px;
+  height: 5px;
+  background-color: @primary-bg;
+  border-radius: 2px;
+}
+
+p#loading-info {
+  color: lighten(@secondary-text, 20%);
+  letter-spacing: 1px;
+  position: absolute;
+  width: 100%;
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: .75em;
+  margin-top: 2em;
+}

@@ -1,0 +1,9 @@
+<div id="{{ slug }}ModalPopup" class="modal modal-active">
+    <div class="modal-content">
+        <span id="{{ slug }}Close" class="close" (click)="closeModal()">&times;</span>
+        <div id="{{ slug }}Content">
+            <h4>{{ title }}</h4>
+            <ng-content></ng-content>
+        </div>
+    </div>
+</div>

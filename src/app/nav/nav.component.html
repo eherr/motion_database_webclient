@@ -1,0 +1,9 @@
+<div class="flex-row menu-bar">
+    <div class="navbar-nav fill-col">
+        <a class="nav-link" routerLink="/" routerLinkActive="nav-link-active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+        <a class="nav-link" routerLink="/advanced" routerLinkActive="nav-link-active">Advanced Edit</a>
+      </div>
+      <div class="navbar-nav">
+        <a class="nav-link nav-link-highlight" (click)="userService.logout()"><i class="fas fa-power-off"></i> End Edit Mode</a>
+    </div>
+</div>

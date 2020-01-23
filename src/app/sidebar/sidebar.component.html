@@ -1,0 +1,208 @@
+
+
+<ul id="sidebarButtonNav">
+  <li><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab1'"
+          rel="tab1" (click)="callMotionClips()">Motion Clips</a></li>
+  <li><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab2'"
+          rel="tab2" (click)="callMotionModel()">Motion Model</a></li>
+  <li *ngIf="user.currentUser"><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab3'"
+            rel="tab3" (click)="callMotionState()">Motion State Graph</a></li>
+</ul>
+    
+<div class="content-container">
+
+      <!-- skeleton list start -->
+      <div id="skeletonList" class="skeleton-list">
+          <label for="skeletons">Skeleton</label>
+          <select [(ngModel)]="currentSkeleton" (ngModelChange)="selectSkeleton($event)" id="skeletons" class="full-width-control">
+            <option *ngFor="let s of skeleton_list"
+                    (click)="getMotionList(getCurrentAction())"  value="{{ s[1] }}">{{ s[1] }}</option>
+          </select>
+        </div>&nbsp;
+      <div id="filler" class="grid-filler">
+          &nbsp;
+      </div>
+        <div id="actionList" class="tree-view">
+		<label for="actions">Collections</label>
+		<tree-root #tree  [nodes]="collections" [focused]="true" (activate)="onSelectNode($event)" ></tree-root>
+      
+        </div>
+        <!-- action list end -->
+
+
+        <div class="tab-content-container" [ngSwitch]="activeTab">
+            <div id="tab1" class="tab-body" *ngSwitchCase="'tab1'">
+
+              <nav id="motionClipTable" class="striped-table">
+                <!-- m[0]: id, m[1]: name -->
+				<label>Motions</label>
+                <p *ngIf="!currentSkeleton" class="text-align-center field-group"><i class="far fa-hand-pointer"></i> Select a skeleton.</p>
+                <p *ngIf="currentSkeleton && !currentCollection" class="text-align-center field-group"><i class="far fa-hand-pointer"></i> Select a collection to display motion clips.</p>
+                <!-- motion table start -->
+                <p *ngIf="(currentSkeleton && currentCollection) && !motionsFound()" class="text-align-center field-group">No motion clips for the selected parameters found</p>
+              
+                <div *ngFor="let m of motion_list" class="flex-row">
+                  <div class="fill-col padded-col">
+                    <a href="javascript:" (click)='messageUnityInstance("AnimationGUI", "GetMotionByID", m[0]);'>{{ m[1] }}</a>
+                  </div>
+                  <div *ngIf="motion_info != undefined &&  motion_info[m[0]] != undefined">{{ motion_info[m[0]]["numFrames"] }}</div>
+                  <div *ngIf="user.currentUser || enable_download || (motion_info != undefined && motion_info[m[0]] != undefined && motion_info[m[0]]['public'] == 1)" class="padded-col align-middle">
+                    <a href="javascript:" class="icon-button" (click)="downloadClip(m[0], m[1]);"><i class="fas fa-download"></i></a>
+                  </div>
+                  <div *ngIf="user.currentUser" class="padded-col align-middle">
+                    <a href="javascript:" class="icon-button" (click)="deleteClip(m[1], m[0]);"><i class="far fa-trash-alt"></i></a>
+                  </div>
+                </div>
+              </nav>
+              <!-- motion table end -->
+          
+            </div>
+            <div id="tab2" class="tab-body" *ngSwitchCase="'tab2'">
+              <p *ngIf="!currentSkeleton || !currentAction" class="text-align-center"><i class="far fa-hand-pointer field-group"></i> Select a skeleton and Action first.</p>
+              <p *ngIf="currentAction && (!model_list || model_list.length == 0)" class="text-align-center field-group">No Motion Models for the selected parameters found</p>
+              <!-- motion model table start -->
+              <nav id='motionModelTable' class="striped-table">
+                <div *ngFor="let m of model_list" class="flex-row">
+                  <div class="fill-col padded-col">
+                    <a href="javascript:" class="icon-button" (click)='messageUnityInstance("AnimationGUI", "GetRandomSample",  m[0]) ;'>{{ m[1] }}</a>
+                  </div>
+                  <div *ngIf="user.currentUser || enable_download" class="padded-col align-middle">
+                    <a href="javascript:" class="icon-button" (click)="downloadSample(m[0],m[1]);"><i class="fas fa-download"></i></a>
+                  </div>
+                </div>
+              </nav>
+              <!-- motion model table end -->
+              
+            </div>
+          
+            <div id="tab3" class="tab-body" *ngSwitchCase="'tab3'">
+              <p *ngIf="!currentSkeleton || !currentAction" class="text-align-center"><i class="far fa-hand-pointer field-group"></i> Select a skeleton and Action first.</p>
+              <p *ngIf="currentAction && (!graph_list || graph_list.length == 0)" class="text-align-center field-group">No Motion Graph for the selected parameters found</p>
+              <!-- motion graph state table start -->
+              <nav id='graphStateTable' class="striped-table">
+                <div *ngFor="let m of graph_list" class="flex-row">
+                  <div class="fill-col padded-col">
+                    <a href="javascript:" class="icon-button" (click)='showStateGraphScene(m[0]);'>Load State Machine: {{ m[1] }}</a>
+                  </div>
+                </div>
+              </nav>
+              <!-- motion graph state table end -->
+          </div>
+
+
+
+      </div>
+<!-- <div class="breadcrumb" *ngIf="motionsFound()">
+  <div class="fill-col">
+    {{ currentSkeleton }} <i class="fas fa-caret-right breadcrumb-spacer"></i> {{ currentActionName }}
+    <i class="fas fa-caret-right breadcrumb-spacer"></i> {{ currentCollectionName }}
+  </div>
+  <a href="javascript:" class="text-button" (click)="resetSelection()"><i class="fas fa-angle-double-left"></i>&nbsp;&nbsp;Back</a>
+</div>-->
+
+
+</div>
+
+
+
+
+<div class="tab-action-bar">
+  <button *ngIf="user.currentUser" type="button" (click)="openCollectionForm()"><i class="fas fa-plus-circle"></i> Add Collection</button>&nbsp;&nbsp;
+  <button *ngIf="user.currentUser && currentCollection" type="button" (click)="removeCollection()"><i class="fas fa-trash"></i> Remove Collection</button>&nbsp;&nbsp;
+  <button *ngIf="user.currentUser && currentCollection  && activeTab == 'tab1'" id="showUploadMotionModalBtn" type="button" (click)="callModal('uploadMotion')"><i class="fas fa-upload"></i> Upload Motion</button>
+  <button *ngIf="user.currentUser && activeTab == 'tab2'" id="showUploadMotionPrimitiveModalBtn" type="button" (click)="callModal('uploadMotionPrimitive')"><i class="fas fa-upload"></i> Upload Motion Primitive</button>
+</div>
+
+<div  *ngIf="!user.currentUser" class="sidebar-footer field-group text-align-center">
+  <hr />
+  <br />
+  <a routerLink="/login"><i class="fas fa-pen"></i> Start Edit Mode</a>
+</div>
+
+
+
+
+<div class="modal-container" [ngSwitch]="activeModal">
+<!-- Modals start -->
+<app-modal title="New Collection" slug="newCollection" (modalCall)="callModal($event)" *ngSwitchCase="'newCollection'" #modal>
+  <form [formGroup]="newCollectionForm" (ngSubmit)="createCollection(modal)">
+  <div class="field-group">
+    <label for="newCollectionNameInput">Collection Name</label>
+    <input id="newCollectionNameInput" formControlName="newCollectionName" class="full-width-control" type="text" />
+    
+    <label for="newCollectionTypeInput">Collection Type</label>
+    <input id="newCollectionTypeInput" formControlName="newCollectionType" class="full-width-control" type="text" />
+    <div *ngIf="collectionSubmitted && newCollectionForm.controls.newCollectionName.errors" class="invalid-feedback">
+        <div *ngIf="newCollectionForm.controls.newCollectionName.errors.required">Collection name is required</div>
+    </div>
+  </div>
+  <div class="field-group field-group-last">
+    <button id="newCollectionBtn" type="submit">Create</button>&nbsp;&nbsp;
+    <button id="abortNewACollectionBtn" type="button" (click)="modal.closeModal()">Cancel</button>
+  </div>
+  </form>
+</app-modal>
+
+<app-modal [title]="'Remove Collection: &quot;' + currentCollectionName + '&quot;'" slug="removeCollection" (modalCall)="callModal($event)" *ngSwitchCase="'removeCollection'" #modal>
+  <div class="field-group">
+    <p>Are you sure you want to remove this collection? You will not be able to undo this.</p>
+  </div>
+  <div class="field-group field-group-last">
+    <button type="button" (click)="[modal.closeModal(), dataService.removeCollection(currentCollection)]">Ok</button>&nbsp;&nbsp;
+    <button type="button" (click)="[modal.closeModal()]">Cancel</button>
+  </div>
+</app-modal>
+
+<app-modal [title]="'Delete Clip: &quot;' + queuedClip.name + '&quot;'" slug="deleteClip" (modalCall)="callModal($event)" *ngSwitchCase="'deleteClip'" #modal>
+  <div class="field-group">
+    <p>Are you sure you want to delete this clip? You will not be able to undo this.</p>
+  </div>
+  <div class="field-group field-group-last">
+    <button type="button" (click)="[modal.closeModal(), dataService.deleteClip(queuedClip.id), getMotionList()]">Ok</button>&nbsp;&nbsp;
+    <button type="button" (click)="[modal.closeModal(), setQueuedClip(none)]">Cancel</button>
+  </div>
+</app-modal>
+
+<app-modal title="Upload Motion" slug="uploadMotion" (modalCall)="callModal($event)" *ngSwitchCase="'uploadMotion'" #modal>
+  <form [formGroup]="motionUploadForm" (ngSubmit)="[uploadMotionClip(modal)]">
+  <div class="field-group">
+      <input id="uploadMotionFilesBtn" formControlName="motionFiles" class="full-width-control" (change)="handleFileInput($event.target.files)" type="file" multiple />
+      <div *ngIf="motionSubmitted && motionUploadForm.controls.motionFiles.errors" class="invalid-feedback">
+          <div *ngIf="motionUploadForm.controls.motionFiles.errors.required">Select at least one motion file.</div>
+      </div>
+  </div>
+  <div id='skeletonModelList' class="field-group">
+    <label for="skeletonModel">Skeleton Model</label>
+    <select id='skeletonModel' formControlName="skeletonTarget" class="full-width-control">
+    <!-- load skeleton models -->
+      <option *ngFor="let skeleton of skeleton_list"
+        value="{{ skeleton[1] }}">{{ skeleton[1] }}</option>
+    </select>
+    <div *ngIf="motionSubmitted && motionUploadForm.controls.skeletonTarget.errors" class="invalid-feedback">
+        <div *ngIf="motionUploadForm.controls.skeletonTarget.errors.required">Select a skeleton</div>
+    </div>
+    </div>
+  <div class="field-group field-group-last">
+    <button type="button" type="submit">Upload</button>&nbsp;&nbsp;
+    <button id="abortUploadMotionBtn" type="button" (click)="modal.closeModal()">Cancel</button>
+  </div>
+  </form>
+</app-modal>
+
+<app-modal title="Upload Motion Primitive" slug="uploadMotionPrimitive" (modalCall)="callModal($event)" *ngSwitchCase="'uploadMotionPrimitive'" #modal>
+  <form [formGroup]="primitiveUploadForm" (ngSubmit)="uploadMotionPrimitive(modal)">
+  <div class="field-group">
+    <input id="uploadMotionPrimitiveFileBtn" class="full-width-control" formControlName="primitiveFiles" name="files[]" type="file" />
+    <div *ngIf="primitiveSubmitted && primitiveUploadForm.controls.primitiveFiles.errors" class="invalid-feedback">
+        <div *ngIf="primitiveUploadForm.controls.primitiveFiles.errors.required">Select a primitive file</div>
+    </div>
+  </div>
+
+  <div class="field-group field-group-last">
+    <button type="button" type="submit">Upload</button>&nbsp;&nbsp;
+    <button id="abortUploadMotionPrimitiveBtn" type="button" (click)="modal.closeModal()">Cancel</button>
+  </div>
+  </form>
+</app-modal>
+<!-- modals end -->
+</div>

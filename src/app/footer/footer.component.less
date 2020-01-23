@@ -1,0 +1,25 @@
+@import "../../less/colors";
+
+.footer{
+  border-top: 1px solid lighten(@light-text, 10%);
+  padding: .5em 0;
+}
+
+#footer-nav{
+  display: inline-flex;
+  flex-wrap: nowrap;
+  margin: 0;
+
+  li{
+    padding: .3em .75em;
+
+    &:not(:first-child){
+      border-left: 1px solid @light-text;
+    }
+  }
+
+  a{
+    text-decoration: none;
+    font-weight: 600;
+  }
+}

@@ -1,0 +1,136 @@
+@import "../../less/colors";
+
+.sidebar-footer{
+  width: 100%;
+}
+
+.striped-table{
+  .flex-row{
+      &:nth-child(2n){
+        background-color: @accent-bg;
+      }
+  }
+}
+
+#sidebarButtonNav{
+  display: inline-flex;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+
+  li{
+    margin: 0 2px 0 2px;
+  }
+}
+
+.content-container{
+  display: grid;
+  flex: 1 0 auto;
+  max-height: 550px;
+  vertical-align: super;
+  grid-template-rows: 50px 450px;
+}
+.tree-view{
+  grid-column:1;
+  grid-row:2;
+  max-height: 550px;
+}
+.grid-filler{
+  &:field-group{
+  }
+  grid-column:2;
+  grid-row:1;
+  height: 10px;
+}
+
+.skeleton-list{
+  &:field-group{
+  }
+  grid-column:1;
+  grid-row:1;
+  height: 10px;
+}
+
+.tab-content-container{
+
+  grid-column:2;
+  grid-row:2;
+  flex: 1 0 auto;
+  overflow-y: auto;
+  max-height: 550px;
+}
+
+.tab-action-bar{
+  text-align: right;
+  margin-top: 15px;
+}
+
+/* src: https://fdossena.com/?p=html5cool/buttons/i.frag*/
+a.sidebar-button {
+    border: none;
+    border-bottom: 5px solid @accent-bg; /* grey */
+    color: lighten(@secondary-text, 20%);
+    padding: 12px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    font-size: 1.1em;
+    cursor: pointer;
+
+    &:hover{
+      border-color: darken(@accent-bg, 40%);
+    }
+
+    &-active{
+      border-color: @accent-color; /* black */
+      color: @primary-text;
+
+      &:hover{
+        border-color: lighten(#000, 25%);
+      }
+    }
+}
+
+.action-list{
+  list-style: none;
+
+  &-row{
+    &:hover{
+      cursor: pointer;
+    }
+  }
+
+  &-main{
+    display: flex;
+    padding: .5em;
+    border-bottom: 1px solid @accent-bg;
+
+    &:hover, &-active{
+        background: @accent-bg;
+    }
+  }
+
+  &-children{
+    margin-left: 1.5em;
+
+    &-active{
+      font-weight: bold;
+    }
+  }
+}
+
+.breadcrumb{
+  align-items: center;
+  color: lighten(@primary-text, 30%);
+  display: flex;
+  flex-wrap: nowrap;
+  padding: .75em 1.5em;
+  -webkit-box-shadow: -1px 8px 10px -9px rgba(0,0,0,0.24);
+  -moz-box-shadow: -1px 8px 10px -9px rgba(0,0,0,0.24);
+  box-shadow: -1px 8px 10px -9px rgba(0,0,0,0.24);
+  margin-bottom: .5em;
+  width: 100%;
+
+  &-spacer{
+    padding: 0 1em;
+  }
+}
