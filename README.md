@@ -5,11 +5,26 @@ Part of the code is based on the following tutorials:
 https://jasonwatmore.com/post/2018/10/29/angular-7-user-registration-and-login-example-tutorial  
 https://medium.com/@ryanchenkie_40935/angular-authentication-using-route-guards-bf7a4ca13ae3  
   
-## ASSETS:  
-  
-All new builds of the application need to go into /assets/Unity/Build.  
-The /TemplateData folder does not need to be overwritten, unless changes need to be made to the progress bar.  
-  
+## Setup Instructions
+
+1. Install [Node.js](https://nodejs.org)
+
+2. Install [Angular JS](https://angular.io/)
+```bat
+npm install @angular/cli @angular/core @angular-devkit/build-angular
+```
+
+3. Go into repository directory and build or debug the application.
+```bat
+ng build/serve
+```
+
+
+## Debugging and updating of the Unity application
+
+New builds of the Unity WebGL app need to be copied into /assets/Unity/Build.  
+
+
 ## License
 Copyright (c) 2019 DFKI GmbH.  
 MIT License, see the LICENSE file.
