@@ -25,8 +25,11 @@ export class MessageService {
     //this.gameInstance = UnityLoader.instantiate("gameContainer", this.appLocation, {onProgress: UnityProgress});
     this.gameInstance = UnityLoader.instantiate("gameContainer", this.appLocation, {onProgress: UnityProgress});
     let data = JSON.parse(localStorage.getItem('currentUser'));
-    if(data != undefined)
-      this.login();
+    if(data == null) {
+      this.notlogin();
+      console.log("User not registered");
+    }
+    
 
   }
 
@@ -45,6 +48,10 @@ export class MessageService {
 
 
   public login() {
-    this.gameInstance.SendMessage("GUI", "SetLoggedIn", true);
+    this.gameInstance.SendMessage("AnimationGUI", "SetLoggedIn", true);
+  }
+
+  public notlogin() {
+    this.gameInstance.SendMessage("AnimationGUI", "NotLoggedIn");
   }
 }
