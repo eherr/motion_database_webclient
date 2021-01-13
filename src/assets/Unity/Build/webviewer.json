@@ -1,7 +1,7 @@
 {
 "companyName": "DefaultCompany",
-"productName": "mocap_server_client_v2",
-"productVersion": "0.5",
+"productName": "mocap_server_client",
+"productVersion": "0.1",
 "dataUrl": "webviewer.data.unityweb",
 "wasmCodeUrl": "webviewer.wasm.code.unityweb",
 "wasmFrameworkUrl": "webviewer.wasm.framework.unityweb",
@@ -9,7 +9,7 @@
 "webglContextAttributes": {"preserveDrawingBuffer": false},
 "splashScreenStyle": "Dark",
 "backgroundColor": "#231F20",
-"developmentBuild": true,
+"developmentBuild": false,
 "multithreading": false,
 "unityVersion": "2019.3.4f1"
 }

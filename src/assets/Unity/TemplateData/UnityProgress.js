@@ -15,7 +15,6 @@ function UnityProgress(gameInstance, progress) {
 }
 
 function InitPlayer(gameInstance){
-  console.log("***************** Inside InitPlayer*****************")
   // Set the server url to be used by the unity client
   var port = $('meta[name=port]').attr("content");
   port = parseInt(port);
