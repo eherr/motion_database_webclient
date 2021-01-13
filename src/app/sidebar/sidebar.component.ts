@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { DataService } from '@app/_services/data.service';
 import { UserService } from '@app/_services/user.service';
-import { FileSaverService } from '@app/_services/file-saver.service';
 import { MessageService } from '../_services/message.service';
 import { HttpHeaders } from '@angular/common/http';
 import { CollectionNode } from '../_models/collections';
@@ -19,7 +18,7 @@ import { TreeComponent, TreeModel, TreeNode } from 'angular-tree-component';
 export class SidebarComponent implements OnInit {
   private enable_download = false;
 
-  public skeleton_list: any;
+  public skeletonList: any;
   public collections: any[] = [];
   
   
@@ -28,13 +27,16 @@ export class SidebarComponent implements OnInit {
 	
   };
 
-  public motion_list: any;
-  public motion_info: any;
-  public model_list: any;
-  public graph_list: any;
+  public motionList: any;
+  public motionInfo: any;
+  public modelList: any;
+  public graphList: any;
+  public characterList: any;
   
 
-  public fileList: FileList;
+  public motionFileList: FileList;
+  public skeletonFileList: FileList;
+  public characterFileList: FileList;
 
   private collectionOpen = false;
 
@@ -43,6 +45,8 @@ export class SidebarComponent implements OnInit {
 
   private currentAction: string;
   private currentSkeleton: string;
+  private selectedSkeleton: string;
+  private selectedCharacter: string;
   private currentCollection: string;
 
   private currentActionName: string;
@@ -55,17 +59,19 @@ export class SidebarComponent implements OnInit {
 
   error = '';
 
+  skeletonSubmitted = false;
   collectionSubmitted = false;
   motionSubmitted = false;
   primitiveSubmitted = false;
-
+  
+  addSkeletonForm: FormGroup;
+  editSkeletonForm: FormGroup;
   newCollectionForm: FormGroup;
   motionUploadForm: FormGroup;
   primitiveUploadForm: FormGroup;
 
   constructor(private dataService: DataService,
               private msgService: MessageService,
-              private fileService: FileSaverService,
               private formBuilder: FormBuilder,
               private user: UserService) {
               }
@@ -77,6 +83,7 @@ export class SidebarComponent implements OnInit {
     this.getCollectionList();
     this.getModelList();
     this.getGraphList();
+    this.getCharacterModels(this.currentSkeleton);
     this.initForms();
     
 
@@ -101,6 +108,13 @@ export class SidebarComponent implements OnInit {
     this.primitiveUploadForm = this.formBuilder.group({
         primitiveFiles: ['', Validators.required]
     });
+    this.addSkeletonForm = this.formBuilder.group({
+      skeletonName: ['', Validators.required],
+      skeletonFile: ['', Validators.required]
+  });
+  this.editSkeletonForm = this.formBuilder.group({
+    characterFile: ['', Validators.required]
+});
 
   }
 
@@ -111,74 +125,79 @@ export class SidebarComponent implements OnInit {
   }
 
   getCollectionList(){
-	//this.tree = document.getElementById("collectionTree");
-	let parentNode = null;
-    this.queryCollectionTree(0,parentNode,0);
+	  //this.tree = document.getElementById("collectionTree");
+    let parentNode = null;
+    this.queryCollectionTree(0, parentNode);
   }
+
    onSelectNode(event){
 	   console.log("select node", event.node.data);
 	   this.selectCollection(event.node.data.id, event.node.data.name);
    }
    
-   queryCollectionTree(parentID: number=0, parentNode:any, owner: number, depth: number=0){
+   queryCollectionTree(parentID: number=0, parentNode:any, depth: number=0){
 
-	 if(owner == undefined){
-      owner = 0;
-    }
-   
-    let ownerStr = String(owner);
-	let parentIDStr = String(parentID);
-	this.dataService.queryCollectionList(parentIDStr, owner).subscribe( 
-			values => {
-			let temp = [];
-			for(let i in values){
-				//console.log(i, values[i]);
-				let node = {"id":values[i][0], "name": values[i][1]};
-				node["children"] = [];
-				//let node = new CollectionNode(values[i][0], values[i][1]);
-				//node.children = [];
-				temp.push(node);
-				this.queryCollectionTree(values[i][0],node,0);
-			}
-			if (parentNode == null){
-				this.collections = temp;
-			}else{
-				parentNode["children"] = temp;
-				//parentNode.children = temp;
-			}
-			this.treeComponent.treeModel.update();
-		}
-	);
-	
+
+    let parentIDStr = String(parentID);
+    this.dataService.queryCollectionList(parentIDStr).subscribe(
+        values => {
+        let temp = [];
+        for(let i in values){
+          //console.log(i, values[i]);
+          let node = {"id":values[i][0], "name": values[i][1]};
+          node["children"] = [];
+          //let node = new CollectionNode(values[i][0], values[i][1]);
+          //node.children = [];
+          temp.push(node);
+          this.queryCollectionTree(values[i][0], node);
+        }
+        if (parentNode == null){
+          this.collections = temp;
+        }else{
+          parentNode["children"] = temp;
+          //parentNode.children = temp;
+        }
+        this.treeComponent.treeModel.update();
+      }
+    );
 		
   }
 
   getSkeletonModels(){
     this.dataService.getSkeletonModels().subscribe(
-        skeletons => this.skeleton_list = skeletons
+        skeletons => this.skeletonList = skeletons
       );
   }
 
   getMotionList(){
     this.dataService.getMotionList(this.currentSkeleton, this.currentCollection).subscribe(
-        motionList => {this.motion_list = motionList; this.getMotionInfo();}
+        motionList => {this.motionList = motionList; this.getMotionInfo();}
       );
   }
   getMotionInfo(){
-    this.dataService.getMotionInfo(this.motion_list).subscribe(
-      motionInfo => {this.motion_info = motionInfo}
+    this.dataService.getMotionInfo(this.motionList).subscribe(
+      motionInfo => {this.motionInfo = motionInfo}
     );
   }
 
   getModelList(){
     this.dataService.getModelList(this.currentSkeleton, this.currentCollection).subscribe(
-        modelList => this.model_list = modelList
+        modelList => this.modelList = modelList
       );
   }
 
   getGraphList(){
     this.dataService.getGraphList(this.currentSkeleton).subscribe(
-        graphList => this.graph_list = graphList
+        graphList => this.graphList = graphList
+      );
+  }
+
+  getCharacterModels(skeletonName: string){
+    this.dataService.getCharacterModels(skeletonName).subscribe(
+        
+      characters => {
+        this.characterList = characters;
+        }
       );
   }
 
@@ -218,9 +237,9 @@ export class SidebarComponent implements OnInit {
     this.currentAction = null;
     this.currentActionName = null;
     this.currentCollectionName = null;
-    this.motion_list = [];
-    this.model_list = [];
-    this.graph_list = [];
+    this.motionList = [];
+    this.modelList = [];
+    this.graphList = [];
   }
 
   parentIsOpen(id){
@@ -228,8 +247,9 @@ export class SidebarComponent implements OnInit {
   }
 
   motionsFound(){
-    return this.motion_list && this.motion_list.length > 0;
+    return this.motionList && this.motionList.length > 0;
   }
+
 
   openCollectionForm(){
     this.callModal("newCollection");
@@ -253,10 +273,6 @@ export class SidebarComponent implements OnInit {
     this.dataService.downloadSampleAsBVH(modelID, name);
   }
 
-  saveToFile(responseText: string, motionName: string){
-    // TODO: Fill
-    // create new Blob and call file service
-  }
 
   createCollection(modal: any){
     this.collectionSubmitted = true;
@@ -273,55 +289,134 @@ export class SidebarComponent implements OnInit {
                                   this.newCollectionForm.controls.newCollectionName.value,
                                   this.newCollectionForm.controls.newCollectionType.value
                                   ).subscribe(
-        data => { },
+        data => { this.getCollectionList(); },
         error => {
             this.error = error;
             console.log("ERROR: " + error);
         });
   }
 
- handleFileInput(files: FileList) {
+ handleMotionFileInput(files: FileList) {
     //https://stackoverflow.com/questions/47936183/angular-file-upload
-      this.fileList = files;
+      this.motionFileList = files;
   
   }
+  handleSkeletonFileInput(files: FileList) {
+    //https://stackoverflow.com/questions/47936183/angular-file-upload
+      this.skeletonFileList = files;
+  
+  }  
+  
+  handleCharacterFile(files: FileList) {
+    //https://stackoverflow.com/questions/47936183/angular-file-upload
+      this.characterFileList = files;
+  
+  }  
 
-  uploadMotionClip(modal: any){
-    //https://stackoverflow.com/questions/27254735/filereader-onload-with-result-and-parameter
+  
+  addSkeleton(modal: any){
+    this.skeletonSubmitted = true;
+
+    console.log("add skeleton");
+
+    // stop here if form is invalid
+    if (this.addSkeletonForm.invalid) {
+      return;
+  }
+  
+  let updateCallback = (e) => {this.getSkeletonModels();};
+  let skeletonName = this.addSkeletonForm.controls.skeletonName.value;
+  console.log("add skeleton", skeletonName);
+  let backendCall = (name: string, bvhStr: string) => {
+      bvhStr = bvhStr.replace(/(\r\n|\n|\r)/gm,"\\n");
+      bvhStr = bvhStr.replace(/\t/gm,"     ");
+      this.dataService.uploadSkeleton(skeletonName, bvhStr, updateCallback);
+    };
+
+    for (var i = 0; i < this.skeletonFileList.length; i++) {
+        let f = this.skeletonFileList.item(i);
+        this.uploadTextFile(f, backendCall);
+        break;
+    }
+
+    modal.closeModal();
+  }
+  
+
+  openEditSkeletonForm(){
+    this.getCharacterModels(this.currentSkeleton);
+    this.callModal('editSkeleton');
+  }
+
+  deleteSkeleton(){
+    this.selectedSkeleton = this.currentSkeleton.valueOf();
+    this.callModal("deleteSkeleton");
+  }
+
+  uploadTextFile(f: any, callback: any){
     //https://developer.mozilla.org/de/docs/Web/API/FileReader/onload
+    //https://stackoverflow.com/questions/27254735/filereader-onload-with-result-and-parameter
     //https://www.html5rocks.com/de/tutorials/file/dndfiles/
     //https://stackoverflow.com/questions/47936183/angular-file-upload
+    let reader = new FileReader();
+    reader.onloadend = (e) => {
+        let name = f.name;
+        let resulStr = <string> reader.result;
+        if (resulStr != undefined){ 
+          callback(f.name, resulStr);
+        }
+      }
+      // Read in the file as a text
+      reader.readAsText(f);
+  }
+
+  uploadBinaryFile(f: any, callback: any){
+    //https://developer.mozilla.org/en-US/docs/Web/API/File/getAsBinary
+    let reader = new FileReader();
+    reader.onloadend = (e) => {
+        let name = f.name;
+        let resultBuffer = <ArrayBuffer> reader.result;
+        console.log("result");
+        console.log(resultBuffer);
+        if (resultBuffer != undefined){ 
+          callback(f.name, resultBuffer);
+        }
+      }
+      // Read in the file as binary
+      reader.readAsArrayBuffer(f);
+  }
+
+
+  uploadMotionClip(modal: any){
     this.motionSubmitted = true;
 
     // stop here if form is invalid
     if (this.motionUploadForm.invalid) {
         return;
     }
+
     let skeletonName = this.motionUploadForm.controls.skeletonTarget.value;
     let collectionID = this.currentCollection;
     let dataService = this.dataService;
-    let callback =  (e) => {this.getMotionList();};
+    let updateCallback =  (e) => {this.getMotionList();};
     let inputField = document.getElementById("uploadMotionFilesBtn");
-    for (var i = 0; i < this.fileList.length; i++) {
-		    let f = this.fileList.item(i);
-        let reader = new FileReader();
-        reader.onloadend = (e) => {
-          let name = f.name;
-          let bvhStr = <string> reader.result;
-          if (bvhStr != undefined){ 
-            bvhStr = bvhStr.replace(/(\r\n|\n|\r)/gm,"\\n");
-            bvhStr = bvhStr.replace(/\t/gm,"     ");
-            dataService.uploadBVHClip(collectionID, skeletonName, name, bvhStr, callback);
-           }
-       };
 
-        // Read in the bvh file as a text
-        reader.readAsText(f);
-	}
-	
+    let backendCall = (name: string, bvhStr: string) => {
+      bvhStr = bvhStr.replace(/(\r\n|\n|\r)/gm,"\\n");
+      bvhStr = bvhStr.replace(/\t/gm,"     ");
+      dataService.uploadBVHClip(collectionID, skeletonName, name, bvhStr, updateCallback);
+    };
+
+    for (var i = 0; i < this.motionFileList.length; i++) {
+        let f = this.motionFileList.item(i);
+        this.uploadTextFile(f, backendCall);
+    }
+
     modal.closeModal();
   }
 
+
+  
   uploadMotionPrimitive(modal: any){
     this.primitiveSubmitted = true;
 
@@ -334,8 +429,29 @@ export class SidebarComponent implements OnInit {
     //TODO: uploadFiles
   }
 
+  uploadCharacter(){
+    // stop here if form is invalid
+    if (this.editSkeletonForm.invalid) {
+        return;
+    }
+
+    let skeletonName = this.currentSkeleton;
+    let updateCallback =  (e) => {this.getCharacterModels(skeletonName);};
+    let backendCall = (name: string, dataStr: any) => {
+      this.dataService.uploadCharacter(name, skeletonName, dataStr, updateCallback);
+    };
+    for (var i = 0; i < this.characterFileList.length; i++) {
+      let f = this.characterFileList.item(i);
+      this.uploadBinaryFile(f, backendCall);
+    }
+  }
+
+  deleteCharacter(characterName: string){
+    let updateCallback =  (e) => {this.getCharacterModels(this.currentSkeleton);};
+    this.dataService.deleteCharacter(this.currentSkeleton, characterName, updateCallback);
+  }
+
   showStateGraphScene(id: number){
-    // TODO: handle state graph
     return;
   }
 

@@ -41,6 +41,10 @@
   grid-row:1;
   height: 10px;
 }
+.box {
+  display: flex;
+  flex-direction: row;
+}
 
 .skeleton-list{
   &:field-group{
@@ -90,6 +94,30 @@ a.sidebar-button {
     }
 }
 
+a.button {
+  border: none;
+  border-bottom: 5px solid @accent-bg; /* grey */
+  color: lighten(@secondary-text, 20%);
+  padding: 12px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  font-size: 1.1em;
+  cursor: pointer;
+
+  &:hover{
+    border-color: darken(@accent-bg, 40%);
+  }
+
+  &-active{
+    border-color: @accent-color; /* black */
+    color: @primary-text;
+
+    &:hover{
+      border-color: lighten(#000, 25%);
+    }
+  }
+}
 .action-list{
   list-style: none;
 

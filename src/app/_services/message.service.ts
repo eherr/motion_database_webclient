@@ -14,44 +14,29 @@ export class MessageService {
   private gameInstance: any;
   private appLocation: string;
 
-  constructor() {
-  }
+  constructor() { }
 
-  public updateGameInstance(appLocation: string) {
+  public updateGameInstance(appLocation: string){
     this.appLocation = appLocation;
-
-    /* https://stackoverflow.com/questions/47229867/prevent-emscripten-compiled-javascript-from-blocking-certain-key-inputs */
-    //https://www.tangledrealitystudios.com/development-tips/prevent-unity-webgl-from-stopping-all-keyboard-input/
+	
+	/* https://stackoverflow.com/questions/47229867/prevent-emscripten-compiled-javascript-from-blocking-certain-key-inputs */
+	//https://www.tangledrealitystudios.com/development-tips/prevent-unity-webgl-from-stopping-all-keyboard-input/
     //this.gameInstance = UnityLoader.instantiate("gameContainer", this.appLocation, {onProgress: UnityProgress});
     this.gameInstance = UnityLoader.instantiate("gameContainer", this.appLocation, {onProgress: UnityProgress});
-    let data = JSON.parse(localStorage.getItem('currentUser'));
-    if(data == null) {
-      this.notlogin();
-      console.log("User not registered");
-    }
-    
-
   }
 
   public sendMessage(gameObject: string, functionName: string, paramValue?: any) {
-    if (paramValue == undefined) {
+    if (this.gameInstance == undefined) return;
+    if(paramValue == undefined){
       this.gameInstance.SendMessage(gameObject, functionName);
-    } else {
+    }
+    else{
       this.gameInstance.SendMessage(gameObject, functionName, paramValue);
     }
 
   }
 
-  public setFullscreen(status: string) {
-    this.gameInstance.SetFullscreen(status);
-  }
-
-
-  public login() {
-    this.gameInstance.SendMessage("AnimationGUI", "SetLoggedIn", true);
-  }
-
-  public notlogin() {
-    this.gameInstance.SendMessage("AnimationGUI", "NotLoggedIn");
+  public setFullscreen(status: string){
+      this.gameInstance.SetFullscreen(status);
   }
 }

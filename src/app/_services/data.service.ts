@@ -48,8 +48,12 @@ export class DataService {
   getUser(): User{
     let data =  JSON.parse(localStorage.getItem('currentUser'));
     let user = new User();
-    user.username = data.username;
-    user.token = data.token;
+    user.username = "";
+    user.token = "";
+    if (data != null){
+      user.username = data.username;
+      user.token = data.token;
+    }
     return user;
   }
 
@@ -71,46 +75,19 @@ export class DataService {
     return this.http.post(this.getServerURL() + "get_meta_data", null);
   }
 
-  getCollectionsBAK(parentID:string="0",owner?: number): Observable<CollectionNode[]> {
-    if(owner == undefined){
-      owner = 0;
-    }
-    let ownerStr = String(owner);
-    return this.queryCollectionList(parentID, owner).pipe(
-      map((data:any[]) => data.map((dataItem:any) => {
-        const node: CollectionNode = new CollectionNode(dataItem[0], dataItem[1]);
-        return node;
-      })),
-      flatMap((collections:CollectionNode[]) => {
-        if(collections.length > 0){
-          return forkJoin(
-            collections.map((collection:CollectionNode) => {
-				
-              return this.queryCollectionList(collection.id, owner).pipe(
-                map((res:any) => {
-                  let primitives = res;
-                  collection.children = primitives;
-                  return collection;
-                })
-              );
-            })
-          );
-        }
-        return of([]);
-      })
-    );
-  }
   
-  queryCollectionList(parentID: string, owner: number){
-	let ownerStr = String(owner);
-	let parentIDStr = String(parentID);
-	return this.http.post<CollectionNode[]>(this.getServerURL() + "get_collection_list", '{"parent_id": "'+parentIDStr+'", "owner":'+ownerStr+'}');
+  
+  queryCollectionList(parentID: string){
+    let user = this.getUser();
+    let parentIDStr = String(parentID);
+    return this.http.post<CollectionNode[]>(this.getServerURL() + "get_collection_list", '{"parent_id": "'+parentIDStr+'", "token":"'+user.token+'"}');
   }
  
 
   getSkeletonModels(){
     return this.http.post(this.getServerURL() + "get_skeleton_list", null);
    }
+
 
   getMotionList(skeletonName: string, collectionID?: string){
     if(collectionID == undefined){
@@ -184,6 +161,7 @@ export class DataService {
     /*return this.http.post(this.getServerURL() + "upload_bvh_clip",
         '{"collection":"'+collectionID+'", "name": "'+name+'", "bvh_data": "'+data+'"}');*/
   }
+
   downloadClipAsBVH(clipID: string, name: string){
     if (!name.endsWith(".bvh")){
        name = name+".bvh";
@@ -193,5 +171,152 @@ export class DataService {
 
   downloadSampleAsBVH(modelID: string, name: string){
     sendRequest(this.getServerURL() + "download_sample_as_bvh", '{"model_id":"'+modelID+'"}', saveToFile, name+"_sample.bvh");
+  }
+
+  uploadSkeleton(skeletonName: string, input_data: string, callback: any){
+    let user = this.getUser();
+    let body =  {name:skeletonName, data: input_data, user:user.username, token: user.token, data_type: "bvh"}
+    sendRequest(this.getServerURL() + "create_new_skeleton", JSON.stringify(body), callback, null);
+  }
+
+  deleteSkeleton(skeletonName: string, callback: any){
+    console.log("call delete", skeletonName);
+    let user = this.getUser();
+    let c = callback
+    let body = {name: skeletonName,  user:user.username, token:  user.token};
+    sendRequest(this.getServerURL() + "remove_skeleton", JSON.stringify(body), c, null);
+  }
+
+  startJob(name: string, cmd: string ){
+    console.log("send post request");
+    let user = this.getUser();
+    let body = '{"name":"'+name+'", "cmd":"'+cmd+'", "token":"'+user.token+'"}';
+    sendRequest(this.getServerURL() + "servers/start", body, null, null);
+  }
+ 
+  createGroup(name: string){
+    console.log("send post request");
+    let user = this.getUser();
+    let body = '{"group_name":"'+name+'", "token":"'+user.token+'"}';
+    sendRequest(this.getServerURL() + "groups/add", body, null, null);
+  }
+  
+  editGroup(group_id: string, name: string, users: any){
+    console.log("send post request");
+    let user = this.getUser();
+    let body = '{"group_id":"'+group_id+'", "group_name":"'+name+'", "users":'+JSON.stringify(users) +', "token":"'+user.token+'"}';
+    sendRequest(this.getServerURL() + "groups/edit", body, null, null);
+  }
+  
+  getServerList(){
+    return this.http.get(this.getServerURL() + "servers");
+  }
+  
+  getGroupList(){
+    return this.http.get(this.getServerURL() + "groups");
+  }
+  
+  getUserList(){
+    return this.http.get(this.getServerURL() + "users");
+  }
+
+  getGroupMemberList(group_id : string){
+    let body = '{"group_id":"'+group_id+'"}';
+    return this.http.post(this.getServerURL() + "group_members", body);
+  }
+  
+  getUserAccessGroupList(user_id : string){
+    let body = '{"user_id":"'+user_id+'"}';
+    return this.http.post(this.getServerURL() + "user_access_groups", body);
+  }
+
+  deleteGroup(group_id: string){
+    let user = this.getUser();
+    let body = '{"group_id":"'+group_id+'", "token":"'+user.token+'"}';
+    sendRequest(this.getServerURL() + "groups/remove", body, null, null);
+  }
+
+    
+  createUser(name: string, email: string, password: string) {
+      let createUserUrl = this.getServerURL() + "users/add"
+      let role = "user";
+      return this.http.post<any>(createUserUrl, { name, password, role, email });
+  }
+
+  editUser(name: string, password: string, email: string, role: string, shared_access_groups: any, user_id : string) {
+    let editUserUrl = this.getServerURL() + "users/edit"
+    let user = this.getUser();
+    let body = {token: user.token};
+    if (name != null)body["name"] = name;
+    if (email != null)body["email"] = email;
+    if (role != null)body["role"] = role;
+    if (password != null)body["password"] = password;
+    if (shared_access_groups != null)body["shared_access_groups"] = JSON.stringify(shared_access_groups);
+    if (user_id  != null)body["user_id"] = user_id ;
+    let bodyStr = JSON.stringify(body);
+    //let bodyStr = '{"name":"'+name+'","password":"'+password+'",  "email":"'+email+'",  "role":"'+role+'", "shared_access_groups":'+JSON.stringify(shared_access_groups) +', "token":"'+user.token+'"}';
+    //return this.http.post(editUserUrl, bodyStr);
+    return sendRequest(editUserUrl, bodyStr, null, null);
+  }
+  
+  editUserPipe(name: string, password: string, email: string, role: string, shared_access_groups: any, user_id : string) {
+    let editUserUrl = this.getServerURL() + "users/edit"
+    let user = this.getUser();
+    let body = {token: user.token};
+    if (name != null)body["name"] = name;
+    if (email != null)body["email"] = email;
+    if (role != null)body["role"] = role;
+    if (password != null)body["password"] = password;
+    if (shared_access_groups != null)body["shared_access_groups"] = JSON.stringify(shared_access_groups);
+    if (user_id  != null)body["user_id"] = user_id ;
+    let bodyStr = JSON.stringify(body);
+    //let bodyStr = '{"name":"'+name+'","password":"'+password+'",  "email":"'+email+'",  "role":"'+role+'", "shared_access_groups":'+JSON.stringify(shared_access_groups) +', "token":"'+user.token+'"}';
+    return this.http.post(editUserUrl, bodyStr);
+  }
+
+  getUserInfo(user_id: string) {
+    let editUserUrl = this.getServerURL() + "users/info"
+    let user = this.getUser();
+    let body = '';
+    if (user_id != null){
+      body = '{"user_id":"'+user_id+'", "token":"'+user.token+'"}';
+    }else{
+      body = '{"token":"'+user.token+'"}';
+    }
+    return this.http.post(editUserUrl, body);
+  }
+
+  deleteUser(user_id: string) {
+    console.log("delete user"+user_id);
+    let user = this.getUser();
+    let body = '{"user_id":"'+user_id+'", "token":"'+user.token+'"}';
+    sendRequest(this.getServerURL() + "users/remove", body, null, null);
+    
+  }
+
+
+  uploadCharacter(name: string, skeleton_type: string, data: ArrayBuffer, callback? : any){
+    //https://gist.github.com/nuclearglow/ab251744db0ebddd504eea28153eb279    
+    let user = this.getUser();
+    let body = {user:user.username, token: user.token, name:name, skeleton_type: skeleton_type, data: Array.from(new Uint8Array(data))};
+    let bodyStr = JSON.stringify(body);
+    sendRequest(this.getServerURL() + "upload_character_model", bodyStr, callback, null);
+  }
+
+  
+  getCharacterModels(skeleton_type: string){
+    let user = this.getUser();
+    let body = {user:user.username, token: user.token, skeleton_type: skeleton_type};
+    let bodyStr = JSON.stringify(body);
+    return this.http.post(this.getServerURL() + "get_character_model_list", bodyStr);
+   }
+
+   deleteCharacter(skeleton_type: string, character_name: string, callback? : any) {
+    console.log("delete character"+character_name);
+    let user = this.getUser();
+    let body = {token: user.token, name:character_name, skeleton_type: skeleton_type};
+    let bodyStr = JSON.stringify(body);
+    sendRequest(this.getServerURL() + "delete_character_model", bodyStr, callback, null);
+    
   }
 }

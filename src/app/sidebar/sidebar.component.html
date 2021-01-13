@@ -15,12 +15,25 @@
       <div id="skeletonList" class="skeleton-list">
           <label for="skeletons">Skeleton</label>
           <select [(ngModel)]="currentSkeleton" (ngModelChange)="selectSkeleton($event)" id="skeletons" class="full-width-control">
-            <option *ngFor="let s of skeleton_list"
+            <option *ngFor="let s of skeletonList"
                     (click)="getMotionList(getCurrentAction())"  value="{{ s[1] }}">{{ s[1] }}</option>
           </select>
+          
         </div>&nbsp;
+
       <div id="filler" class="grid-filler">
+        <div class="box">
+          <div *ngIf="user.currentUser" class="padded-col align-middle">
+            <a href="javascript:" class="icon-button" (click)="callModal('addSkeleton')"><i class="fas fa-upload"></i></a>
+          </div>
+            <div *ngIf="user.currentUser" class="padded-col align-middle">
+            <a href="javascript:" class="icon-button" (click)="openEditSkeletonForm()"><i class="fas fa-edit"></i></a>
+          </div>
+          <div *ngIf="user.currentUser" class="padded-col align-middle">
+            <a href="javascript:" class="icon-button" (click)="deleteSkeleton();"><i class="far fa-trash-alt"></i></a>
+          </div>
           &nbsp;
+      </div>
       </div>
         <div id="actionList" class="tree-view">
 		<label for="actions">Collections</label>
@@ -41,12 +54,12 @@
                 <!-- motion table start -->
                 <p *ngIf="(currentSkeleton && currentCollection) && !motionsFound()" class="text-align-center field-group">No motion clips for the selected parameters found</p>
               
-                <div *ngFor="let m of motion_list" class="flex-row">
+                <div *ngFor="let m of motionList" class="flex-row">
                   <div class="fill-col padded-col">
                     <a href="javascript:" (click)='messageUnityInstance("AnimationGUI", "GetMotionByID", m[0]);'>{{ m[1] }}</a>
                   </div>
-                  <div *ngIf="motion_info != undefined &&  motion_info[m[0]] != undefined">{{ motion_info[m[0]]["numFrames"] }}</div>
-                  <div *ngIf="user.currentUser || enable_download || (motion_info != undefined && motion_info[m[0]] != undefined && motion_info[m[0]]['public'] == 1)" class="padded-col align-middle">
+                  <div *ngIf="motionInfo != undefined &&  motionInfo[m[0]] != undefined">{{ motionInfo[m[0]]["numFrames"] }}</div>
+                  <div *ngIf="user.currentUser || enable_download || (motionInfo != undefined && motionInfo[m[0]] != undefined && motionInfo[m[0]]['public'] == 1)" class="padded-col align-middle">
                     <a href="javascript:" class="icon-button" (click)="downloadClip(m[0], m[1]);"><i class="fas fa-download"></i></a>
                   </div>
                   <div *ngIf="user.currentUser" class="padded-col align-middle">
@@ -59,10 +72,10 @@
             </div>
             <div id="tab2" class="tab-body" *ngSwitchCase="'tab2'">
               <p *ngIf="!currentSkeleton || !currentAction" class="text-align-center"><i class="far fa-hand-pointer field-group"></i> Select a skeleton and Action first.</p>
-              <p *ngIf="currentAction && (!model_list || model_list.length == 0)" class="text-align-center field-group">No Motion Models for the selected parameters found</p>
+              <p *ngIf="currentAction && (!modelList || modelList.length == 0)" class="text-align-center field-group">No Motion Models for the selected parameters found</p>
               <!-- motion model table start -->
               <nav id='motionModelTable' class="striped-table">
-                <div *ngFor="let m of model_list" class="flex-row">
+                <div *ngFor="let m of modelList" class="flex-row">
                   <div class="fill-col padded-col">
                     <a href="javascript:" class="icon-button" (click)='messageUnityInstance("AnimationGUI", "GetRandomSample",  m[0]) ;'>{{ m[1] }}</a>
                   </div>
@@ -77,10 +90,10 @@
           
             <div id="tab3" class="tab-body" *ngSwitchCase="'tab3'">
               <p *ngIf="!currentSkeleton || !currentAction" class="text-align-center"><i class="far fa-hand-pointer field-group"></i> Select a skeleton and Action first.</p>
-              <p *ngIf="currentAction && (!graph_list || graph_list.length == 0)" class="text-align-center field-group">No Motion Graph for the selected parameters found</p>
+              <p *ngIf="currentAction && (!graphList || graphList.length == 0)" class="text-align-center field-group">No Motion Graph for the selected parameters found</p>
               <!-- motion graph state table start -->
               <nav id='graphStateTable' class="striped-table">
-                <div *ngFor="let m of graph_list" class="flex-row">
+                <div *ngFor="let m of graphList" class="flex-row">
                   <div class="fill-col padded-col">
                     <a href="javascript:" class="icon-button" (click)='showStateGraphScene(m[0]);'>Load State Machine: {{ m[1] }}</a>
                   </div>
@@ -116,14 +129,76 @@
 <div  *ngIf="!user.currentUser" class="sidebar-footer field-group text-align-center">
   <hr />
   <br />
-  <a routerLink="/login"><i class="fas fa-pen"></i> Start Edit Mode</a>
+  <!--  <a routerLink="/login"><i class="fas fa-pen"></i> Start Edit Mode</a>  -->
+
 </div>
 
 
 
 
 <div class="modal-container" [ngSwitch]="activeModal">
+
 <!-- Modals start -->
+<app-modal title="Add Skeleton" slug="AddSkeleton" (modalCall)="callModal($event)" *ngSwitchCase="'addSkeleton'" #modal>
+  <form [formGroup]="addSkeletonForm" (ngSubmit)="addSkeleton(modal)">
+  <div class="field-group">
+    <label for="skeletonName">Skeleton Name</label>
+    <input id="skeletonName" formControlName="skeletonName" class="full-width-control" type="text" />
+
+  </div>
+  <div class="field-group">
+    <input id="uploadSkeletonFileBtn" formControlName="skeletonFile" class="full-width-control" (change)="handleSkeletonFileInput($event.target.files)" type="file" multiple />
+    <div *ngIf="skeletonSubmitted && addSkeletonForm.controls.skeletonFile.errors" class="invalid-feedback">
+        <div *ngIf="addSkeletonForm.controls.skeletonFile.errors.required">Select one skeleton file.</div>
+    </div>
+</div>
+  <div class="field-group field-group-last">
+    <button id="addSkeletonBtn" type="submit">Add</button>&nbsp;&nbsp;
+    <button id="abortAddSkeletonBtn" type="button" (click)="modal.closeModal()">Cancel</button>
+  </div>
+  </form>
+</app-modal>
+
+
+<app-modal [title]="'Edit Skeleton: &quot;' + currentSkeleton + '&quot;'" slug="EditSkeleton" (modalCall)="callModal($event)" *ngSwitchCase="'editSkeleton'" #modal>
+  <form [formGroup]="editSkeletonForm" >
+
+  <div class="field-group">
+    
+  <label >Character Model List</label>
+  <div *ngFor="let c of characterList" class="flex-row">
+      <div class="fill-col padded-col">
+        <a >{{ c }}</a>
+      </div>
+      <div class="padded-col align-middle">
+        <a href="javascript:" class="icon-button" (click)="deleteCharacter(c);"><i class="far fa-trash-alt"></i></a>
+      </div>
+    </div>
+</div>
+  <div class="field-group">
+    <input id="uploadCharacterFileBtn" formControlName="characterFile" class="full-width-control" (change)="handleCharacterFile($event.target.files)" type="file" multiple />
+    <div *ngIf="skeletonSubmitted && editSkeletonForm.controls.characterFile.errors" class="invalid-feedback">
+        <div *ngIf="editSkeletonForm.controls.characterFile.errors.required">Select a GLTF file.</div>
+    </div>
+    <button id="uploadCharacterBtn" type="button" (click)="uploadCharacter()">Upload</button>&nbsp;&nbsp;
+</div>
+  <div class="field-group field-group-last">
+    <button id="abortEditSkeletonBtn" type="button" (click)="modal.closeModal()">Close</button>
+  </div>
+  </form>
+</app-modal>
+
+<app-modal [title]="'Delete Skeleton: &quot;' + selectedSkeleton + '&quot;'" slug="deleteSkeleton" (modalCall)="callModal($event)" *ngSwitchCase="'deleteSkeleton'" #modal>
+  <div class="field-group">
+    <p>Are you sure you want to remove this skeleton? You will not be able to undo this.</p>
+  </div>
+  <div class="field-group field-group-last">
+    <button type="button" (click)="[modal.closeModal(), dataService.deleteSkeleton(selectedSkeleton), getSkeletonModels()]">Ok</button>&nbsp;&nbsp;
+    <button type="button" (click)="[modal.closeModal()]">Cancel</button>
+  </div>
+</app-modal>
+
+
 <app-modal title="New Collection" slug="newCollection" (modalCall)="callModal($event)" *ngSwitchCase="'newCollection'" #modal>
   <form [formGroup]="newCollectionForm" (ngSubmit)="createCollection(modal)">
   <div class="field-group">
@@ -148,7 +223,7 @@
     <p>Are you sure you want to remove this collection? You will not be able to undo this.</p>
   </div>
   <div class="field-group field-group-last">
-    <button type="button" (click)="[modal.closeModal(), dataService.removeCollection(currentCollection)]">Ok</button>&nbsp;&nbsp;
+    <button type="button" (click)="[modal.closeModal(), dataService.removeCollection(currentCollection), getCollectionList()]">Ok</button>&nbsp;&nbsp;
     <button type="button" (click)="[modal.closeModal()]">Cancel</button>
   </div>
 </app-modal>
@@ -166,7 +241,7 @@
 <app-modal title="Upload Motion" slug="uploadMotion" (modalCall)="callModal($event)" *ngSwitchCase="'uploadMotion'" #modal>
   <form [formGroup]="motionUploadForm" (ngSubmit)="[uploadMotionClip(modal)]">
   <div class="field-group">
-      <input id="uploadMotionFilesBtn" formControlName="motionFiles" class="full-width-control" (change)="handleFileInput($event.target.files)" type="file" multiple />
+      <input id="uploadMotionFilesBtn" formControlName="motionFiles" class="full-width-control" (change)="handleMotionFileInput($event.target.files)" type="file" multiple />
       <div *ngIf="motionSubmitted && motionUploadForm.controls.motionFiles.errors" class="invalid-feedback">
           <div *ngIf="motionUploadForm.controls.motionFiles.errors.required">Select at least one motion file.</div>
       </div>
@@ -175,7 +250,7 @@
     <label for="skeletonModel">Skeleton Model</label>
     <select id='skeletonModel' formControlName="skeletonTarget" class="full-width-control">
     <!-- load skeleton models -->
-      <option *ngFor="let skeleton of skeleton_list"
+      <option *ngFor="let skeleton of skeletonList"
         value="{{ skeleton[1] }}">{{ skeleton[1] }}</option>
     </select>
     <div *ngIf="motionSubmitted && motionUploadForm.controls.skeletonTarget.errors" class="invalid-feedback">

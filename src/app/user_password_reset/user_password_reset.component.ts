@@ -7,18 +7,18 @@ import { MessageService } from '@app/_services/message.service';
 import { AuthenticationService } from '../_services/authentication.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.less']
+  selector: 'app-user_password_reset',
+  templateUrl: './user_password_reset.component.html',
+  styleUrls: ['./user_password_reset.component.less']
 })
-export class LoginComponent implements OnInit {
-    loginForm: FormGroup;
+export class UserPasswordResetComponent implements OnInit {
+    resetForm: FormGroup;
     loading = false;
     submitted = false;
     returnUrl: string;
     error = '';
     unamePattern = "^[A-Za-z0-9_-]{2,15}$";
-    pwdPattern = "^(?=.*[a-z])(?=.*\\d)[A-Za-z\\d!$%@#£€*?&]{6,}$";
+    emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$";
 
     constructor(
         private formBuilder: FormBuilder,
@@ -38,9 +38,8 @@ export class LoginComponent implements OnInit {
 
     ngOnInit() {
 		
-        this.loginForm = this.formBuilder.group({
-            username: ['', [Validators.required, Validators.maxLength(15), Validators.pattern(this.unamePattern)]],
-            password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(25), Validators.pattern(this.pwdPattern)]]
+        this.resetForm = this.formBuilder.group({
+            email: ['', [Validators.required, Validators.email, Validators.maxLength(45), Validators.pattern(this.emailPattern)]]
         });
 
         // get return url from route parameters or default to '/'
@@ -48,18 +47,18 @@ export class LoginComponent implements OnInit {
     }
 
     // convenience getter for easy access to form fields
-    get f() { return this.loginForm.controls; }
+    get f() { return this.resetForm.controls; }
 
     onSubmit() {
         this.submitted = true;
 
         // stop here if form is invalid
-        if (this.loginForm.invalid) {
+        if (this.resetForm.invalid) {
             return;
         }
 
         this.loading = true;
-        this.authenticationService.login(this.f.username.value, this.f.password.value)
+        this.authenticationService.reset_password(this.f.email.value)
             .pipe(first())
             .subscribe(
                 data => {

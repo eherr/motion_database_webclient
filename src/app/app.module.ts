@@ -17,12 +17,15 @@ import { GameWindowComponent } from './game-window/game-window.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { ModalComponent } from './modal/modal.component';
 import { LoginComponent } from './login/login.component';
+import { RegistrationComponent } from './registration/registration.component';
+import { EditUserComponent } from './edit_user/edit_user.component';
+import { UserPasswordResetComponent } from './user_password_reset/user_password_reset.component';
+import { AdminComponent } from './admin/admin.component';
 
 import { BasicAuthInterceptor } from './_helpers/basic-auth.interceptor';
 import { ErrorInterceptor } from './_helpers/error.interceptor';
 
 import { TreeModule } from 'angular-tree-component';
-
 
 @NgModule({
   declarations: [
@@ -36,6 +39,10 @@ import { TreeModule } from 'angular-tree-component';
     SidebarComponent,
     ModalComponent,
     LoginComponent,
+    RegistrationComponent,
+    EditUserComponent,
+    UserPasswordResetComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,

@@ -21,12 +21,11 @@ export class AuthenticationService {
         return this.currentUserSubject.value;
     }
 
-    login(username: string, password: string) {
+    login(name: string, password: string) {
 		
-        console.log("authenticate"+username+password+'${environment.apiUrl}');
         let authenticateUrl = this.dataService.getServerURL() + "authenticate"
         let oldUrl = `${environment.apiUrl}/authenticate`;
-        return this.http.post<any>(authenticateUrl, { username, password })
+        return this.http.post<any>(authenticateUrl, { name, password })
             .pipe(map(user => {
                 if (user && user.token) {
                     // store user details and basic auth credentials in local storage to keep user logged in between page refreshes
@@ -42,5 +41,19 @@ export class AuthenticationService {
         // remove user from local storage to log user out
         localStorage.removeItem('currentUser');
         this.currentUserSubject.next(null);
+    }
+
+    reset_password(email: string) {
+        let resetPasswordUrl = this.dataService.getServerURL() + "users/reset_password"
+        return this.http.post<any>(resetPasswordUrl, { email })
+            .pipe(map(user => {
+                if (user && user.token) {
+                    // store user details and basic auth credentials in local storage to keep user logged in between page refreshes
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    this.currentUserSubject.next(user);
+                    console.log("success")
+                }
+                return user;
+            }));
     }
 }
