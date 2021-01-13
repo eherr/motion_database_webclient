@@ -1,6 +1,6 @@
 # Motion Database Web Client
 
-Web client for the motion database server written using the angular framework. It integrates a [Unity WebGL app](https://github.com/eherr/motion_database_unity_client) to view the animations in the browser. 
+Web client for the [motion database server](https://github.com/eherr/motion_database_server) written using the angular framework. It integrates a [Unity WebGL app](https://github.com/eherr/motion_database_unity_client) to view the animations in the browser. 
 Part of the code is based on the following tutorials:  
 https://jasonwatmore.com/post/2018/10/29/angular-7-user-registration-and-login-example-tutorial  
 https://medium.com/@ryanchenkie_40935/angular-authentication-using-route-guards-bf7a4ca13ae3  
