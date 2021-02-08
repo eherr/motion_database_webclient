@@ -21,11 +21,11 @@ export class AuthenticationService {
         return this.currentUserSubject.value;
     }
 
-    login(name: string, password: string) {
+    login(username: string, password: string) {
 		
         let authenticateUrl = this.dataService.getServerURL() + "authenticate"
         let oldUrl = `${environment.apiUrl}/authenticate`;
-        return this.http.post<any>(authenticateUrl, { name, password })
+        return this.http.post<any>(authenticateUrl, { username, password })
             .pipe(map(user => {
                 if (user && user.token) {
                     // store user details and basic auth credentials in local storage to keep user logged in between page refreshes
