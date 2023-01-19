@@ -35,7 +35,6 @@ export class AdminComponent implements OnInit {
   jobSubmitted = false;
   groupSubmitted = false;
 
-  startJobForm: FormGroup;
   addProjectForm: FormGroup;
   editProjectForm: FormGroup;
   userTableForm: FormGroup;
@@ -67,10 +66,6 @@ export class AdminComponent implements OnInit {
   }
   
   initForms(){
-    this.startJobForm = this.formBuilder.group({
-        serverName: ['', Validators.required],
-        serverCmd: ['', Validators.required]
-    });
     this.addProjectForm = this.formBuilder.group({
         projectName: ['', Validators.required],
         isPublic: ['']
@@ -107,15 +102,10 @@ export class AdminComponent implements OnInit {
             //add custom properties
             ctrl["userID"] = user[0];
             ctrl["name"] = user[1];
-            //get role
-            this.dataService.getUserInfo(user[0]).subscribe(
-                data => { 
-                        if(data["success"]){
-                            ctrl["role"] = String(data["role"]);
-                            this.userTableForm.addControl(key, ctrl);
-                            this.userTableForm.get(key).setValue(data["role"]);
-                        }
-              })
+            ctrl["role"] = String(user[2]);
+            this.userTableForm.addControl(key, ctrl);
+            this.userTableForm.get(key).setValue(user[2]);
+          
           })
         }
       );
@@ -127,19 +117,6 @@ export class AdminComponent implements OnInit {
 
 
 
-  startJobFromModal(modal: any){
-    this.jobSubmitted = true;
-
-    // stop here if form is invalid
-    if (this.startJobForm.invalid) {
-        return;
-    }
-    modal.closeModal();
-  
-    this.dataService.startJob(this.startJobForm.controls.serverName.value,
-                                  this.startJobForm.controls.serverCmd.value
-                                  );
-  }
   
   createProjectFromModal(modal: any){
     this.groupSubmitted = true;
