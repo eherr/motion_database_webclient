@@ -101,7 +101,7 @@ export class DataService {
   }
 
   getMotionInfo(motionList : Array<any>){
-    let columnList = ["ID", "numFrames", "public"];
+    let columnList = ["ID", "numFrames"];
     let idList = [];
     for(var i = 0; i < motionList.length; i++){
       idList.push(motionList[i][0]);
@@ -194,46 +194,43 @@ export class DataService {
     sendRequest(this.getServerURL() + "servers/start", body, null, null);
   }
  
-  createGroup(name: string){
+  createProject(name: string, is_public: boolean){
     console.log("send post request");
     let user = this.getUser();
-    let body = '{"group_name":"'+name+'", "token":"'+user.token+'"}';
-    sendRequest(this.getServerURL() + "groups/add", body, null, null);
+    var pStr = is_public? "1":"0";
+    let body = '{"project_name":"'+name+'", "token":"'+user.token+'",  "is_public": '+pStr+ '}';
+    sendRequest(this.getServerURL() + "projects/add", body, null, null);
   }
   
-  editGroup(group_id: string, name: string, users: any){
+  editProject(group_id: string, name: string, is_public: boolean,users: any){
     console.log("send post request");
     let user = this.getUser();
-    let body = '{"group_id":"'+group_id+'", "group_name":"'+name+'", "users":'+JSON.stringify(users) +', "token":"'+user.token+'"}';
-    sendRequest(this.getServerURL() + "groups/edit", body, null, null);
+    var pStr = is_public? "1":"0";
+    let body = '{"project_id":"'+group_id+'", "project_name":"'+name+'", "is_public": '+pStr+ ',"users":'+JSON.stringify(users) +', "token":"'+user.token+'"}';
+    sendRequest(this.getServerURL() + "projects/edit", body, null, null);
   }
   
   getServerList(){
     return this.http.get(this.getServerURL() + "servers");
   }
   
-  getGroupList(){
-    return this.http.get(this.getServerURL() + "groups");
+  getProjectList(){
+    return this.http.get(this.getServerURL() + "projects");
   }
   
   getUserList(){
     return this.http.get(this.getServerURL() + "users");
   }
 
-  getGroupMemberList(group_id : string){
-    let body = '{"group_id":"'+group_id+'"}';
-    return this.http.post(this.getServerURL() + "group_members", body);
-  }
-  
-  getUserAccessGroupList(user_id : string){
-    let body = '{"user_id":"'+user_id+'"}';
-    return this.http.post(this.getServerURL() + "user_access_groups", body);
+  getProjectMemberList(project_id : string){
+    let body = '{"project_id":"'+project_id+'"}';
+    return this.http.post(this.getServerURL() + "project_members", body);
   }
 
-  deleteGroup(group_id: string){
+  deleteProject(project_id: string){
     let user = this.getUser();
-    let body = '{"group_id":"'+group_id+'", "token":"'+user.token+'"}';
-    sendRequest(this.getServerURL() + "groups/remove", body, null, null);
+    let body = '{"project_id":"'+project_id+'", "token":"'+user.token+'"}';
+    sendRequest(this.getServerURL() + "projects/remove", body, null, null);
   }
 
     
@@ -243,7 +240,7 @@ export class DataService {
       return this.http.post<any>(createUserUrl, { name, password, role, email });
   }
 
-  editUser(name: string, password: string, email: string, role: string, shared_access_groups: any, user_id : string) {
+  editUser(name: string, password: string, email: string, role: string, project_list: any, user_id : string) {
     let editUserUrl = this.getServerURL() + "users/edit"
     let user = this.getUser();
     let body = {token: user.token};
@@ -251,7 +248,7 @@ export class DataService {
     if (email != null)body["email"] = email;
     if (role != null)body["role"] = role;
     if (password != null)body["password"] = password;
-    if (shared_access_groups != null)body["shared_access_groups"] = JSON.stringify(shared_access_groups);
+    if (project_list != null)body["project_list"] = project_list;
     if (user_id  != null)body["user_id"] = user_id ;
     let bodyStr = JSON.stringify(body);
     //let bodyStr = '{"name":"'+name+'","password":"'+password+'",  "email":"'+email+'",  "role":"'+role+'", "shared_access_groups":'+JSON.stringify(shared_access_groups) +', "token":"'+user.token+'"}';
@@ -259,7 +256,7 @@ export class DataService {
     return sendRequest(editUserUrl, bodyStr, null, null);
   }
   
-  editUserPipe(name: string, password: string, email: string, role: string, shared_access_groups: any, user_id : string) {
+  editUserPipe(name: string, password: string, email: string, role: string, project_list: any, user_id : string) {
     let editUserUrl = this.getServerURL() + "users/edit"
     let user = this.getUser();
     let body = {token: user.token};
@@ -267,7 +264,7 @@ export class DataService {
     if (email != null)body["email"] = email;
     if (role != null)body["role"] = role;
     if (password != null)body["password"] = password;
-    if (shared_access_groups != null)body["shared_access_groups"] = JSON.stringify(shared_access_groups);
+    if (project_list != null)body["project_list"] = project_list;
     if (user_id  != null)body["user_id"] = user_id ;
     let bodyStr = JSON.stringify(body);
     //let bodyStr = '{"name":"'+name+'","password":"'+password+'",  "email":"'+email+'",  "role":"'+role+'", "shared_access_groups":'+JSON.stringify(shared_access_groups) +', "token":"'+user.token+'"}';
@@ -318,5 +315,11 @@ export class DataService {
     let bodyStr = JSON.stringify(body);
     sendRequest(this.getServerURL() + "delete_character_model", bodyStr, callback, null);
     
+  }
+
+  getUserProjectList(user_id : string){
+    let user = this.getUser();
+    let body = '{"user_id":"'+user_id+'", "token":"'+user.token+'"}';
+    return this.http.post(this.getServerURL() + "user/projects", body);
   }
 }

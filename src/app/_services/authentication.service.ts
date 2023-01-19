@@ -24,7 +24,6 @@ export class AuthenticationService {
     login(username: string, password: string) {
 		
         let authenticateUrl = this.dataService.getServerURL() + "authenticate"
-        let oldUrl = `${environment.apiUrl}/authenticate`;
         return this.http.post<any>(authenticateUrl, { username, password })
             .pipe(map(user => {
                 if (user && user.token) {

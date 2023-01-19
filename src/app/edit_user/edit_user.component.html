@@ -49,23 +49,23 @@
      
               
             <div class="field-group">
-            <label for="editGroupInput"> Shared Access Groups </label>
+            <label for="editGroupInput"> Projects Memberships </label>
              </div>
             <div class="field-group">
-            <select multiple formControlName="userAccessGroupList">
-                <option *ngFor="let group of userAccessGroupList" [ngValue]="group">{{group[1]}} </option>
+            <select multiple formControlName="userProjectList">
+                <option *ngFor="let project of userProjectList" [ngValue]="project">{{project[1]}} </option>
             </select>
-            <button id="removeGroupAccessBtn" type="button" (click)="[removeGroupAccess()]">Remove</button>&nbsp;&nbsp;
+            <button id="removeProjectBtn" type="button" (click)="[removeProject()]">Remove</button>&nbsp;&nbsp;
             </div>
               
             <div class="field-group">
-            <label for="editGroupInput"> Groups </label>
+            <label for="editGroupInput"> Projects </label>
              </div>
             <div class="field-group">
-            <select multiple formControlName="groupList">
-                <option *ngFor="let group of groupList" [ngValue]="group">{{group[1]}} </option>
+            <select multiple formControlName="projectList">
+                <option *ngFor="let project of projectList" [ngValue]="project">{{project[1]}} </option>
             </select>
-            <button id="addGroupAccessBtn" type="button" (click)="[addGroupAccess()]">Add</button>&nbsp;&nbsp;
+            <button id="addProjectBtn" type="button" (click)="[addProject()]">Add</button>&nbsp;&nbsp;
           </div>
           
           

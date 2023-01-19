@@ -2,9 +2,7 @@
 
 <ul id="sidebarButtonNav">
     <li><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab1'"
-            rel="tab1" (click)="ShowServerList()">Server List</a></li>
-    <li><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab2'"
-            rel="tab2"(click)="ShowGroupList()" > Group List</a></li>
+            rel="tab1"(click)="ShowProjectList()" > Project List</a></li>
     <li *ngIf="user.currentUser"><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab3'" rel="tab3" (click)="ShowUserList()" >User List</a></li>
   </ul>
       
@@ -13,48 +11,8 @@
             &nbsp;
         </div>
           <div class="tab-content-container" [ngSwitch]="activeTab">
-              <div id="tab1" class="tab-body" *ngSwitchCase="'tab1'">
-                  <nav id="serverTable" class="striped-table">
-                  <div class="flex-row">
-                    <div class="fill-col padded-col">
-                       <label>Name</label>
-                    </div>
-                     <div class="fill-col padded-col">
-                     <label>Address</label>
-                    </div>
-                     <div class="fill-col padded-col">
-                     <label>Owner</label>
-                    </div>
-                   <div class="fill-col padded-col">
-                     <label>OS</label>
-                    </div>
-                   <div class="fill-col padded-col">
-                     <label>Start Job</label>
-                    </div>
-                  </div>
-                  
-                  <div *ngFor="let m of serverList" class="flex-row">
-                    <div class="fill-col padded-col">
-                      <a href="#" >{{ m["name"] }}</a>
-                    </div>
-                     <div class="fill-col padded-col">
-                      <a href="#" >{{ m["address"]+":"+m["port"] }}</a>
-                    </div>
-                     <div class="fill-col padded-col">
-                      <a href="#" >{{ m["user"] }}</a>
-                    </div>
-                     <div class="fill-col padded-col">
-                      <a href="#" >{{ m["os"] }}</a>
-                    </div>
-                     <div *ngIf="user.currentUser" class="padded-col align-middle">
-                      <a href="javascript:" class="icon-button" (click)="startJobForm.controls.serverName.value=m['name']; callModal('startJob');"><i class="icon-tasks"></i></a>
-                    </div>
-                  </div>
-              </nav>
-              </div>
-           
                <!-- group table start -->
-              <div id="tab2" class="tab-body" *ngSwitchCase="'tab2'">
+              <div id="tab1" class="tab-body" *ngSwitchCase="'tab1'">
                         <div class="flex-row">
                     <div class="fill-col padded-col">
                        <label>ID</label>
@@ -66,8 +24,8 @@
                      <label>Operations</label>
                     </div>
                   </div>
-                <nav id='groupTable' class="striped-table">
-                  <div *ngFor="let m of groupList" class="flex-row">
+                <nav id='projectTable' class="striped-table">
+                  <div *ngFor="let m of projectList" class="flex-row">
                     <div class="fill-col padded-col">
                       <a  href="#" class="icon-button" >{{ m[0] }}</a>
                     </div>
@@ -75,8 +33,8 @@
                       <a  href="#" class="icon-button" >{{ m[1] }}</a>
                     </div>
                      <div class="fill-col padded-col">
-                      <a href="javascript:"  class="icon-button" (click)="openEditGroupModal(m); callModal('editGroup');"><i class="icon-wrench"></i> </a>
-                      <a href="javascript:"  class="icon-button" (click)="openDeleteGroupModal(m); callModal('deleteGroup');"><i class="icon-remove"></i> </a>
+                      <a href="javascript:"  class="icon-button" (click)="openEditProjectModal(m); callModal('editProject');">edit &nbsp;</a>
+                      <a href="javascript:"  class="icon-button" (click)="openDeleteProjectModal(m); callModal('deleteProject');">delete<i class="icon-remove"></i> </a>
                     </div>
                   </div>
                 </nav>
@@ -85,7 +43,7 @@
             
             
                <!-- user table start -->
-              <div id="tab3" class="tab-body" *ngSwitchCase="'tab3'">
+              <div id="tab2" class="tab-body" *ngSwitchCase="'tab2'">
                
                 <nav id='userTable' class="striped-table"> 
                   <form [formGroup]="userTableForm" >
@@ -116,7 +74,7 @@
                           </select>
                         </div>
                         <div class="fill-col padded-col">
-                          <a href="javascript:"  class="icon-button" (click)="openDeleteUserModal(m); callModal('deleteUser');"><i class="far fa-trash-alt"></i></a>
+                          <a href="javascript:"  class="icon-button" (click)="openDeleteUserModal(m); callModal('deleteUser');">delete</a>
                         </div>
                       </div>
                   </form>
@@ -129,92 +87,76 @@
   
   
   <div class="tab-action-bar">
-    <button *ngIf="user.currentUser && activeTab == 'tab2'" type="button" (click)="callModal('addGroup');"><i class="fas fa-plus-circle"></i> Add Group </button>&nbsp;&nbsp;
+    <button *ngIf="user.currentUser && activeTab == 'tab1'" type="button" (click)="callModal('addProject');"><i class="fas fa-plus-circle"></i> Add Project </button>&nbsp;&nbsp;
   
   </div>
   
   <!-- Modals start -->
   <div class="modal-container" [ngSwitch]="activeModal">
-  <app-modal title="Start Job" slug="startJob" (modalCall)="callModal($event)" *ngSwitchCase="'startJob'" #modal>
-    <form [formGroup]="startJobForm" (ngSubmit)="startJobFromModal(modal)">
+  
+  <app-modal title="Create Project" slug="addProject" (modalCall)="callModal($event)" *ngSwitchCase="'addProject'" #modal>
+    <form [formGroup]="addProjectForm" (ngSubmit)="createProjectFromModal(modal)">
     <div class="field-group">
-      <label for="serverNameInput">Server Name</label>
-      <input id="serverNameInput" formControlName="serverName" class="full-width-control" type="text" />
-      <div *ngIf="jobSubmitted && startJobForm.controls.serverName.errors" class="invalid-feedback">
-          <div *ngIf="startJobForm.controls.serverName.errors.required">server name is required</div>
+      <label for="projectNameInput">Project Name</label>
+      <input id="projectNameInput" formControlName="projectName" class="full-width-control" type="text" />
+          <div *ngIf="groupSubmitted && addProjectForm.controls.projectName.errors" class="invalid-feedback">
+          <div *ngIf="addProjectForm.controls.projectName.errors.required">project name is required</div>
       </div>
-      <label for="serverCmdInput">Command</label>
-      <input id="serverCmdInput" formControlName="serverCmd" class="full-width-control" type="text" />
-      <div *ngIf="jobSubmitted && startJobForm.controls.serverCmd.errors" class="invalid-feedback">
-          <div *ngIf="startJobForm.controls.serverCmd.errors.required">server cmd is required</div>
-      </div>
+      <label for="groupIsPublicInput">IsPublic</label>
+      <input id="groupIsPublicInput" formControlName="isPublic" class="full-width-control" type="checkbox" />
+
     </div>
     <div class="field-group field-group-last">
-      <button id="startJobBtn" type="submit">Create</button>&nbsp;&nbsp;
-      <button id="abortStartJobBtn" type="button" (click)="modal.closeModal()">Cancel</button>
-    </div>
-    </form>
-  </app-modal>
-  <app-modal title="Create Group" slug="addGroup" (modalCall)="callModal($event)" *ngSwitchCase="'addGroup'" #modal>
-    <form [formGroup]="addGroupForm" (ngSubmit)="createGroupFromModal(modal)">
-    <div class="field-group">
-      <label for="groupNameInput">Group Name</label>
-      <input id="groupNameInput" formControlName="groupName" class="full-width-control" type="text" />
-          <div *ngIf="groupSubmitted && addGroupForm.controls.groupName.errors" class="invalid-feedback">
-          <div *ngIf="addGroupForm.controls.groupName.errors.required">group name is required</div>
-      </div>
-    </div>
-    <div class="field-group field-group-last">
-      <button id="createGroupBtn" type="submit">Create</button>&nbsp;&nbsp;
-      <button id="abortCreateGroupBtn" type="button" (click)="[modal.closeModal(), getGroupList()]">Cancel</button>
+      <button id="createProjectBtn" type="submit">Create</button>&nbsp;&nbsp;
+      <button id="abortCreateProjectBtn" type="button" (click)="[modal.closeModal(), getProjectList()]">Cancel</button>
     </div>
     </form>
   </app-modal>
   
-  <app-modal title="Edit Group" slug="editGroup" (modalCall)="callModal($event)" *ngSwitchCase="'editGroup'" #modal>
-    <form [formGroup]="editGroupForm" (ngSubmit)="editGroupFromModal(modal)">
+  <app-modal title="Edit Project" slug="editProject" (modalCall)="callModal($event)" *ngSwitchCase="'editProject'" #modal>
+    <form [formGroup]="editProjectForm" (ngSubmit)="editProjectFromModal(modal)">
     <div class="field-group">
-      <label for="editGroupInput">Group Name</label>
-      <input id="editGroupInput" formControlName="groupName" class="full-width-control" type="text" /> 
+      <label for="editProjectInput">Project Name</label>
+      <input id="editProjectInput" formControlName="projectName" class="full-width-control" type="text" /> 
       
-          <div *ngIf="editGroupSubmitted && editGroupForm.controls.groupName.errors" class="invalid-feedback">
-          <div *ngIf="editGroupForm.controls.groupName.errors.required">group name is required</div>
+          <div *ngIf="editProjectSubmitted && editProjectForm.controls.projectName.errors" class="invalid-feedback">
+          <div *ngIf="editProjectForm.controls.projectName.errors.required">project name is required</div>
       </div>
     </div>
     
       <div class="field-group">
-      <label for="editGroupInput"> Group Members </label>
+      <label for="editProjectInput"> Project Members </label>
        </div>
       <div class="field-group">
-      <select multiple formControlName="groupMemberList">
-          <option *ngFor="let user of selectedGroupUserList" [ngValue]="user">{{user[1]}} </option>
+      <select multiple formControlName="projectMemberList">
+          <option *ngFor="let user of selectedProjectUserList" [ngValue]="user">{{user[1]}} </option>
       </select>
-      <button id="removeUserFromGroupBtn" type="button" (click)="[removeUserFromGroupInModal()]">Remove</button>&nbsp;&nbsp;
+      <button id="removeUserFromProjectBtn" type="button" (click)="[removeUserFromProjectInModal()]">Remove</button>&nbsp;&nbsp;
        </div>
        
       <div class="field-group">
-      <label for="editGroupInput"> All Users</label>
+      <label for="editProjectInput"> All Users</label>
        </div>
       <div class="field-group">
       <select multiple formControlName="userList">
           <option *ngFor="let user of userList" [ngValue]="user">{{user[1]}} </option>
       </select>
-      <button id="addUserToGroupBtn" type="button" (click)="[addUserToGroupInModal()]">Add</button>&nbsp;&nbsp;
+      <button id="addUserToProjectBtn" type="button" (click)="[addUserToProjectInModal()]">Add</button>&nbsp;&nbsp;
        </div>
       
     <div class="field-group field-group-last">
-      <button id="editGroupBtn" type="submit">Save</button>&nbsp;&nbsp;
-      <button id="abortEditGroupBtn" type="button" (click)="[modal.closeModal()]">Cancel</button>
+      <button id="editProjectBtn" type="submit">Save</button>&nbsp;&nbsp;
+      <button id="abortEditProjectBtn" type="button" (click)="[modal.closeModal()]">Cancel</button>
     </div>
     </form>
   </app-modal>
-  <app-modal [title]="'Delete Group: &quot;' + selectedGroup[1] + '&quot;'" slug="deleteGroup" (modalCall)="callModal($event)" *ngSwitchCase="'deleteGroup'" #modal>
+  <app-modal [title]="'Delete Project: &quot;' + selectedProject[1] + '&quot;'" slug="deleteProject" (modalCall)="callModal($event)" *ngSwitchCase="'deleteProject'" #modal>
     <div class="field-group">
-      <p>Are you sure you want to delete this Group? </p>
+      <p>Are you sure you want to delete this Project? </p>
     </div>
     <div class="field-group field-group-last">
-      <button type="button" (click)="[modal.closeModal(), dataService.deleteGroup(selectedGroup[0]), getGroupList()]">Ok</button>&nbsp;&nbsp;
-      <button type="button" (click)="[modal.closeModal(), selectedGroup=none]">Cancel</button>
+      <button type="button" (click)="[modal.closeModal(), dataService.deleteProject(selectedProject[0]), getProjectList()]">Ok</button>&nbsp;&nbsp;
+      <button type="button" (click)="[modal.closeModal(), selectedProject=none]">Cancel</button>
     </div>
   </app-modal>
 

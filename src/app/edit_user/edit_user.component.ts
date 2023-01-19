@@ -27,8 +27,8 @@ export class EditUserComponent implements OnInit {
     unamePattern = "^[A-Za-z0-9_-]{2,15}$";
     pwdPattern = "^(?=.*[a-z])(?=.*\\d)[A-Za-z\\d!$%@#£€*?&]{6,}$";
     emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$";
-    public groupList: any;
-    public userAccessGroupList: any;
+    public projectList: any;
+    public userProjectList: any;
     constructor(
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
@@ -52,8 +52,8 @@ export class EditUserComponent implements OnInit {
             email: ['', [Validators.required, Validators.email, Validators.maxLength(45), Validators.pattern(this.emailPattern)]],
             password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(25), Validators.pattern(this.pwdPattern)]],
             repeatPassword: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(25), Validators.pattern(this.pwdPattern)]],
-            groupList: [''],
-            userAccessGroupList: ['']
+            projectList: [''],
+            userProjectList: ['']
         },{validator: passwordConfirming});
 		// disable camera because the canvas is now hidden
 		// it is automatically reactivated when the object is reloaded
@@ -66,7 +66,7 @@ export class EditUserComponent implements OnInit {
         //this.editUserForm.controls.username.value = data.username;
         // console.log("user"+data.username);
 
-        this.userAccessGroupList = []
+        this.userProjectList = []
         this.dataService.getUserInfo(null).subscribe(
             data => { if(data["success"]){
                             console.log(data);
@@ -82,15 +82,15 @@ export class EditUserComponent implements OnInit {
             }
           );
           
-        this.dataService.getGroupList().subscribe(
-                groupList => {this.groupList = groupList;}
+        this.dataService.getProjectList().subscribe(
+                projectList => {this.projectList = projectList;}
                 );
         
-        this.dataService.getUserAccessGroupList(data["user_id"]).subscribe(
-                groupData => {  if(groupData["success"] ) {
-                                    this.userAccessGroupList = groupData["group_list"];
+        this.dataService.getUserProjectList(data["user_id"]).subscribe(
+                data => {  if(data["success"] ) {
+                                    this.userProjectList = data["project_list"];
                                 }else{
-                                    console.log("error getting group list");
+                                    console.log("error getting project list");
                                     }
                             }
                     );
@@ -112,9 +112,9 @@ export class EditUserComponent implements OnInit {
 			return;
 		}
         let role = "";
-        let shared_access_groups = this.userAccessGroupList;
+        let user_projects = this.userProjectList;
         this.loading = true;
-        this.dataService.editUserPipe(this.f.username.value, this.f.password.value, this.f.email.value, role, shared_access_groups, null)
+        this.dataService.editUserPipe(this.f.username.value, this.f.password.value, this.f.email.value, role, user_projects, null)
             .pipe(first())
             .subscribe(
                 data => {
@@ -129,40 +129,40 @@ export class EditUserComponent implements OnInit {
     
     
     
-  addGroupAccess(){
-    let selected = this.editUserForm.controls.groupList.value;
+  addProject(){
+    let selected = this.editUserForm.controls.projectList.value;
     console.log("add group"+ selected);
-    for (let newGroup of selected){
-        let addGroup = true;
-        for (let existingUser of this.userAccessGroupList){
-            if(newGroup[0] == existingUser[0]){
-                addGroup = false;
+    for (let newProject of selected){
+        let addProject = true;
+        for (let existingUser of this.userProjectList){
+            if(newProject[0] == existingUser[0]){
+                addProject = false;
                 break;
             }
         }
-        if(addGroup){
-            this.userAccessGroupList.push(newGroup);
+        if(addProject){
+            this.userProjectList.push(newProject);
         }
     }
   }
   
-  removeGroupAccess(){
-    let selectedGroups = this.editUserForm.controls.userAccessGroupList.value;
-    console.log("remove groups"+selectedGroups);
-    let newGroupList = [];
-    for (let group of this.userAccessGroupList){
-        let removeGroup = false;
-        for(let idx in selectedGroups){
-            if(selectedGroups[idx][0] == group[0]){
+  removeProject(){
+    let selectedProjects = this.editUserForm.controls.userProjectList.value;
+    console.log("remove groups"+selectedProjects);
+    let newProjectList = [];
+    for (let group of this.userProjectList){
+        let removeProject = false;
+        for(let idx in selectedProjects){
+            if(selectedProjects[idx][0] == group[0]){
                 console.log("remove group"+group[0]);
-                removeGroup = true;
+                removeProject = true;
                 break;
             }
         }
-        if(!removeGroup){
-            newGroupList.push(group);
+        if(!removeProject){
+            newProjectList.push(group);
         }
     }
-    this.userAccessGroupList = newGroupList;
+    this.userProjectList = newProjectList;
   }
 }

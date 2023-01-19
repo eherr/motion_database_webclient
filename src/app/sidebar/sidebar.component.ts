@@ -43,13 +43,11 @@ export class SidebarComponent implements OnInit {
   private activeTab: string = "tab1";
   private activeModal: string = "none";
 
-  private currentAction: string;
   private currentSkeleton: string;
   private selectedSkeleton: string;
   private selectedCharacter: string;
   private currentCollection: string;
 
-  private currentActionName: string;
   private currentCollectionName: string;
 
   private queuedClip: any;
@@ -213,37 +211,22 @@ export class SidebarComponent implements OnInit {
     this.getGraphList();
   }
 
-  selectAction(id, name){
-    if(this.parentIsOpen(id))
-      this.collectionOpen = false;
-    else
-      this.collectionOpen = true;
 
-    this.currentAction = id;
-    this.currentActionName = name;
-    console.log("Selected Action: " + id);
-  }
 
   selectCollection(id, name){
     this.currentCollection = id;
     this.currentCollectionName = name;
-    console.log("Selected Motion Primitive: " + id);
+    console.log("Selected Collection: " + id);
     this.getMotionList();
     this.getModelList();
   }
 
   resetSelection(){
     this.currentCollection = null;
-    this.currentAction = null;
-    this.currentActionName = null;
     this.currentCollectionName = null;
     this.motionList = [];
     this.modelList = [];
     this.graphList = [];
-  }
-
-  parentIsOpen(id){
-    return this.currentAction == id && this.collectionOpen;
   }
 
   motionsFound(){
@@ -302,17 +285,12 @@ export class SidebarComponent implements OnInit {
   
   }
   handleSkeletonFileInput(files: FileList) {
-    //https://stackoverflow.com/questions/47936183/angular-file-upload
       this.skeletonFileList = files;
-  
   }  
   
   handleCharacterFile(files: FileList) {
-    //https://stackoverflow.com/questions/47936183/angular-file-upload
       this.characterFileList = files;
-  
   }  
-
   
   addSkeleton(modal: any){
     this.skeletonSubmitted = true;
@@ -426,7 +404,6 @@ export class SidebarComponent implements OnInit {
     }
 
     modal.closeModal();
-    //TODO: uploadFiles
   }
 
   uploadCharacter(){

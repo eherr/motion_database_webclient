@@ -17,19 +17,16 @@ import { AuthenticationService } from '../_services/authentication.service';
 })
 export class AdminComponent implements OnInit {
 
-  public serverList: any;
-  public groupList: any;
+  public projectList: any;
   public userList: any;
-  public selectedGroup: any;
-  public selectedGroupUserList: any;
+  public selectedProject: any;
+  public selectedProjectUserList: any;
   public selectedUser: any;
   
 
   private activeTab: string = "tab1";
   private activeModal: string = "none";
 
-  private currentServer: string;
-  private currentServerName: string;
 
   oppoRole: any = ['user', 'internal', 'admin']
 
@@ -39,8 +36,8 @@ export class AdminComponent implements OnInit {
   groupSubmitted = false;
 
   startJobForm: FormGroup;
-  addGroupForm: FormGroup;
-  editGroupForm: FormGroup;
+  addProjectForm: FormGroup;
+  editProjectForm: FormGroup;
   userTableForm: FormGroup;
 
   constructor(private dataService: DataService,
@@ -60,8 +57,7 @@ export class AdminComponent implements OnInit {
               }
 
   ngOnInit() {
-    this.getServerList();
-    this.getGroupList();
+    this.getProjectList();
     this.getUserList();
     this.initForms();
     
@@ -75,12 +71,14 @@ export class AdminComponent implements OnInit {
         serverName: ['', Validators.required],
         serverCmd: ['', Validators.required]
     });
-    this.addGroupForm = this.formBuilder.group({
-        groupName: ['', Validators.required]
+    this.addProjectForm = this.formBuilder.group({
+        projectName: ['', Validators.required],
+        isPublic: ['']
     });
-    this.editGroupForm = this.formBuilder.group({
-        groupName: ['', Validators.required],
-        groupMemberList: [''],
+    this.editProjectForm = this.formBuilder.group({
+        projectName: ['', Validators.required],
+        projectMemberList: [''],
+        isPublic: [''],
         userList: ['']
     });
     this.userTableForm = this.formBuilder.group({
@@ -91,14 +89,9 @@ export class AdminComponent implements OnInit {
   }
 
 
-  getServerList(){
-    this.dataService.getServerList().subscribe(
-        serverList => {this.serverList = serverList;}
-      );
-  }
-  getGroupList(){
-    this.dataService.getGroupList().subscribe(
-        groupList => {this.groupList = groupList;}
+  getProjectList(){
+    this.dataService.getProjectList().subscribe(
+      projectList => {this.projectList = projectList;}
       );
   }
   getUserList(){
@@ -132,10 +125,6 @@ export class AdminComponent implements OnInit {
       this.activeModal = modalName;
   }
 
-  resetSelection(){
-    this.currentServer = null;
-    this.serverList = [];
-  }
 
 
   startJobFromModal(modal: any){
@@ -152,48 +141,48 @@ export class AdminComponent implements OnInit {
                                   );
   }
   
-  createGroupFromModal(modal: any){
+  createProjectFromModal(modal: any){
     this.groupSubmitted = true;
 
     // stop here if form is invalid
-    if (this.addGroupForm.invalid) {
+    if (this.addProjectForm.invalid) {
         return;
     }
     modal.closeModal();
   
-    this.dataService.createGroup(this.addGroupForm.controls.groupName.value);
+    this.dataService.createProject(this.addProjectForm.controls.projectName.value, this.addProjectForm.controls.isPublic.value);
   }
   
   
-  openEditGroupModal(group: any){
-    console.log("edit group model");
-    this.selectedGroup = group
-    this.activeModal = "editGroup";
-    this.selectedGroupUserList = []
-    this.dataService.getGroupMemberList(group[0]).subscribe(
-        groupUserList => {this.selectedGroupUserList = groupUserList;}
+  openEditProjectModal(project: any){
+    console.log("edit project modal");
+    this.selectedProject = project
+    this.activeModal = "editProject";
+    this.selectedProjectUserList = []
+    this.dataService.getProjectMemberList(project[0]).subscribe(
+        projectUserList => {this.selectedProjectUserList = projectUserList;}
       );
-    this.editGroupForm.controls.groupName.setValue(group[1]);
+    this.editProjectForm.controls.projectName.setValue(project[1]);
   }
   
   
-  editGroupFromModal(modal: any){
-    console.log("edit group");
+  editProjectFromModal(modal: any){
+    console.log("edit project");
     this.groupSubmitted = true;
 
     // stop here if form is invalid
-    if (this.editGroupForm.invalid) {
+    if (this.editProjectForm.invalid) {
         console.log("Form is invalid");
          return;
      }
     modal.closeModal();
-    this.dataService.editGroup(this.selectedGroup[0], this.editGroupForm.controls.groupName.value, this.selectedGroupUserList);
+    this.dataService.editProject(this.selectedProject[0], this.editProjectForm.controls.projectName.value, this.editProjectForm.controls.isPublic.value, this.selectedProjectUserList);
   }
   
-  openDeleteGroupModal(group: any){
-    console.log("open deleteGroup model");
-    this.selectedGroup = group
-    this.activeModal = "deleteGroup";
+  openDeleteProjectModal(group: any){
+    console.log("open deleteProject model");
+    this.selectedProject = group
+    this.activeModal = "deleteProject";
   }
 
   openDeleteUserModal(user: any){
@@ -202,48 +191,38 @@ export class AdminComponent implements OnInit {
     this.activeModal = "deleteUser";
   }
   
-  
-  ShowServerList(){
-    this.getServerList();
-    this.activeTab ='tab1';
-  }
 
-  ShowGroupList(){
-    this.getGroupList();
-    this.activeTab ='tab2';
+  ShowProjectList(){
+    this.getProjectList();
+    this.activeTab ='tab1';
   }
   ShowUserList(){
     this.getUserList();
-    this.activeTab ='tab3';
-  }
-  StartJob(name :string){
-    console.log("start job");
-    let cmd = "python none.py";
-    this.dataService.startJob(name, cmd)
+    this.activeTab ='tab2';
   }
   
-  addUserToGroupInModal(){
-    let selected = this.editGroupForm.controls.userList.value;
+  addUserToProjectInModal(){
+    let selected = this.editProjectForm.controls.userList.value;
     console.log("add user"+ selected);
     for (let newUser of selected){
         let addUser = true;
-        for (let existingUser of this.selectedGroupUserList){
+        for (let existingUser of this.selectedProjectUserList){
             if(newUser[0] == existingUser[0]){
                 addUser = false;
                 break;
             }
         }
         if(addUser){
-            this.selectedGroupUserList.push(newUser);
+            this.selectedProjectUserList.push(newUser);
         }
     }
   }
   
-  removeUserFromGroupInModal(){
-    let selectedUsers = this.editGroupForm.controls.groupMemberList.value;
+  removeUserFromProjectInModal(){
+    let selectedUsers = this.editProjectForm.controls.projectMemberList.value;
     console.log("remove users"+selectedUsers);
     let newUserList = [];
-    for (let user of this.selectedGroupUserList){
+    for (let user of this.selectedProjectUserList){
         let removeUser = false;
         for(let idx in selectedUsers){
             if(selectedUsers[idx][0] == user[0]){
@@ -256,7 +235,7 @@ export class AdminComponent implements OnInit {
             newUserList.push(user);
         }
     }
-    this.selectedGroupUserList = newUserList;
+    this.selectedProjectUserList = newUserList;
   }
 
   changeUserRole(userID: string, event: any ){
