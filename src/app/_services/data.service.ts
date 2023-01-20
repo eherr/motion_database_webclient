@@ -215,7 +215,12 @@ export class DataService {
   }
   
   getProjectList(){
-    return this.http.get(this.getServerURL() + "projects");
+    
+    let user = this.getUser();
+    let body = {token: user.token};
+    return this.http.post(this.getServerURL() + "projects", body);
+
+    //return this.http.get(this.getServerURL() + "projects");
   }
   
   getUserList(){

@@ -120,13 +120,17 @@ export class SidebarComponent implements OnInit {
 
   getDownloadSettings(){
     this.dataService.getMetaInformation().subscribe(
-      metaData => this.enable_download = metaData['enable_download']
+      metaData => {
+        this.enable_download = metaData['enable_download']
+      }
     );
   }
 
   getProjects(){
     this.dataService.getProjectList().subscribe(
-      projectList => this.projectList = projectList
+      (projectList: any) => {
+        this.projectList = projectList;
+        }
       );
   }
 
@@ -145,8 +149,6 @@ export class SidebarComponent implements OnInit {
   getCollections(){
 	  //this.tree = document.getElementById("collectionTree");
     let parentID = this.projectInfo["collection"];
-    console.log("getCollections", this.projectInfo);
-    console.log("getCollections", parentID);
     let parentNode = null;
     this.queryCollectionTree(parentID, parentNode);
   }
