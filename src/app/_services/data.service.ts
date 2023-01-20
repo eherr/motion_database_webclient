@@ -282,6 +282,11 @@ export class DataService {
     }
     return this.http.post(editUserUrl, body);
   }
+  getProjectInfo(project_id: string) {
+    let editProjectUrl = this.getServerURL() + "projects/info"
+    let body = '{"project_id":"'+project_id+'"}';
+    return this.http.post(editProjectUrl, body);
+  }
 
   deleteUser(user_id: string) {
     console.log("delete user"+user_id);

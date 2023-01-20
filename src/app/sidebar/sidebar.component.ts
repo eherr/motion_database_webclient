@@ -18,6 +18,8 @@ import { TreeComponent, TreeModel, TreeNode } from 'angular-tree-component';
 export class SidebarComponent implements OnInit {
   private enable_download = false;
 
+  public projectList: any;
+  public projectInfo: any;
   public skeletonList: any;
   public collections: any[] = [];
   
@@ -38,11 +40,9 @@ export class SidebarComponent implements OnInit {
   public skeletonFileList: FileList;
   public characterFileList: FileList;
 
-  private collectionOpen = false;
-
   private activeTab: string = "tab1";
   private activeModal: string = "none";
-
+  private currentProject: number;
   private currentSkeleton: string;
   private selectedSkeleton: string;
   private selectedCharacter: string;
@@ -76,16 +76,18 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit() {
     this.currentSkeleton = "custom";
+    
+    this.currentProject = 1;
     this.getDownloadSettings();
+    this.getProjects();
     this.getSkeletonModels();
-    this.getCollectionList();
-    this.getModelList();
+    this.initProject();
     this.getGraphList();
     this.getCharacterModels(this.currentSkeleton);
     this.initForms();
-    
 
   }
+
   ngAfterInit() {
     const treeModel:TreeModel = this.treeComponent.treeModel;
     const firstNode:TreeNode = treeModel.getFirstRoot();
@@ -122,10 +124,31 @@ export class SidebarComponent implements OnInit {
     );
   }
 
-  getCollectionList(){
+  getProjects(){
+    this.dataService.getProjectList().subscribe(
+      projectList => this.projectList = projectList
+      );
+  }
+
+  initProject(){
+    let projectID = this.currentProject.toString();
+    this.dataService.getProjectInfo(projectID).subscribe(
+      projectInfo => {
+        this.projectInfo = projectInfo;
+      this.getCollections();
+      this.getMotionList();
+      this.getModelList();
+      this.getGraphList();}
+    );
+  }
+
+  getCollections(){
 	  //this.tree = document.getElementById("collectionTree");
+    let parentID = this.projectInfo["collection"];
+    console.log("getCollections", this.projectInfo);
+    console.log("getCollections", parentID);
     let parentNode = null;
-    this.queryCollectionTree(0, parentNode);
+    this.queryCollectionTree(parentID, parentNode);
   }
 
    onSelectNode(event){
@@ -212,6 +235,11 @@ export class SidebarComponent implements OnInit {
   }
 
 
+  selectProject(event){
+    console.log("Selected Skeleton: " + event);
+    this.initProject();
+
+  }
 
   selectCollection(id, name){
     this.currentCollection = id;
@@ -272,7 +300,7 @@ export class SidebarComponent implements OnInit {
                                   this.newCollectionForm.controls.newCollectionName.value,
                                   this.newCollectionForm.controls.newCollectionType.value
                                   ).subscribe(
-        data => { this.getCollectionList(); },
+        data => { this.getCollections(); },
         error => {
             this.error = error;
             console.log("ERROR: " + error);

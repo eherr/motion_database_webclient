@@ -27,18 +27,32 @@
   flex: 1 0 auto;
   max-height: 550px;
   vertical-align: super;
-  grid-template-rows: 50px 450px;
+  grid-template-rows: 50px 50px 400px;
+  grid-template-columns: 450px 400px;
 }
-.tree-view{
+.project-list{
   grid-column:1;
-  grid-row:2;
-  max-height: 550px;
+  grid-row:1;
+  width: 150px;
 }
-.grid-filler{
-  &:field-group{
-  }
+.grid-filler-row1{
   grid-column:2;
   grid-row:1;
+}
+.skeleton-list{
+  grid-column:1;
+  grid-row:2;
+  width: 150px;
+}
+
+
+.tree-view{
+  grid-column:1;
+  grid-row:3;
+}
+.grid-filler{
+  grid-column:2;
+  grid-row:2;
   height: 10px;
 }
 .box {
@@ -46,18 +60,10 @@
   flex-direction: row;
 }
 
-.skeleton-list{
-  &:field-group{
-  }
-  grid-column:1;
-  grid-row:1;
-  height: 10px;
-}
-
 .tab-content-container{
 
   grid-column:2;
-  grid-row:2;
+  grid-row:3;
   flex: 1 0 auto;
   overflow-y: auto;
   max-height: 550px;

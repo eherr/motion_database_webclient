@@ -3,7 +3,7 @@
 <ul id="sidebarButtonNav">
     <li><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab1'"
             rel="tab1"(click)="ShowProjectList()" > Project List</a></li>
-    <li *ngIf="user.currentUser"><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab3'" rel="tab3" (click)="ShowUserList()" >User List</a></li>
+    <li *ngIf="user.currentUser"><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab2'" rel="tab2" (click)="ShowUserList()" >User List</a></li>
   </ul>
       
   <div class="content-container">

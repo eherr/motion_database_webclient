@@ -11,7 +11,18 @@
     
 <div class="content-container">
 
-      <!-- skeleton list start -->
+      <!-- project list start -->
+      <div id="projectList" class="project-list">
+        <label for="projects">Project</label>
+        <select [(ngModel)]="currentProject" (ngModelChange)="selectProject($event)" id="projects" class="full-width-control">
+          <option *ngFor="let p of projectList"
+                  (click)="initProject()"  value="{{ p[0] }}">{{ p[1] }}</option>
+        </select>
+        
+      </div>&nbsp;
+
+
+       <!-- skeleton list start -->
       <div id="skeletonList" class="skeleton-list">
           <label for="skeletons">Skeleton</label>
           <select [(ngModel)]="currentSkeleton" (ngModelChange)="selectSkeleton($event)" id="skeletons" class="full-width-control">
@@ -35,8 +46,8 @@
           &nbsp;
       </div>
       </div>
-        <div id="actionList" class="tree-view">
-		<label for="actions">Collections</label>
+        <div id="collectionList" class="tree-view">
+		<label for="collections">Collections</label>
 		<tree-root #tree  [nodes]="collections" [focused]="true" (activate)="onSelectNode($event)" ></tree-root>
       
         </div>
@@ -71,8 +82,8 @@
           
             </div>
             <div id="tab2" class="tab-body" *ngSwitchCase="'tab2'">
-              <p *ngIf="!currentSkeleton || !currentAction" class="text-align-center"><i class="far fa-hand-pointer field-group"></i> Select a skeleton and Action first.</p>
-              <p *ngIf="currentAction && (!modelList || modelList.length == 0)" class="text-align-center field-group">No Motion Models for the selected parameters found</p>
+              <p *ngIf="!currentSkeleton || !currentCollection" class="text-align-center"><i class="far fa-hand-pointer field-group"></i> Select a skeleton and Action first.</p>
+              <p *ngIf="currentCollection && (!modelList || modelList.length == 0)" class="text-align-center field-group">No Motion Models for the selected parameters found</p>
               <!-- motion model table start -->
               <nav id='motionModelTable' class="striped-table">
                 <div *ngFor="let m of modelList" class="flex-row">
@@ -89,8 +100,8 @@
             </div>
           
             <div id="tab3" class="tab-body" *ngSwitchCase="'tab3'">
-              <p *ngIf="!currentSkeleton || !currentAction" class="text-align-center"><i class="far fa-hand-pointer field-group"></i> Select a skeleton and Action first.</p>
-              <p *ngIf="currentAction && (!graphList || graphList.length == 0)" class="text-align-center field-group">No Motion Graph for the selected parameters found</p>
+              <p *ngIf="!currentSkeleton || !currentCollection" class="text-align-center"><i class="far fa-hand-pointer field-group"></i> Select a skeleton and Action first.</p>
+              <p *ngIf="currentCollection && (!graphList || graphList.length == 0)" class="text-align-center field-group">No Motion Graph for the selected parameters found</p>
               <!-- motion graph state table start -->
               <nav id='graphStateTable' class="striped-table">
                 <div *ngFor="let m of graphList" class="flex-row">
@@ -107,7 +118,7 @@
       </div>
 <!-- <div class="breadcrumb" *ngIf="motionsFound()">
   <div class="fill-col">
-    {{ currentSkeleton }} <i class="fas fa-caret-right breadcrumb-spacer"></i> {{ currentActionName }}
+    {{ currentSkeleton }} <i class="fas fa-caret-right breadcrumb-spacer"></i> {{ currentCollectionName }}
     <i class="fas fa-caret-right breadcrumb-spacer"></i> {{ currentCollectionName }}
   </div>
   <a href="javascript:" class="text-button" (click)="resetSelection()"><i class="fas fa-angle-double-left"></i>&nbsp;&nbsp;Back</a>
