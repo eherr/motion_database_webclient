@@ -27,8 +27,6 @@ export class EditUserComponent implements OnInit {
     unamePattern = "^[A-Za-z0-9_-]{2,15}$";
     pwdPattern = "^(?=.*[a-z])(?=.*\\d)[A-Za-z\\d!$%@#£€*?&]{6,}$";
     emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$";
-    public projectList: any;
-    public userProjectList: any;
     constructor(
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
@@ -51,9 +49,7 @@ export class EditUserComponent implements OnInit {
             username: ['', [Validators.required, Validators.maxLength(15), Validators.pattern(this.unamePattern)]],
             email: ['', [Validators.required, Validators.email, Validators.maxLength(45), Validators.pattern(this.emailPattern)]],
             password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(25), Validators.pattern(this.pwdPattern)]],
-            repeatPassword: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(25), Validators.pattern(this.pwdPattern)]],
-            projectList: [''],
-            userProjectList: ['']
+            repeatPassword: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(25), Validators.pattern(this.pwdPattern)]]
         },{validator: passwordConfirming});
 		// disable camera because the canvas is now hidden
 		// it is automatically reactivated when the object is reloaded
@@ -62,11 +58,9 @@ export class EditUserComponent implements OnInit {
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
         
-        let data =  JSON.parse(localStorage.getItem('currentUser'));
         //this.editUserForm.controls.username.value = data.username;
         // console.log("user"+data.username);
 
-        this.userProjectList = []
         this.dataService.getUserInfo(null).subscribe(
             data => { if(data["success"]){
                             console.log(data);
@@ -82,18 +76,6 @@ export class EditUserComponent implements OnInit {
             }
           );
           
-        this.dataService.getProjectList().subscribe(
-                projectList => {this.projectList = projectList;}
-                );
-        
-        this.dataService.getUserProjectList(data["user_id"]).subscribe(
-                data => {  if(data["success"] ) {
-                                    this.userProjectList = data["project_list"];
-                                }else{
-                                    console.log("error getting project list");
-                                    }
-                            }
-                    );
     }
 
     // convenience getter for easy access to form fields
@@ -111,10 +93,8 @@ export class EditUserComponent implements OnInit {
 			console.log("Passwords do not match");
 			return;
 		}
-        let role = "";
-        let user_projects = this.userProjectList;
         this.loading = true;
-        this.dataService.editUserPipe(this.f.username.value, this.f.password.value, this.f.email.value, role, user_projects, null)
+        this.dataService.editUserPipe(this.f.username.value, this.f.password.value, this.f.email.value, null, null, null)
             .pipe(first())
             .subscribe(
                 data => {
@@ -127,42 +107,5 @@ export class EditUserComponent implements OnInit {
                 });
     }
     
-    
-    
-  addProject(){
-    let selected = this.editUserForm.controls.projectList.value;
-    console.log("add group"+ selected);
-    for (let newProject of selected){
-        let addProject = true;
-        for (let existingUser of this.userProjectList){
-            if(newProject[0] == existingUser[0]){
-                addProject = false;
-                break;
-            }
-        }
-        if(addProject){
-            this.userProjectList.push(newProject);
-        }
-    }
-  }
   
-  removeProject(){
-    let selectedProjects = this.editUserForm.controls.userProjectList.value;
-    console.log("remove groups"+selectedProjects);
-    let newProjectList = [];
-    for (let group of this.userProjectList){
-        let removeProject = false;
-        for(let idx in selectedProjects){
-            if(selectedProjects[idx][0] == group[0]){
-                console.log("remove group"+group[0]);
-                removeProject = true;
-                break;
-            }
-        }
-        if(!removeProject){
-            newProjectList.push(group);
-        }
-    }
-    this.userProjectList = newProjectList;
-  }
 }

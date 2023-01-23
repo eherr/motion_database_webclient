@@ -47,27 +47,6 @@
               </div>
               
      
-              
-            <div class="field-group">
-            <label for="editGroupInput"> Projects Memberships </label>
-             </div>
-            <div class="field-group">
-            <select multiple formControlName="userProjectList">
-                <option *ngFor="let project of userProjectList" [ngValue]="project">{{project[1]}} </option>
-            </select>
-            <button id="removeProjectBtn" type="button" (click)="[removeProject()]">Remove</button>&nbsp;&nbsp;
-            </div>
-              
-            <div class="field-group">
-            <label for="editGroupInput"> Projects </label>
-             </div>
-            <div class="field-group">
-            <select multiple formControlName="projectList">
-                <option *ngFor="let project of projectList" [ngValue]="project">{{project[1]}} </option>
-            </select>
-            <button id="addProjectBtn" type="button" (click)="[addProject()]">Add</button>&nbsp;&nbsp;
-          </div>
-          
           
             </div>
             <div class="field-group field-group-last align-right">
