@@ -35,13 +35,13 @@
       <div id="filler" class="grid-filler">
         <div class="box">
           <div *ngIf="user.currentUser" class="padded-col align-middle">
-            <a href="javascript:" class="icon-button" (click)="callModal('addSkeleton')">new</a>
+            <a href="javascript:" class="icon-button" (click)="callModal('addSkeleton')"><i class="fas fa-upload"></i></a>
           </div>
             <div *ngIf="user.currentUser" class="padded-col align-middle">
-            <a href="javascript:" class="icon-button" (click)="openEditSkeletonForm()">edit</a>
+            <a href="javascript:" class="icon-button" (click)="openEditSkeletonForm()"><i class="fas fa-edit"></i></a>
           </div>
           <div *ngIf="user.currentUser" class="padded-col align-middle">
-            <a href="javascript:" class="icon-button" (click)="deleteSkeleton();">delete</a>
+            <a href="javascript:" class="icon-button" (click)="deleteSkeleton();"><i class="far fa-trash-alt"></i></a>
           </div>
           &nbsp;
       </div>
@@ -71,10 +71,10 @@
                   </div>
                   <div *ngIf="motionInfo != undefined &&  motionInfo[m[0]] != undefined">{{ motionInfo[m[0]]["numFrames"] }}</div>
                   <div *ngIf="user.currentUser || enable_download || (motionInfo != undefined && motionInfo[m[0]] != undefined && motionInfo[m[0]]['public'] == 1)" class="padded-col align-middle">
-                    <a href="javascript:" class="icon-button" (click)="downloadClip(m[0], m[1]);">download</a>
+                    <a href="javascript:" class="icon-button" (click)="downloadClip(m[0], m[1]);"><i class="fas fa-download"></i></a>
                   </div>
                   <div *ngIf="user.currentUser" class="padded-col align-middle">
-                    <a href="javascript:" class="icon-button" (click)="deleteClip(m[1], m[0]);">delete</a>
+                    <a href="javascript:" class="icon-button" (click)="deleteClip(m[1], m[0]);"><i class="far fa-trash-alt"></i></a>
                   </div>
                 </div>
               </nav>

@@ -33,8 +33,9 @@
                       <a  href="#" class="icon-button" >{{ m[1] }}</a>
                     </div>
                      <div class="fill-col padded-col">
-                      <a href="javascript:"  class="icon-button" (click)="openEditProjectModal(m); callModal('editProject');">edit &nbsp;</a>
-                      <a href="javascript:"  class="icon-button" (click)="openDeleteProjectModal(m); callModal('deleteProject');">delete<i class="icon-remove"></i> </a>
+                      <a href="javascript:"  class="icon-button" (click)="openEditProjectModal(m); callModal('editProject');"><i class="fas fa-edit" ></i></a> 
+                      &nbsp;
+                      <a href="javascript:"  class="icon-button" (click)="openDeleteProjectModal(m); callModal('deleteProject');"><i class="far fa-trash-alt"></i></a>
                     </div>
                   </div>
                 </nav>
@@ -74,7 +75,7 @@
                           </select>
                         </div>
                         <div class="fill-col padded-col">
-                          <a href="javascript:"  class="icon-button" (click)="openDeleteUserModal(m); callModal('deleteUser');">delete</a>
+                          <a href="javascript:"  class="icon-button" (click)="openDeleteUserModal(m); callModal('deleteUser');"><i class="far fa-trash-alt"></i></a>
                         </div>
                       </div>
                   </form>
@@ -102,8 +103,8 @@
           <div *ngIf="groupSubmitted && addProjectForm.controls.projectName.errors" class="invalid-feedback">
           <div *ngIf="addProjectForm.controls.projectName.errors.required">project name is required</div>
       </div>
-      <label for="groupIsPublicInput">IsPublic</label>
-      <input id="groupIsPublicInput" formControlName="isPublic" class="full-width-control" type="checkbox" />
+      <label for="projectIsPublicInput">IsPublic</label>
+      <input id="projectIsPublicInput" formControlName="isPublic" class="full-width-control" type="checkbox" />
 
     </div>
     <div class="field-group field-group-last">
@@ -123,6 +124,9 @@
           <div *ngIf="editProjectForm.controls.projectName.errors.required">project name is required</div>
       </div>
     </div>
+    <label for="editProjectIsPublicInput">IsPublic</label>
+    <input id="editProjectIsPublicInput" formControlName="isPublic" class="full-width-control" type="checkbox" />
+
     
       <div class="field-group">
       <label for="editProjectInput"> Project Members </label>
