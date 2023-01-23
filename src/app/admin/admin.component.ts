@@ -32,8 +32,6 @@ export class AdminComponent implements OnInit {
 
   error = '';
 
-  jobSubmitted = false;
-  groupSubmitted = false;
 
   addProjectForm: FormGroup;
   editProjectForm: FormGroup;
@@ -72,8 +70,8 @@ export class AdminComponent implements OnInit {
     });
     this.editProjectForm = this.formBuilder.group({
         projectName: ['', Validators.required],
-        projectMemberList: [''],
         isPublic: [''],
+        projectMemberList: [''],
         userList: ['']
     });
     this.userTableForm = this.formBuilder.group({
@@ -119,7 +117,6 @@ export class AdminComponent implements OnInit {
 
   
   createProjectFromModal(modal: any){
-    this.groupSubmitted = true;
 
     // stop here if form is invalid
     if (this.addProjectForm.invalid) {
@@ -133,20 +130,24 @@ export class AdminComponent implements OnInit {
   
   openEditProjectModal(project: any){
     console.log("edit project modal");
-    this.selectedProject = project
-    this.activeModal = "editProject";
-    this.selectedProjectUserList = []
-    this.dataService.getProjectMemberList(project[0]).subscribe(
-        projectUserList => {this.selectedProjectUserList = projectUserList;}
-      );
-    this.editProjectForm.controls.projectName.setValue(project[1]);
+    
+    this.dataService.getProjectInfo(project[0]).subscribe(
+      projectInfo => {
+        
+        this.selectedProject = project
+        this.activeModal = "editProject";
+        this.dataService.getProjectMemberList(project[0]).subscribe(
+            projectUserList => {this.selectedProjectUserList = projectUserList;}
+          );
+        this.editProjectForm.controls.projectName.setValue(project[1]);
+        this.editProjectForm.controls.isPublic.setValue(projectInfo["public"]);
+      }
+    )
   }
   
   
   editProjectFromModal(modal: any){
     console.log("edit project");
-    this.groupSubmitted = true;
-
     // stop here if form is invalid
     if (this.editProjectForm.invalid) {
         console.log("Form is invalid");
