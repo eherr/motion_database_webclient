@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { UserService } from '../_services/user.service';
 
 @Component({
@@ -6,13 +6,8 @@ import { UserService } from '../_services/user.service';
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.less']
 })
-export class NavComponent implements OnInit {
-
+export class NavComponent {
   constructor(
-    private userService:UserService
+    public userService:UserService
   ) { }
-
-  ngOnInit() {
-  }
-
 }

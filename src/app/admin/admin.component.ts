@@ -1,10 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { DataService } from '@app/_services/data.service';
-import { UserService } from '@app/_services/user.service';
+import { DataService } from '../_services/data.service';
+import { UserService } from '../_services/user.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { HttpHeaders } from '@angular/common/http';
-import { CollectionNode } from '../_models/collections';
-import { Observable, of } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '../_services/authentication.service';
 
@@ -22,10 +19,12 @@ export class AdminComponent implements OnInit {
   public selectedProject: any;
   public selectedProjectUserList: any;
   public selectedUser: any;
+  public addProjectSubmitted: boolean = false;
+  public editProjectSubmitted: boolean = false;
   
 
-  private activeTab: string = "tab1";
-  private activeModal: string = "none";
+  public activeTab: string = "tab1";
+  public activeModal: string = "none";
 
 
   oppoRole: any = ['user', 'internal', 'admin']
@@ -37,11 +36,11 @@ export class AdminComponent implements OnInit {
   editProjectForm: FormGroup;
   userTableForm: FormGroup;
 
-  constructor(private dataService: DataService,
-              private formBuilder: FormBuilder,
-              private router: Router,
-              private authenticationService: AuthenticationService,
-              private user : UserService) {
+  constructor(public dataService: DataService,
+              public formBuilder: FormBuilder,
+              public router: Router,
+              public authenticationService: AuthenticationService,
+              public user : UserService) {
                 
                 // redirect to home if user is not an admin
                 let _user = this.authenticationService.currentUserValue;
@@ -94,15 +93,10 @@ export class AdminComponent implements OnInit {
         userList => {
           this.userList = userList;
           //add dynamic select controls
-          this.userList.forEach(user => {
+          this.userList.forEach((user: any) => {
             let key = 'user'+String(user[0]);
-            let ctrl = this.formBuilder.control(key);
-            //add custom properties
-            ctrl["userID"] = user[0];
-            ctrl["name"] = user[1];
-            ctrl["role"] = String(user[2]);
+            let ctrl: any = this.formBuilder.control(key);
             this.userTableForm.addControl(key, ctrl);
-            this.userTableForm.get(key).setValue(user[2]);
           
           })
         }
@@ -124,29 +118,31 @@ export class AdminComponent implements OnInit {
     }
     modal.closeModal();
   
-    this.dataService.createProject(this.addProjectForm.controls.projectName.value, this.addProjectForm.controls.isPublic.value);
+    this.dataService.createProject(this.addProjectForm.controls["projectName"].value, this.addProjectForm.controls["isPublic"].value);
   }
   
   
   openEditProjectModal(project: any){
+    
     console.log("edit project modal");
     
     this.dataService.getProjectInfo(project[0]).subscribe(
-      projectInfo => {
+      (projectInfo:any) => {
         
         this.selectedProject = project
         this.activeModal = "editProject";
         this.dataService.getProjectMemberList(project[0]).subscribe(
-            projectUserList => {this.selectedProjectUserList = projectUserList;}
+            projectUserList => {this.selectedProjectUserList = projectUserList;console.log(projectUserList);}
           );
-        this.editProjectForm.controls.projectName.setValue(project[1]);
-        this.editProjectForm.controls.isPublic.setValue(projectInfo["public"]);
+        this.editProjectForm.controls["projectName"].setValue(project[1]);
+        this.editProjectForm.controls["isPublic"].setValue(projectInfo["public"]);
       }
     )
   }
   
   
   editProjectFromModal(modal: any){
+    this.editProjectSubmitted = true;
     console.log("edit project");
     // stop here if form is invalid
     if (this.editProjectForm.invalid) {
@@ -154,7 +150,9 @@ export class AdminComponent implements OnInit {
          return;
      }
     modal.closeModal();
-    this.dataService.editProject(this.selectedProject[0], this.editProjectForm.controls.projectName.value, this.editProjectForm.controls.isPublic.value, this.selectedProjectUserList);
+    
+    this.editProjectSubmitted = false;
+    this.dataService.editProject(this.selectedProject[0], this.editProjectForm.controls["projectName"].value, this.editProjectForm.controls["isPublic"].value, this.selectedProjectUserList);
   }
   
   openDeleteProjectModal(group: any){
@@ -180,7 +178,8 @@ export class AdminComponent implements OnInit {
   }
   
   addUserToProjectInModal(){
-    let selected = this.editProjectForm.controls.userList.value;
+    this.addProjectSubmitted = true;
+    let selected = this.editProjectForm.controls["userList"].value;
     console.log("add user"+ selected);
     for (let newUser of selected){
         let addUser = true;
@@ -194,10 +193,12 @@ export class AdminComponent implements OnInit {
             this.selectedProjectUserList.push(newUser);
         }
     }
+    
+    this.addProjectSubmitted = false;
   }
   
   removeUserFromProjectInModal(){
-    let selectedUsers = this.editProjectForm.controls.projectMemberList.value;
+    let selectedUsers = this.editProjectForm.controls["projectMemberList"].value;
     console.log("remove users"+selectedUsers);
     let newUserList = [];
     for (let user of this.selectedProjectUserList){
@@ -217,8 +218,10 @@ export class AdminComponent implements OnInit {
   }
 
   changeUserRole(userID: string, event: any ){
-      let role = this.userTableForm.get("user"+String(userID)).value;
-      this.dataService.editUser(null, null, null, role, null, userID);
+      let userData = this.userTableForm.get("user"+String(userID));
+      if(userData == null) return;
+      let role = userData.value;
+      this.dataService.editUser("", "", "", role, null, userID);
   }
   
 }

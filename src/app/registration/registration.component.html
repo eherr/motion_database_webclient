@@ -7,44 +7,44 @@
           <div class="card-body">
               <div class="field-group">
                   <label for="username">Username</label>
-                  <input type="text" formControlName="username" class="full-width-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
-                  <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
-                      <div *ngIf="f.username.errors.required">Username is required</div>
-                      <div *ngIf="f.username.errors.maxlength">Username must be less or equal 15 characters</div>
-                      <div *ngIf="f.username.errors.pattern">Username not valid</div>
+                  <input type="text" formControlName="username" class="full-width-control" [ngClass]="{ 'is-invalid': submitted && f['username'].errors }" />
+                  <div *ngIf="submitted && f['username'].errors" class="invalid-feedback">
+                      <div *ngIf="f['username'].errors['required']">Username is required</div>
+                      <div *ngIf="f['username'].errors['maxlength']">Username must be less or equal 15 characters</div>
+                      <div *ngIf="f['username'].errors['pattern']">Username not valid</div>
                   </div>
               </div>
               <div class="field-group">
                   <label for="email">Email</label>
-                  <input type="text" formControlName="email" class="full-width-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
-                  <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
-                    <div *ngIf="f.email.errors.required">Email is required</div>
-                    <div *ngIf="f.email.errors.email">Email not valid</div>
-                    <div *ngIf="f.email.errors.maxlength">Email must be less or equal 45 characters</div>
-                    <div *ngIf="f.email.errors.pattern">Email not valid</div>
+                  <input type="text" formControlName="email" class="full-width-control" [ngClass]="{ 'is-invalid': submitted && f['email'].errors }" />
+                  <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+                    <div *ngIf="f['email'].errors['required']">Email is required</div>
+                    <div *ngIf="f['email'].errors['email']">Email not valid</div>
+                    <div *ngIf="f['email'].errors['maxlength']">Email must be less or equal 45 characters</div>
+                    <div *ngIf="f['email'].errors['pattern']">Email not valid</div>
                 </div>
               </div>
               <div class="field-group">
                   <label for="password">Password</label>
-                  <input type="password" formControlName="password" class="full-width-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
-                  <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
-                      <div *ngIf="f.password.errors.required">Password is required</div>
-                      <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
-                      <div *ngIf="f.password.errors.maxlength">Password must be less or equal 25 characters</div>
-                      <div *ngIf="f.password.errors.pattern">Password not valid</div>
+                  <input type="password" formControlName="password" class="full-width-control" [ngClass]="{ 'is-invalid': submitted && f['password'].errors }" />
+                  <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+                      <div *ngIf="f['password'].errors['required']">Password is required</div>
+                      <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+                      <div *ngIf="f['password'].errors['maxlength']">Password must be less or equal 25 characters</div>
+                      <div *ngIf="f['password'].errors['pattern']">Password not valid</div>
                   </div>
               </div>
               <div class="field-group">
                   <label for="repeatPassword">Repeat Password</label>
-                  <input type="password" formControlName="repeatPassword" class="full-width-control" [ngClass]="{ 'is-invalid': submitted && f.repeatPassword.errors }" />
-                  <div *ngIf="submitted && f.repeatPassword.errors" class="invalid-feedback">
-                      <div *ngIf="f.repeatPassword.errors.required">Password is required</div>
-                      <div *ngIf="f.repeatPassword.errors.minlength">Password must be at least 6 characters</div>
-                      <div *ngIf="f.repeatPassword.errors.maxlength">Password must be less or equal 25 characters</div>
-                      <div *ngIf="f.repeatPassword.errors.pattern">Password not valid</div>
+                  <input type="password" formControlName="repeatPassword" class="full-width-control" [ngClass]="{ 'is-invalid': submitted && f['repeatPassword'].errors }" />
+                  <div *ngIf="submitted && f['repeatPassword'].errors" class="invalid-feedback">
+                      <div *ngIf="f['repeatPassword'].errors['required']">Password is required</div>
+                      <div *ngIf="f['repeatPassword'].errors['minlength']">Password must be at least 6 characters</div>
+                      <div *ngIf="f['repeatPassword'].errors['maxlength']">Password must be less or equal 25 characters</div>
+                      <div *ngIf="f['repeatPassword'].errors['pattern']">Password not valid</div>
                   </div>
                   <div *ngIf="submitted && registrationForm.errors" class="invalid-feedback">
-                    <div *ngIf="registrationForm.errors.passwordsNoMatch" class="invalid-feedback">Passwords do not match</div>
+                    <div *ngIf="registrationForm.errors['passwordsNoMatch']" class="invalid-feedback">Passwords do not match</div>
                 </div>
               </div>
             </div>

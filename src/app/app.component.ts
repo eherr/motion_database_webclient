@@ -30,27 +30,15 @@ export class AppComponent {
   ngOnInit():void{
     console.log(this.dataService.getServerURL());
     const appTitle = this.titleService.getTitle();
-    this.router
-      .events.pipe(
-        filter(event => event instanceof NavigationEnd),
-        map(() => {
-          const child = this.activatedRoute.firstChild;
-          if (child.snapshot.data['title']) {
-            return appTitle + " - " + child.snapshot.data['title'];
-          }
-          return appTitle;
-        })
-      ).subscribe((ttl: string) => {
-        this.titleService.setTitle(ttl);
-      });
-
+  
       // add meta tags
       this.getMetaInformation();
+
   }
 
   getMetaInformation(){
     this.dataService.getMetaInformation().subscribe(
-      metaData => {
+      (metaData: any) => {
         this.meta.addTags([
             {name: 'connectionID', content: metaData['id']},
             {name: 'port', content: metaData['port']},
@@ -61,5 +49,6 @@ export class AppComponent {
       }
     );
   }
+ 
 
 }

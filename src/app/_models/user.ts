@@ -2,7 +2,7 @@
  * Basic auth class 
  */
 export class User {
-    username: string;
+    username?: string;
     token?: string;
     role?: string;
 }

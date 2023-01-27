@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter  } from '@angular/core';
 
 @Component({
   selector: 'app-modal',
@@ -6,8 +6,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./modal.component.less']
 })
 export class ModalComponent implements OnInit {
-  @Input() title: string;
-  @Input() slug: string;
+  @Input() title: string = "";
+  @Input() slug: string = "";
   @Input() isActive: boolean = false;
 
   @Output() modalCall = new EventEmitter<string>();

@@ -2,16 +2,20 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { first } from 'rxjs/operators';
-import { MessageService } from '@app/_services/message.service';
-
+import { MessageService } from '../_services/message.service';
 import { AuthenticationService } from '../_services/authentication.service';
-import { DataService } from '@app/_services/data.service';
+import { DataService } from '../_services/data.service';
 
 function passwordConfirming(c: AbstractControl): { passwordsNoMatch: boolean } {
-    if (c.get('password').value !== c.get('repeatPassword').value) {
-        return {passwordsNoMatch: true};
-    }
+  let pw = c.get('password');
+  let rpw = c.get('repeatPassword');
+  if (pw != null && rpw!= null && pw.value !== rpw.value) {
+      return {passwordsNoMatch: true};
+  }else{
+    return {passwordsNoMatch: false};
+  }
 }
+
 
 @Component({
   selector: 'app-registration',
@@ -49,7 +53,7 @@ export class RegistrationComponent implements OnInit {
 		
         this.registrationForm = this.formBuilder.group({
             username: ['', [Validators.required, Validators.maxLength(15), Validators.pattern(this.unamePattern)]],
-            email: ['', [Validators.required, Validators.email, Validators.maxLength(45), Validators.pattern(this.emailPattern)]],
+            email: ['', [Validators.required, Validators["email"], Validators.maxLength(45), Validators.pattern(this.emailPattern)]],
             password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(25), Validators.pattern(this.pwdPattern)]],
             repeatPassword: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(25), Validators.pattern(this.pwdPattern)]]
         },{validator: passwordConfirming});
@@ -68,19 +72,19 @@ export class RegistrationComponent implements OnInit {
         if (this.registrationForm.invalid) {
             return;
         }
-		if (this.f.password.value != this.f.repeatPassword.value){
+		if (this.f["password"].value != this.f["repeatPassword"].value){
 			console.log("Passwords do not match");
 			return;
 		}
 
         this.loading = true;
-        this.dataService.createUser(this.f.username.value, this.f.email.value, this.f.password.value)
+        this.dataService.createUser(this.f["username"].value, this.f["email"].value, this.f["password"].value)
             .pipe(first())
             .subscribe(
-                data => {
+                (data:any) => {
                     this.router.navigate([this.returnUrl]);
                 },
-                error => {
+                (error:any) => {
 					
                     this.error = error;
                     this.loading = false;

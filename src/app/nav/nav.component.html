@@ -1,11 +1,4 @@
 <div class="flex-row menu-bar">
-    <!--<div class="navbar-nav fill-col">
-        <a class="nav-link" routerLink="/" routerLinkActive="nav-link-active" [routerLinkActiveOptions]="{exact: true}">Home</a>
-        <a class="nav-link" routerLink="/advanced" routerLinkActive="nav-link-active">Advanced Edit</a>
-      </div>
-      <div class="navbar-nav">
-        <a class="nav-link nav-link-highlight" (click)="userService.logout()"><i class="fas fa-power-off"></i> End Edit Mode</a>
-    </div>-->
 	   <div class="navbar-nav">
         <a *ngIf="!userService.currentUser"  class="nav-link nav-link-highlight" routerLink="/login"> <i class="icon-user"></i> Login</a>
         <a *ngIf="!userService.currentUser" class="nav-link nav-link-highlight" routerLink="/registration"><i class="icon-user"></i> Register</a>
@@ -13,6 +6,7 @@
         <a *ngIf="userService.currentUser" class="nav-link nav-link-highlight" routerLink="/"><i class="icon-user"></i> DB Viewer </a>
         <a *ngIf="userService.currentUser" class="nav-link nav-link-highlight" routerLink="/edit_user"><i class="icon-user"></i> Edit User</a>
         <a *ngIf="userService.currentUser && userService.currentUser.role=='admin'" class="nav-link nav-link-highlight" routerLink="/admin"><i class="icon-user"></i> Admin</a>
+        <a *ngIf="userService.currentUser && userService.currentUser.role=='admin'" class="nav-link nav-link-highlight" routerLink="/experiments"><i class="icon-user"></i> Experiments</a>
         <a *ngIf="userService.currentUser" class="nav-link nav-link-highlight" (click)="userService.logout()"><i class="fas fa-power-off"></i> Logout</a>
     </div> 
 	

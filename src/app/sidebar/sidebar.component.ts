@@ -1,12 +1,10 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { DataService } from '@app/_services/data.service';
-import { UserService } from '@app/_services/user.service';
+import { Component, OnInit,ViewChild } from '@angular/core';
+import { DataService } from '../_services/data.service';
+import { UserService } from '../_services/user.service';
 import { MessageService } from '../_services/message.service';
-import { HttpHeaders } from '@angular/common/http';
-import { CollectionNode } from '../_models/collections';
-import { Observable, of } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TreeComponent, TreeModel, TreeNode } from 'angular-tree-component';
+
+import { TreeModule, TreeComponent } from '@circlon/angular-tree-component';
 
 
 @Component({
@@ -16,7 +14,7 @@ import { TreeComponent, TreeModel, TreeNode } from 'angular-tree-component';
   host: {'class': 'padded-col fill-col', 'id': 'sidebar'}
 })
 export class SidebarComponent implements OnInit {
-  private enable_download = false;
+  public enable_download = false;
 
   public projectList: any;
   public projectInfo: any;
@@ -40,17 +38,17 @@ export class SidebarComponent implements OnInit {
   public skeletonFileList: FileList;
   public characterFileList: FileList;
 
-  private activeTab: string = "tab1";
-  private activeModal: string = "none";
-  private currentProject: number;
-  private currentSkeleton: string;
-  private selectedSkeleton: string;
-  private selectedCharacter: string;
-  private currentCollection: string;
+  public activeTab: string = "tab1";
+  public activeModal: string = "none";
+  public currentProject: number = 1;
+  public currentSkeleton: string = "";
+  public selectedSkeleton: string = "";
+  public selectedCharacter: string = "";
+  public currentCollection: string = "";
 
-  private currentCollectionName: string;
+  public currentCollectionName: string = "";
 
-  private queuedClip: any;
+  public queuedClip: any;
     setQueuedClip(newClip: any){
       this.queuedClip = newClip;
     }
@@ -68,10 +66,10 @@ export class SidebarComponent implements OnInit {
   motionUploadForm: FormGroup;
   primitiveUploadForm: FormGroup;
 
-  constructor(private dataService: DataService,
-              private msgService: MessageService,
-              private formBuilder: FormBuilder,
-              private user: UserService) {
+  constructor(public dataService: DataService,
+              public msgService: MessageService,
+              public formBuilder: FormBuilder,
+              public user: UserService) {
               }
 
   ngOnInit() {
@@ -89,38 +87,38 @@ export class SidebarComponent implements OnInit {
   }
 
   ngAfterInit() {
-    const treeModel:TreeModel = this.treeComponent.treeModel;
-    const firstNode:TreeNode = treeModel.getFirstRoot();
+    let firstNode = this.treeComponent.treeModel.getFirstRoot();
     
     firstNode.setActiveAndVisible();
   }
   initForms(){
+   
     this.newCollectionForm = this.formBuilder.group({
-        newCollectionName: ['', Validators.required],
-        newCollectionType: ['', Validators.required]
-    });
-
-    this.motionUploadForm = this.formBuilder.group({
-        motionFiles: ['', Validators.required],
-        skeletonTarget: ['', Validators.required]
-    });
-
-    this.primitiveUploadForm = this.formBuilder.group({
-        primitiveFiles: ['', Validators.required]
-    });
-    this.addSkeletonForm = this.formBuilder.group({
-      skeletonName: ['', Validators.required],
-      skeletonFile: ['', Validators.required]
+      newCollectionName: ['', Validators.required],
+      newCollectionType: ['', Validators.required]
   });
-  this.editSkeletonForm = this.formBuilder.group({
-    characterFile: ['', Validators.required]
+
+  this.motionUploadForm = this.formBuilder.group({
+      motionFiles: ['', Validators.required],
+      skeletonTarget: ['', Validators.required]
+  });
+
+  this.primitiveUploadForm = this.formBuilder.group({
+      primitiveFiles: ['', Validators.required]
+  });
+  this.addSkeletonForm = this.formBuilder.group({
+    skeletonName: ['', Validators.required],
+    skeletonFile: ['', Validators.required]
+});
+this.editSkeletonForm = this.formBuilder.group({
+  characterFile: ['', Validators.required]
 });
 
   }
 
   getDownloadSettings(){
     this.dataService.getMetaInformation().subscribe(
-      metaData => {
+      (metaData:any) => {
         this.enable_download = metaData['enable_download']
       }
     );
@@ -137,8 +135,9 @@ export class SidebarComponent implements OnInit {
   initProject(){
     let projectID = this.currentProject.toString();
     this.dataService.getProjectInfo(projectID).subscribe(
-      projectInfo => {
+      (projectInfo:any) => {
         this.projectInfo = projectInfo;
+        this.currentCollection = this.projectInfo["collection"];
       this.getCollections();
       this.getMotionList();
       this.getModelList();
@@ -153,7 +152,7 @@ export class SidebarComponent implements OnInit {
     this.queryCollectionTree(parentID, parentNode);
   }
 
-   onSelectNode(event){
+   onSelectNode(event: any){
 	   console.log("select node", event.node.data);
 	   this.selectCollection(event.node.data.id, event.node.data.name);
    }
@@ -163,12 +162,11 @@ export class SidebarComponent implements OnInit {
 
     let parentIDStr = String(parentID);
     this.dataService.queryCollectionList(parentIDStr).subscribe(
-        values => {
+        (values :any) => {
         let temp = [];
         for(let i in values){
           //console.log(i, values[i]);
-          let node = {"id":values[i][0], "name": values[i][1]};
-          node["children"] = [];
+          let node = {"id":values[i][0], "name": values[i][1], "children":[]};
           //let node = new CollectionNode(values[i][0], values[i][1]);
           //node.children = [];
           temp.push(node);
@@ -188,37 +186,37 @@ export class SidebarComponent implements OnInit {
 
   getSkeletonModels(){
     this.dataService.getSkeletonModels().subscribe(
-        skeletons => this.skeletonList = skeletons
+      (skeletons :any)  => this.skeletonList = skeletons
       );
   }
 
   getMotionList(){
     this.dataService.getMotionList(this.currentSkeleton, this.currentCollection).subscribe(
-        motionList => {this.motionList = motionList; this.getMotionInfo();}
+      (motionList :any) => {this.motionList = motionList; this.getMotionInfo();}
       );
   }
   getMotionInfo(){
     this.dataService.getMotionInfo(this.motionList).subscribe(
-      motionInfo => {this.motionInfo = motionInfo}
+      (motionInfo :any)  => {this.motionInfo = motionInfo}
     );
   }
 
   getModelList(){
     this.dataService.getModelList(this.currentSkeleton, this.currentCollection).subscribe(
-        modelList => this.modelList = modelList
+      (modelList :any)  => this.modelList = modelList
       );
   }
 
   getGraphList(){
     this.dataService.getGraphList(this.currentSkeleton).subscribe(
-        graphList => this.graphList = graphList
+      (graphList :any)  => this.graphList = graphList
       );
   }
 
   getCharacterModels(skeletonName: string){
     this.dataService.getCharacterModels(skeletonName).subscribe(
         
-      characters => {
+      (characters :any) => {
         this.characterList = characters;
         }
       );
@@ -228,7 +226,7 @@ export class SidebarComponent implements OnInit {
       this.activeModal = modalName;
   }
 
-  selectSkeleton(event){
+  selectSkeleton(event: any){
     console.log("Selected Skeleton: " + event);
     this.msgService.sendMessage("AnimationGUI", "SetSourceSkeleton", this.currentSkeleton);
     this.getMotionList();
@@ -237,13 +235,13 @@ export class SidebarComponent implements OnInit {
   }
 
 
-  selectProject(event){
+  selectProject(event: any){
     console.log("Selected Skeleton: " + event);
     this.initProject();
 
   }
 
-  selectCollection(id, name){
+  selectCollection(id: string, name: string){
     this.currentCollection = id;
     this.currentCollectionName = name;
     console.log("Selected Collection: " + id);
@@ -252,8 +250,8 @@ export class SidebarComponent implements OnInit {
   }
 
   resetSelection(){
-    this.currentCollection = null;
-    this.currentCollectionName = null;
+    this.currentCollection = "";
+    this.currentCollectionName = "";
     this.motionList = [];
     this.modelList = [];
     this.graphList = [];
@@ -299,27 +297,30 @@ export class SidebarComponent implements OnInit {
     if (this.currentCollection != undefined)
       collectionID = this.currentCollection;
     this.dataService.createCollection(collectionID,
-                                  this.newCollectionForm.controls.newCollectionName.value,
-                                  this.newCollectionForm.controls.newCollectionType.value
+                                  this.newCollectionForm.controls["newCollectionName"].value,
+                                  this.newCollectionForm.controls["newCollectionType"].value
                                   ).subscribe(
-        data => { this.getCollections(); },
-        error => {
+        (data :any)=> { this.getCollections(); },
+        (error: any) => {
             this.error = error;
             console.log("ERROR: " + error);
         });
   }
 
- handleMotionFileInput(files: FileList) {
+ handleMotionFileInput(target: any) {
     //https://stackoverflow.com/questions/47936183/angular-file-upload
-      this.motionFileList = files;
+    if (target == null) return;
+    this.motionFileList = target.files;
   
   }
-  handleSkeletonFileInput(files: FileList) {
-      this.skeletonFileList = files;
+  handleSkeletonFileInput(target: any) {
+    if (target == null) return;
+    this.skeletonFileList = target.files;
   }  
   
-  handleCharacterFile(files: FileList) {
-      this.characterFileList = files;
+  handleCharacterFile(target: any) {
+    if (target == null) return;
+    this.characterFileList = target.files;
   }  
   
   addSkeleton(modal: any){
@@ -332,8 +333,8 @@ export class SidebarComponent implements OnInit {
       return;
   }
   
-  let updateCallback = (e) => {this.getSkeletonModels();};
-  let skeletonName = this.addSkeletonForm.controls.skeletonName.value;
+  let updateCallback = (e: any) => {this.getSkeletonModels();};
+  let skeletonName = this.addSkeletonForm.controls["skeletonName"].value;
   console.log("add skeleton", skeletonName);
   let backendCall = (name: string, bvhStr: string) => {
       bvhStr = bvhStr.replace(/(\r\n|\n|\r)/gm,"\\n");
@@ -403,10 +404,10 @@ export class SidebarComponent implements OnInit {
         return;
     }
 
-    let skeletonName = this.motionUploadForm.controls.skeletonTarget.value;
+    let skeletonName = this.motionUploadForm.controls["skeletonTarget"].value;
     let collectionID = this.currentCollection;
     let dataService = this.dataService;
-    let updateCallback =  (e) => {this.getMotionList();};
+    let updateCallback =  (e: any) => {this.getMotionList();};
     let inputField = document.getElementById("uploadMotionFilesBtn");
 
     let backendCall = (name: string, bvhStr: string) => {
@@ -443,7 +444,7 @@ export class SidebarComponent implements OnInit {
     }
 
     let skeletonName = this.currentSkeleton;
-    let updateCallback =  (e) => {this.getCharacterModels(skeletonName);};
+    let updateCallback =  (e: any) => {this.getCharacterModels(skeletonName);};
     let backendCall = (name: string, dataStr: any) => {
       this.dataService.uploadCharacter(name, skeletonName, dataStr, updateCallback);
     };
@@ -454,7 +455,7 @@ export class SidebarComponent implements OnInit {
   }
 
   deleteCharacter(characterName: string){
-    let updateCallback =  (e) => {this.getCharacterModels(this.currentSkeleton);};
+    let updateCallback = (e: any) => {this.getCharacterModels(this.currentSkeleton);};
     this.dataService.deleteCharacter(this.currentSkeleton, characterName, updateCallback);
   }
 

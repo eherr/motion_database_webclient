@@ -39,7 +39,7 @@
 .flex--cols(@n, @i: 1) when (@i =< @n){
     //n is the number of cols in the grid
     @base-width: (1 / @n);
-    @h: round(@n / @i); //the position in the row based on #n
+    @h: @n / @i; //round() the position in the row based on #n
 
     .col-@{i}{
       width: round(percentage((@base-width * @i)), 4); //xx,yyyy%

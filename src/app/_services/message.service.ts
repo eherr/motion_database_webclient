@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-
-import '@assets/Unity/Build/UnityLoader.js';
-import '@assets/Unity/TemplateData/UnityProgress.js';
+import '../../assets/Unity/Build/UnityLoader.js';
+import '../../assets/Unity/TemplateData/UnityProgress.js';
 
 declare var UnityLoader : any;
 declare var UnityProgress : any;
@@ -9,13 +8,14 @@ declare var UnityProgress : any;
 @Injectable({
   providedIn: 'root'
 })
-
 export class MessageService {
-  private gameInstance: any;
-  private appLocation: string;
+  public gameInstance: any;
+  public appLocation: string = "";
 
   constructor() { }
 
+
+  
   public updateGameInstance(appLocation: string){
     this.appLocation = appLocation;
 	

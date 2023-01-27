@@ -1,29 +1,30 @@
 .menu-bar{
-  border-bottom:1px solid darken(@accent-bg, 5%);
-  padding: 0 1.25em;
-}
-
-.navbar-nav{
-  display: flex;
-}
-
-.nav-link{
-  display: block;
-  padding: 1em 1.5em .5em 1.5em;
-  margin: 0 .2em;
-  text-decoration: none;
-  border-bottom: .5em solid transparent;
-
-  &-highlight{
-    cursor: pointer;
-    background: @accent-bg;
+    border-bottom:1px solid darken(@accent-bg, 5%);
+    padding: 0 1.25em;
   }
-
-  &:hover{
-    border-bottom-color: darken(@accent-bg, 5%);
+  
+  .navbar-nav{
+    display: flex;
   }
-
-  &-active{
-    border-bottom-color: @accent-color;
+  
+  .nav-link{
+    display: block;
+    padding: 1em 1.5em .5em 1.5em;
+    margin: 0 .2em;
+    text-decoration: none;
+    border-bottom: .5em solid transparent;
+  
+    &-highlight{
+      cursor: pointer;
+      background: @accent-bg;
+    }
+  
+    &:hover{
+      border-bottom-color: darken(@accent-bg, 5%);
+    }
+  
+    &-active{
+      border-bottom-color: @accent-color;
+    }
   }
-}
+  

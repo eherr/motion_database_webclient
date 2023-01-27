@@ -1,12 +1,10 @@
-import { Injectable, ComponentFactoryResolver } from '@angular/core';
-import { HttpClient, HttpResponse, HttpHeaders, HttpRequest} from '@angular/common/http';
-import { Observable, forkJoin, of } from 'rxjs';
-import { catchError, tap, map, flatMap } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 
 import { CollectionNode } from '../_models/collections'
-//import  { saveAs } from '@assets/FileSaver.js';
-import { saveAs } from 'file-saver/src/FileSaver';
-import { User } from '@app/_models/user';
+import { AuthenticationService } from '../_services/authentication.service'
+import { saveAs } from 'file-saver';
+import { User } from '../_models/user';
 
 //src: https://stackoverflow.com/questions/36975619/how-to-call-a-rest-web-service-api-from-javascript
 function sendRequest(url : string, data : any, callback?: any, callbackData?: any){
@@ -34,7 +32,6 @@ function saveToFile(responseText: string, motionName: string){
   var data = new Blob([responseText], {type: "application/text"});
   saveAs(data, motionName);
 }
-
 declare var jquery:any;
 declare var $ :any;
 @Injectable({
@@ -46,14 +43,13 @@ export class DataService {
   constructor(private http: HttpClient) { }
 
   getUser(): User{
-    let data =  JSON.parse(localStorage.getItem('currentUser'));
-    let user = new User();
-    user.username = "";
-    user.token = "";
-    if (data != null){
-      user.username = data.username;
-      user.token = data.token;
-    }
+    let userData = localStorage.getItem('currentUser');
+    let user : User = new User();
+    if(userData == null) return user;
+    let userDict = JSON.parse(userData);
+    user.token = userDict["token"];
+    user.username = userDict["username"];
+    user.role = userDict["role"];
     return user;
   }
 
@@ -179,7 +175,7 @@ export class DataService {
     sendRequest(this.getServerURL() + "create_new_skeleton", JSON.stringify(body), callback, null);
   }
 
-  deleteSkeleton(skeletonName: string, callback: any){
+  deleteSkeleton(skeletonName: string, callback: any=null){
     console.log("call delete", skeletonName);
     let user = this.getUser();
     let c = callback
@@ -248,15 +244,15 @@ export class DataService {
   editUser(name: string, password: string, email: string, role: string, project_list: any, user_id : string) {
     let editUserUrl = this.getServerURL() + "users/edit"
     let user = this.getUser();
-    let body = {token: user.token};
-    if (name != null)body["name"] = name;
-    if (email != null)body["email"] = email;
-    if (role != null)body["role"] = role;
-    if (password != null)body["password"] = password;
+    let body: any = {token: user.token};
+    if (name != "")body["name"] = name;
+    if (email != "")body["email"] = email;
+    if (role != "")body["role"] = role;
+    if (password != "")body["password"] = password;
     if (project_list != null)body["project_list"] = project_list;
-    if (user_id  != null)body["user_id"] = user_id ;
+    if (user_id  != "")body["user_id"] = user_id ; 
     let bodyStr = JSON.stringify(body);
-    //let bodyStr = '{"name":"'+name+'","password":"'+password+'",  "email":"'+email+'",  "role":"'+role+'", "shared_access_groups":'+JSON.stringify(shared_access_groups) +', "token":"'+user.token+'"}';
+   
     //return this.http.post(editUserUrl, bodyStr);
     return sendRequest(editUserUrl, bodyStr, null, null);
   }
@@ -264,15 +260,14 @@ export class DataService {
   editUserPipe(name: string, password: string, email: string, role: string, project_list: any, user_id : string) {
     let editUserUrl = this.getServerURL() + "users/edit"
     let user = this.getUser();
-    let body = {token: user.token};
-    if (name != null)body["name"] = name;
-    if (email != null)body["email"] = email;
-    if (role != null)body["role"] = role;
-    if (password != null)body["password"] = password;
+    let body: any = {token: user.token};
+    if (name != "")body["name"] = name;
+    if (email != "")body["email"] = email;
+    if (role != "")body["role"] = role;
+    if (password != "")body["password"] = password;
     if (project_list != null)body["project_list"] = project_list;
-    if (user_id  != null)body["user_id"] = user_id ;
+    if (user_id  != "")body["user_id"] = user_id ; 
     let bodyStr = JSON.stringify(body);
-    //let bodyStr = '{"name":"'+name+'","password":"'+password+'",  "email":"'+email+'",  "role":"'+role+'", "shared_access_groups":'+JSON.stringify(shared_access_groups) +', "token":"'+user.token+'"}';
     return this.http.post(editUserUrl, bodyStr);
   }
 
@@ -280,7 +275,7 @@ export class DataService {
     let editUserUrl = this.getServerURL() + "users/info"
     let user = this.getUser();
     let body = '';
-    if (user_id != null){
+    if (user_id != ""){
       body = '{"user_id":"'+user_id+'", "token":"'+user.token+'"}';
     }else{
       body = '{"token":"'+user.token+'"}';
@@ -332,4 +327,44 @@ export class DataService {
     let body = '{"user_id":"'+user_id+'", "token":"'+user.token+'"}';
     return this.http.post(this.getServerURL() + "user/projects", body);
   }
+
+  getExperimentList(collection_id: string){
+    let user = this.getUser();
+    let body = {token: user.token, collection: collection_id};
+    let bodyStr = JSON.stringify(body);
+    return this.http.post(this.getServerURL() + "experiments", bodyStr);
+  }
+  deleteExperiment(exp_id: string) {
+   let user = this.getUser();
+   let body = {token: user.token, experiment_id: exp_id};
+   let bodyStr = JSON.stringify(body);
+   sendRequest(this.getServerURL() + "experiments/remove", bodyStr, null, null);
+   
+ }  
+ 
+ getExperimentLog(exp_id: string){
+  let user = this.getUser();
+  let body = {token: user.token, experiment_id: exp_id};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post(this.getServerURL() + "experiments/log", bodyStr);
+} 
+getExperimentInfo(exp_id: string){
+  let user = this.getUser();
+  let body = {token: user.token, experiment_id: exp_id};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post(this.getServerURL() + "experiments/info", bodyStr);
+}
+
+downloadModel(modelID: string, name: string){
+  if (!name.endsWith(".zip")){
+     name = name+".zip";
+  }
+  let user = this.getUser();
+  let body = {token: user.token, model_id: modelID};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post(this.getServerURL() + "models/download", bodyStr,  {observe: 'response', responseType: 'blob'}).subscribe((res: any)=>{
+    saveAs(res.body, name);
+  });
+
+}
 }
