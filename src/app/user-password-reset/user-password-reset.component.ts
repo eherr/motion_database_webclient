@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-import { MessageService } from '@app/_services/message.service';
+import { MessageService } from '../_services/message.service';
 
 import { AuthenticationService } from '../_services/authentication.service';
 
 @Component({
-  selector: 'app-user_password_reset',
-  templateUrl: './user_password_reset.component.html',
-  styleUrls: ['./user_password_reset.component.less']
+  selector: 'app-user-password-reset',
+  templateUrl: './user-password-reset.component.html',
+  styleUrls: ['./user-password-reset.component.less']
 })
 export class UserPasswordResetComponent implements OnInit {
     resetForm: FormGroup;
@@ -58,7 +58,7 @@ export class UserPasswordResetComponent implements OnInit {
         }
 
         this.loading = true;
-        this.authenticationService.reset_password(this.f.email.value)
+        this.authenticationService.reset_password(this.f["email"].value)
             .pipe(first())
             .subscribe(
                 data => {

@@ -1,0 +1,89 @@
+@import "../../less/colors";
+
+.sidebar-footer{
+  width: 100%;
+}
+
+.striped-table{
+  .flex-row{
+      &:nth-child(2n){
+        background-color: @accent-bg;
+      }
+  }
+}
+
+#sidebarButtonNav{
+  display: inline-flex;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+
+  li{
+    margin: 0 2px 0 2px;
+  }
+}
+
+.content-container{
+  max-height: 1252px;
+  vertical-align: super;
+  grid-template-rows: 50px 400px 512px;
+  grid-template-columns: 250px 660px;
+}
+.project-selector{
+  grid-column:1;
+  grid-row:1;
+  width: 150px;
+}
+.grid-filler{
+  grid-column:2;
+  grid-row:1;
+}
+
+.collections-tree-view{
+  grid-column:1;
+  grid-row:2;
+}
+
+.experiment-list{
+
+  grid-column:2;
+  grid-row:2;
+  flex: 1 0 auto;
+  overflow-y: auto;
+  max-height: 550px;
+}
+
+.chart-container{
+  grid-row:3;
+}
+
+.tab-action-bar{
+  text-align: right;
+  margin-top: 15px;
+}
+
+/* src: https://fdossena.com/?p=html5cool/buttons/i.frag*/
+a.sidebar-button {
+    border: none;
+    border-bottom: 5px solid @accent-bg; /* grey */
+    color: lighten(@secondary-text, 20%);
+    padding: 12px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    font-size: 1.1em;
+    cursor: pointer;
+
+    &:hover{
+      border-color: darken(@accent-bg, 40%);
+    }
+
+    &-active{
+      border-color: @accent-color; /* black */
+      color: @primary-text;
+
+      &:hover{
+        border-color: lighten(#000, 25%);
+      }
+    }
+}
+

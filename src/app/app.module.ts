@@ -22,6 +22,7 @@ import { ImpressComponent } from './impress/impress.component';
 import { BasicAuthInterceptor } from './_helpers/basic-auth.interceptor';
 import { ErrorInterceptor } from './_helpers/error.interceptor';
 import { ExperimentsComponent } from './experiments/experiments.component';
+import { UserPasswordResetComponent } from './user-password-reset/user-password-reset.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { ExperimentsComponent } from './experiments/experiments.component';
     LoginComponent,
     RegistrationComponent,
     ImpressComponent,
-    ExperimentsComponent
+    ExperimentsComponent,
+    UserPasswordResetComponent
   ],
   imports: [
     BrowserModule,
