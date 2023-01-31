@@ -28,6 +28,7 @@ export class ExperimentsComponent implements OnInit {
   public currentProject: number = 1;
   public activeModal: string = "none";
   public currentExp: string = "";
+  public colors: any = ["red","green",  "blue", "purple", "orange"]
 
   public chart: Chart;
   public plotData : any;
@@ -57,18 +58,7 @@ export class ExperimentsComponent implements OnInit {
 
       data: {// values on X-Axis
         labels: [ ], 
-	       datasets: [
-          {
-            label: "rewards",
-            data: [],
-            borderColor: 'blue'
-          },
-          {
-            label: "steps",
-            data: [],
-            borderColor: 'limegreen'
-          }  
-        ]
+	       datasets: []
       },
       options: {
         aspectRatio:2.5
@@ -81,32 +71,35 @@ export class ExperimentsComponent implements OnInit {
   {
     if (data == null || data["log_data"] == null || data["field_names"] == null) return;
     this.chart.data.labels =[];
-    let labelIndex = 0;
-    let dataSetIndex =0;
-    let indexMap = [];
     let labelKey = 'time/total_timesteps';
     if(data["label_key"] !=null){
       labelKey =data["label_key"];
-
     }
+    this.chart.data.datasets = [];
     for(let i = 0; i <data["field_names"].length; i++ ){
-      if(data["field_names"][i] != labelKey){
-        this.chart.data.datasets[dataSetIndex]["data"] = [];
-        this.chart.data.datasets[dataSetIndex].label = data["field_names"][i];
-        indexMap.push(dataSetIndex);
-        dataSetIndex++;
+      if(i >= this.colors.length){
+        console.log("Error index outside of colors array");
+        return;
+      }
+      if(data["field_names"][i] == labelKey){
+        
+        for(let j = 0; j <data["log_data"].length; j++ ){
+          this.chart.data.labels.push(data["log_data"][j][i]);
+        }
       }else{
-        labelIndex = i;
+        let values = [];
+        for(let j = 0; j <data["log_data"].length; j++ ){
+          values.push(data["log_data"][j][i]);
+        }
+        let dataset = {
+          label: data["field_names"][i],
+          data: values,
+          borderColor: this.colors[i]
+        };
+        this.chart.data.datasets.push(dataset);
       }
     }
-    for(let i = 0; i <data["log_data"].length; i++ ){
-      this.chart.data.labels.push(data["log_data"][labelIndex][labelIndex]);
-      for (let j = 0; j < indexMap.length;j++){
-        let srcIdx = indexMap[j];
-        this.chart.data.datasets[j]["data"].push(data["log_data"][i][srcIdx]);
-      }
-
-    }
+   
     this.chart.update()
   }
 
