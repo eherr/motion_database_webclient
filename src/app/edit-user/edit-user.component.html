@@ -1,0 +1,63 @@
+<div class="flex-row padded-row flex-nowrap align-middle">
+    <div class="card">
+        <h4 class="card-header">Edit User</h4>
+        <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+        <form [formGroup]="editUserForm" (ngSubmit)="onSubmit()">
+          <div class="card-body">
+              <div class="field-group">
+                  <label for="username">Username</label>
+                  <input type="text" formControlName="username" class="full-width-control" [ngClass]="{ 'is-invalid': submitted && f['username'].errors }" />
+                  <div *ngIf="submitted && f['username'].errors" class="invalid-feedback">
+                      <div *ngIf="f['username'].errors['required']">Username is required</div>
+                      <div *ngIf="f['username'].errors['maxlength']">Username must be less or equal 15 characters</div>
+                      <div *ngIf="f['username'].errors['pattern']">Username not valid</div>
+                  </div>
+              </div>
+              <div class="field-group">
+                  <label for="email">Email</label>
+                  <input type="text" formControlName="email" class="full-width-control" [ngClass]="{ 'is-invalid': submitted && f['email'].errors }" />
+                  <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+                    <div *ngIf="f['email'].errors['minlength']">Email is required</div>
+                    <div *ngIf="f['email'].errors['maxlength']">Email must be less or equal 45 characters</div>
+                    <div *ngIf="f['email'].errors['pattern']">Email not valid</div>
+                </div>
+              </div>
+              <div class="field-group">
+                  <label for="password">Password</label>
+                  <input type="password" formControlName="password" class="full-width-control" [ngClass]="{ 'is-invalid': submitted && f['password'].errors }" />
+                  <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+                      <div *ngIf="f['password'].errors['required']">Password is required</div>
+                      <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+                      <div *ngIf="f['password'].errors['maxlength']">Password must be less or equal 25 characters</div>
+                      <div *ngIf="f['password'].errors['pattern']">Password not valid</div>
+                  </div>
+              </div>
+              <div class="field-group">
+                  <label for="repeatPassword">Repeat Password</label>
+                  <input type="password" formControlName="repeatPassword" class="full-width-control" [ngClass]="{ 'is-invalid': submitted && f['repeatPassword'].errors }" />
+                  <div *ngIf="submitted && f['repeatPassword'].errors" class="invalid-feedback">
+                      <div *ngIf="f['repeatPassword'].errors['required']">Password is required</div>
+                      <div *ngIf="f['repeatPassword'].errors['minlength']">Password must be at least 6 characters</div>
+                      <div *ngIf="f['repeatPassword'].errors['maxlength']">Password must be less or equal 25 characters</div>
+                      <div *ngIf="f['repeatPassword'].errors['pattern']">Password not valid</div>
+                  </div>
+                  <div *ngIf="submitted && editUserForm.errors" class="invalid-feedback">
+                    <div *ngIf="editUserForm.errors['passwordsNoMatch']">Passwords do not match</div>
+                </div>
+              </div>
+              
+     
+          
+            </div>
+            <div class="field-group field-group-last align-right">
+              <div class="fill-col">
+                <a routerLink="/" routerLinkActive="active">Cancel</a>
+              </div>
+              <button [disabled]="loading" class="btn btn-primary">
+                  <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                  Edit User
+              </button>
+            </div>
+        </form>
+    </div>
+</div>
