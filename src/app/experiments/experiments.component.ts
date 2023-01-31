@@ -27,6 +27,7 @@ export class ExperimentsComponent implements OnInit {
   
   public currentProject: number = 1;
   public activeModal: string = "none";
+  public currentExp: string = "";
 
   public chart: Chart;
   public plotData : any;
@@ -78,17 +79,41 @@ export class ExperimentsComponent implements OnInit {
     
   updateChart(data : any)
   {
-    if (data == null || data["log_data"] == null) return;
+    if (data == null || data["log_data"] == null || data["field_names"] == null) return;
     this.chart.data.labels =[];
-    this.chart.data.datasets[0]["data"] = [];
-    this.chart.data.datasets[1]["data"] = [];
+    let labelIndex = 0;
+    let dataSetIndex =0;
+    let indexMap = [];
+    let labelKey = 'time/total_timesteps';
+    if(data["label_key"] !=null){
+      labelKey =data["label_key"];
+
+    }
+    for(let i = 0; i <data["field_names"].length; i++ ){
+      if(data["field_names"][i] != labelKey){
+        this.chart.data.datasets[dataSetIndex]["data"] = [];
+        this.chart.data.datasets[dataSetIndex].label = data["field_names"][i];
+        indexMap.push(dataSetIndex);
+        dataSetIndex++;
+      }else{
+        labelIndex = i;
+      }
+    }
     for(let i = 0; i <data["log_data"].length; i++ ){
-      this.chart.data.labels.push(data["log_data"][i][2]);
-      this.chart.data.datasets[0]["data"].push(data["log_data"][i][0]);
-      this.chart.data.datasets[1]["data"].push(data["log_data"][i][1]);
+      this.chart.data.labels.push(data["log_data"][labelIndex][labelIndex]);
+      for (let j = 0; j < indexMap.length;j++){
+        let srcIdx = indexMap[j];
+        this.chart.data.datasets[j]["data"].push(data["log_data"][i][srcIdx]);
+      }
 
     }
     this.chart.update()
+  }
+
+  refreshData(){
+    if(this.currentCollection == "")return;
+    this.selectCollection(this.currentCollection);
+    this.plotExperiment(this.currentExp);
   }
 
   getExperimentList(collectionID: string){
@@ -107,7 +132,8 @@ export class ExperimentsComponent implements OnInit {
   }
 
   plotExperiment(expId: string){
-    
+    if(expId == "") return;
+    this.currentExp = expId;
     this.dataService.getExperimentLog(expId).subscribe(
       (plotData:any) => {this.plotData = plotData;
         console.log(plotData);
