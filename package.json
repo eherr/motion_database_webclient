@@ -19,6 +19,7 @@
     "@angular/platform-browser-dynamic": "^15.1.0",
     "@angular/router": "^15.1.0",
     "@circlon/angular-tree-component": "^11.0.4",
+    "@ngstack/code-editor": "^4.0.0",
     "@types/file-saver": "^2.0.5",
     "chart.js": "^4.2.0",
     "colors": "^1.4.0",

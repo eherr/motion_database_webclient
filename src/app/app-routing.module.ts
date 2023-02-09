@@ -8,6 +8,7 @@ import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { ImpressComponent } from './impress/impress.component';
 import { ExperimentsComponent } from './experiments/experiments.component';
+import { ModelTypesComponent } from './model-types/model-types.component';
 import { UserPasswordResetComponent } from './user-password-reset/user-password-reset.component';
 
 const routes: Routes = [
@@ -50,6 +51,11 @@ const routes: Routes = [
     path: 'experiments',
     component: ExperimentsComponent,
     data: { title: 'Experiments' }
+  },
+  {
+    path: 'model_types',
+    component: ModelTypesComponent,
+    data: { title: 'ModelTypes' }
   },
   {
     path: 'user_password_reset',

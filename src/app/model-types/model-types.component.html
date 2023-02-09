@@ -1,0 +1,77 @@
+<div class="content-container">
+   
+    <div class="model-type-list" >
+        <!-- group table start -->
+                 <div class="flex-row">
+             <div class="fill-col padded-col">
+                <label>Name</label>
+             </div>
+              <div class="fill-col padded-col">
+              <label>Operations</label>
+             </div>
+           </div>
+         <nav id='modelTypeTable' class="striped-table">
+           <div *ngFor="let e of modelTypeList" class="flex-row">
+             <div class="fill-col padded-col">
+               <a  href="#" class="icon-button">{{ e[0] }}</a>
+             </div>
+              <div class="fill-col padded-col">
+                <a href="javascript:"  class="icon-button" (click)="openEditModelTypeModal(e[0]);"><i class="fas fa-edit"></i></a>
+               <a href="javascript:"  class="icon-button" (click)="callModal('deleteModelType'); selectedModelType = e"><i class="far fa-trash-alt"></i></a>
+             </div>
+           </div>
+         </nav>
+     </div>
+    </div>
+
+    
+<div class="tab-action-bar">
+    <button  type="button" (click)="openEditModelTypeModal(null)"><i class="fas fa-plus-circle"></i> Add Model Type </button>&nbsp;&nbsp;
+
+</div>
+      
+<!-- Modals start -->
+<div class="modal-container" [ngSwitch]="activeModal">
+    <app-modal title="Create ModelType" slug="editModelType" (modalCall)="callModal($event)" *ngSwitchCase="'editModelType'" #modal>
+        <form [formGroup]="editModelTypeForm" (ngSubmit)="editModelTypeFromModal(modal)">
+        <div class="field-group">
+          <label for="modelTypeNameInput">Name</label>
+          <input id="modelTypeNameInput" formControlName="name" class="full-width-control" type="text" />
+              <div *ngIf="editModelTypeSubmitted && editModelTypeForm.controls['name'].errors" class="invalid-feedback">
+              <div *ngIf="editModelTypeForm.controls['name'].errors['required']">name is required</div>
+          </div>
+          <label for="modelTypeLoaderInput">Loader</label>
+        
+          <ngs-code-editor r id="modelTypeLoaderInput"
+            [theme]=theme
+            [codeModel]=loaderCodeModel
+            [options]=options
+          ></ngs-code-editor>
+
+          <label for="modelTypeRequirementsInput">Requirements</label>
+          <ngs-code-editor r id="modelTypeRequirementsInput"
+            [theme]=theme
+            [codeModel]=requirementsModel
+            [options]=options
+          ></ngs-code-editor>    
+        </div>
+        <div class="field-group field-group-last">
+          <button id="createModelTypeBtn" type="submit">Save</button>&nbsp;&nbsp;
+          <button id="abortCreateModelTypeBtn" type="button" (click)="modal.closeModal(); getModelTypeList();selectedModelType=null;">Cancel</button>
+        </div>
+        </form>
+      </app-modal>
+
+    <app-modal [title]="'Delete ModelType: &quot;' + selectedModelType[0] + '&quot;'" slug="deleteModelType" (modalCall)="callModal($event)" *ngSwitchCase="'deleteModelType'" #modal>
+        
+        <div class="field-group">
+          <p>Are you sure you want to delete this ModelType? </p>
+        </div>
+        <div class="field-group field-group-last">
+          <button type="button" (click)="modal.closeModal(); dataService.deleteModelType(selectedModelType[0]); selectedModelType=null; getModelTypeList();">Ok</button>&nbsp;&nbsp;
+          <button type="button" (click)="modal.closeModal(); selectedModelType=null">Cancel</button>
+        </div>
+        </app-modal>
+
+        
+</div>

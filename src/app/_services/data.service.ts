@@ -367,4 +367,43 @@ downloadModel(modelID: string, name: string){
   });
 
 }
+createModelType(name: string, loader: string, requirements: string){
+  console.log("send post request");
+  let user = this.getUser();
+  let body = {token: user.token, name: name, loader:loader, requirements: requirements};
+  let bodyStr = JSON.stringify(body);
+  sendRequest(this.getServerURL() + "model_types/add", bodyStr, null, null);
+}
+
+editModelType(name: string, loader: string, requirements: string) {
+  let user = this.getUser();
+  let body: any = {token: user.token};
+  if (name != "")body["model_type"] = name;
+  if (loader != "")body["loader"] = loader;
+  if (requirements != "")body["requirements"] = requirements;
+  let bodyStr = JSON.stringify(body);
+ 
+  //return this.http.post(editUserUrl, bodyStr);
+  return sendRequest(this.getServerURL() + "model_types/edit", bodyStr, null, null);
+}
+
+getModelTypeList(){
+  let user = this.getUser();
+  let body = {token: user.token};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post(this.getServerURL() + "model_types", bodyStr);
+}
+deleteModelType(model_type: string) {
+  let user = this.getUser();
+  let body = {token: user.token, model_type: model_type};
+  let bodyStr = JSON.stringify(body);
+  sendRequest(this.getServerURL() + "model_types/remove", bodyStr, null, null);
+  
+}  
+getModelTypeInfo(model_type: string) {
+  let user = this.getUser();
+  let body = {token: user.token, model_type: model_type};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post<any>(this.getServerURL() + "model_types/info", bodyStr);
+}  
 }
