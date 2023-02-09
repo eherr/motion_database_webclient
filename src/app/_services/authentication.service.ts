@@ -13,12 +13,13 @@ export class AuthenticationService {
 
     constructor(private http: HttpClient,private dataService: DataService) {
        let userData = localStorage.getItem('currentUser');
-       if(userData == null) return;
+       let user : User = new User();
+       if(userData != null) {
         let userDict = JSON.parse(userData);
-         let user : User = new User();
          user.token = userDict["token"];
          user.username = userDict["username"];
          user.role = userDict["role"];
+        }
         this.currentUserSubject = new BehaviorSubject<User>(user);
         this.currentUser = this.currentUserSubject.asObservable();
     }
@@ -62,5 +63,15 @@ export class AuthenticationService {
                 }
                 return user;
             }));
+    }
+
+    IsAdmin(){
+        let user = this.currentUserSubject.value
+        return user.token != null && user.role=='admin';
+    }
+    
+    IsLoggedIn(){
+        let user = this.currentUserSubject.value
+        return user.token != null;
     }
 }

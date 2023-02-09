@@ -27,4 +27,12 @@ export class UserService {
         this.authenticationService.logout();
         this.router.navigate(['/']);
     }
+    
+    IsAdmin(){
+        return this.currentUser.token != null && this.currentUser.role=='admin';
+    }
+    
+    IsLoggedIn(){
+        return this.currentUser.token != null;
+    }
 }

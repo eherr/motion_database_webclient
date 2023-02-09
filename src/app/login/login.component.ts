@@ -5,6 +5,7 @@ import { first } from 'rxjs/operators';
 import { MessageService } from '../_services/message.service';
 
 import { AuthenticationService } from '../_services/authentication.service';
+import { UserService } from '../_services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -25,10 +26,11 @@ export class LoginComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private authenticationService: AuthenticationService,
-		private messageService: MessageService
+		private messageService: MessageService,
+        private user: UserService
     ) {
         // redirect to home if already logged in
-        if (this.authenticationService.currentUserValue) {
+        if (this.user.IsLoggedIn()) {
             this.router.navigate(['/']);
         }
 		// disable camera because the canvas is now hidden
