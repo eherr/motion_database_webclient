@@ -406,4 +406,45 @@ getModelTypeInfo(model_type: string) {
   let bodyStr = JSON.stringify(body);
   return this.http.post<any>(this.getServerURL() + "model_types/info", bodyStr);
 }  
+
+
+
+createEvalScript(modelType: string, engine: string, loader: string, requirements: string){
+  console.log("send post request");
+  let user = this.getUser();
+  let body = {token: user.token,engine:engine, modelType: modelType, loader:loader, requirements: requirements};
+  let bodyStr = JSON.stringify(body);
+  sendRequest(this.getServerURL() + "eval_scripts/add", bodyStr, null, null);
+}
+
+editEvalScript(modelType: string, engine: string, loader: string, requirements: string) {
+  let user = this.getUser();
+  let body: any = {token: user.token, model_type: modelType, engine:engine};
+  if (loader != "")body["loader"] = loader;
+  if (requirements != "")body["requirements"] = requirements;
+  let bodyStr = JSON.stringify(body);
+ 
+  //return this.http.post(editUserUrl, bodyStr);
+  return sendRequest(this.getServerURL() + "eval_scripts/edit", bodyStr, null, null);
+}
+
+getEvalScriptList(){
+  let user = this.getUser();
+  let body = {token: user.token};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post(this.getServerURL() + "eval_scripts", bodyStr);
+}
+deleteEvalScript(model_type: string, engine: string) {
+  let user = this.getUser();
+  let body = {token: user.token, model_type: model_type, engine:engine};
+  let bodyStr = JSON.stringify(body);
+  sendRequest(this.getServerURL() + "eval_scripts/remove", bodyStr, null, null);
+  
+}  
+getEvalScriptInfo(model_type: string, engine: string) {
+  let user = this.getUser();
+  let body = {token: user.token, model_type: model_type, engine:engine};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post<any>(this.getServerURL() + "eval_scripts/info", bodyStr);
+}  
 }

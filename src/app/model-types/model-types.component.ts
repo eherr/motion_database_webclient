@@ -12,13 +12,14 @@ import { CodeModel } from '@ngstack/code-editor';
 })
 export class ModelTypesComponent implements OnInit{
 
-  public modelTypeList: any;
+  public evalScriptList: any;
   public selectedModelType: any;
+  public selectedEngine: any;
   
-  public editModelTypeSubmitted: boolean = false;
+  public editEvalScriptSubmitted: boolean = false;
   public activeModal: string = "none";
   theme = 'vs-dark';
-  editModelTypeForm: FormGroup;
+  editEvalScriptForm: FormGroup;
   loaderCodeModel: CodeModel = {
    language: 'python',
    uri:  "loader.python",
@@ -41,12 +42,13 @@ export class ModelTypesComponent implements OnInit{
     }
 
    ngOnInit() {
-    this.getModelTypeList();
+    this.getEvalScriptList();
     this.initForms();
   }
   initForms(){
-    this.editModelTypeForm = this.formBuilder.group({
-        name: ['', Validators.required],
+    this.editEvalScriptForm = this.formBuilder.group({
+      modelType: ['', Validators.required],
+        engine: ['', Validators.required],
         //loader: this.formBuilder.group({
         //  editorContent: [''],}),
         //requirements: ['']
@@ -54,10 +56,10 @@ export class ModelTypesComponent implements OnInit{
 
     
   }
-  getModelTypeList(){
-    this.dataService.getModelTypeList().subscribe(
-      (modelTypeList: any) => {
-        this.modelTypeList = modelTypeList;
+  getEvalScriptList(){
+    this.dataService.getEvalScriptList().subscribe(
+      (evalScriptList: any) => {
+        this.evalScriptList = evalScriptList;
         }
       );
   }
@@ -65,50 +67,54 @@ export class ModelTypesComponent implements OnInit{
     this.activeModal = modalName;
   }
 
-  editModelTypeFromModal(modal: any){
+  editgetEvalScriptListFromModal(modal: any){
 
     // stop here if form is invalid
-    if (this.editModelTypeForm.invalid) {
+    if (this.editEvalScriptForm.invalid) {
       
         this.selectedModelType = null;
         return;
     }
     modal.closeModal();
-    let name = this.editModelTypeForm.controls["name"].value;
+    let modelType = this.editEvalScriptForm.controls["modelType"].value;
+    let engine = this.editEvalScriptForm.controls["engine"].value;
     let loaderText = this.loaderCodeModel.value;
     let requirementsText = this.requirementsModel.value;
     console.log(loaderText);
   
     if (this.selectedModelType == null){
-      this.dataService.createModelType(name, loaderText, requirementsText);
+      this.dataService.createEvalScript(modelType, engine, loaderText, requirementsText);
     }else{
-      this.dataService.editModelType(name, loaderText, requirementsText);
+      this.dataService.editEvalScript(modelType, engine, loaderText, requirementsText);
     }
     
     this.selectedModelType = null;
-    this.getModelTypeList();
+    this.getEvalScriptList();
   }
   
 
-  openEditModelTypeModal(modelType: any){
+  openEditEvalScriptModal(modelType: any, engine: any){
     console.log("open edit model");
     this.selectedModelType = modelType;
+    this.selectedEngine = engine;
     if (modelType != null){
-      this.dataService.getModelTypeInfo(modelType).subscribe(
+      this.dataService.getEvalScriptInfo(modelType, engine).subscribe(
         (data:any)=>{
-          this.editModelTypeForm.controls["name"].setValue(data["name"]);
-          this.loaderCodeModel.value = data["loader"];
+          this.editEvalScriptForm.controls["modelType"].setValue(data["modelType"]);
+          this.editEvalScriptForm.controls["engine"].setValue(data["engine"]);
+          this.loaderCodeModel.value = data["script"];
           this.requirementsModel.value = data["requirements"];
-          //this.editModelTypeForm.controls["loader"].setValue(data["loader"]);
+          //this.editEvalScriptForm.controls["loader"].setValue(data["loader"]);
           
-          this.activeModal = "editModelType";
+          this.activeModal = "editEvalScript";
         })
     } else{
-      this.editModelTypeForm.controls["name"].setValue("");
-      //this.editModelTypeForm.controls["requirements"].setValue("");
-      //this.editModelTypeForm.controls["loader"].setValue("");
+      this.editEvalScriptForm.controls["modelType"].setValue("");
+      this.editEvalScriptForm.controls["engine"].setValue("");
+      //this.editEvalScriptForm.controls["requirements"].setValue("");
+      //this.editEvalScriptForm.controls["loader"].setValue("");
     
-      this.activeModal = "editModelType";
+      this.activeModal = "editEvalScript";
     }
   }
  
