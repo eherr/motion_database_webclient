@@ -23,8 +23,9 @@ import { BasicAuthInterceptor } from './_helpers/basic-auth.interceptor';
 import { ErrorInterceptor } from './_helpers/error.interceptor';
 import { ExperimentsComponent } from './experiments/experiments.component';
 import { UserPasswordResetComponent } from './user-password-reset/user-password-reset.component';
-import { ModelTypesComponent } from './model-types/model-types.component';
-import { CodeEditorModule } from '@ngstack/code-editor';
+import { DataTypesComponent } from './data-types/data-types.component';
+//import { CodeEditorModule } from '@ngstack/code-editor';
+import { DataTransformsComponent } from './data-transforms/data-transforms.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { CodeEditorModule } from '@ngstack/code-editor';
     ImpressComponent,
     ExperimentsComponent,
     UserPasswordResetComponent,
-    ModelTypesComponent,
+    DataTypesComponent,
+    DataTransformsComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,7 +53,7 @@ import { CodeEditorModule } from '@ngstack/code-editor';
     HttpClientModule,
     ReactiveFormsModule,
     TreeModule,
-    CodeEditorModule.forRoot()
+   // CodeEditorModule.forRoot()
   ],
   providers: [
     Title,

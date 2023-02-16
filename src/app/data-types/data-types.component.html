@@ -1,0 +1,165 @@
+
+<div class="content-container">
+   
+<div><p> Data Types </p></div>
+    <div class="data-type-list" >
+        <!-- group table start -->
+                 <div class="flex-row">
+             <div class="fill-col padded-col">
+                <label>Name</label>
+             </div>
+              <div class="fill-col padded-col">
+              <label>Operations</label>
+             </div>
+           </div>
+         <nav id='dataTypeTable' class="striped-table">
+           <div *ngFor="let e of dataTypeList" class="flex-row">
+             <div class="fill-col padded-col">
+               <a   class="icon-button">{{ e[0] }}</a>
+             </div>
+              <div class="fill-col padded-col">
+                <a href="javascript:"  class="icon-button"  (click)="openEditDataTypeModal(e[0]);"><i class="fas fa-edit"></i></a>
+               <a href="javascript:"  class="icon-button" (click)="callModal('deleteDataType'); selectedDataType =e[0]" ><i class="far fa-trash-alt"></i></a>
+             </div>
+           </div>
+         </nav>
+     </div>
+     <div class="tab-action-bar">
+       <button  type="button" (click)="openEditDataTypeModal(null)"><i class="fas fa-plus-circle"></i> Add Data Type </button>&nbsp;&nbsp;
+      
+     
+     </div>
+<div><p> Data Type Loaders </p></div>
+
+    <div class="data-type-list" >
+      <!-- group table start -->
+               <div class="flex-row">
+           <div class="fill-col padded-col">
+              <label>Data Type</label>
+           </div>
+           <div class="fill-col padded-col">
+           <label>Engine</label>
+          </div>
+            <div class="fill-col padded-col">
+            <label>Operations</label>
+           </div>
+         </div>
+       <nav id='dataTypeLoaderTable' class="striped-table">
+         <div *ngFor="let e of loaderScripts" class="flex-row">
+           <div class="fill-col padded-col">
+             <a   class="icon-button">{{ e[1] }}</a>
+           </div>
+           <div class="fill-col padded-col">
+             <a class="icon-button">{{ e[2] }}</a>
+           </div>
+            <div class="fill-col padded-col">
+              <a href="javascript:"  class="icon-button" (click)="openEditDataLoaderModal(e[1], e[2]);"><i class="fas fa-edit"></i></a>
+             <a href="javascript:"  class="icon-button" (click)="callModal('deleteDataLoader'); selectedDataType = e[1]; selectedEngine=e[2]"><i class="far fa-trash-alt"></i></a>
+           </div>
+         </div>
+       </nav>
+   </div>
+   <div class="tab-action-bar">
+     <button  type="button" (click)="openEditDataLoaderModal(null, null)"><i class="fas fa-plus-circle"></i> Add Data Loader Script </button>&nbsp;&nbsp;
+  
+  </div>
+  </div>
+
+      
+<!-- Modals start -->
+
+<div class="modal-container" [ngSwitch]="activeModal">
+  <!-- DataType Modals start -->
+  <app-modal title="Edit Data Type" slug="editDataType" (modalCall)="callModal($event)" *ngSwitchCase="'editDataType'" #modal>
+    <form [formGroup]="editDataTypeForm" (ngSubmit)="editDataTypeFromModal(modal)">
+    <div class="field-group">
+      <label for="dataTypeNameInput">Name</label>
+      <input id="dataTypeNameInput" formControlName="name" class="full-width-control" type="text" />
+      <div *ngIf="editDataTypeSubmitted && editDataTypeForm.controls['name'].errors" class="invalid-feedback">
+      <div *ngIf="editDataTypeForm.controls['name'].errors['required']">name is required</div>
+  </div>
+  
+    <label for="isSkeletonMotion">isSkeletonMotion </label>
+    <input formControlName="isSkeletonMotion" class="full-width-control" type="checkbox" />
+
+    
+    <label for="isModel">isModel </label>
+    <input formControlName="isModel" class="full-width-control" type="checkbox" />
+
+    <label for="isTimeSeries">isTimeSeries </label>
+    <input formControlName="isTimeSeries" class="full-width-control" type="checkbox" />
+
+      <label for="dataTypeRequirementsInput">Requirements</label>
+      <textarea id="dataTypeRequirementsInput" formControlName="requirements" style="width:250px;height:150px;"></textarea>
+      
+    </div>
+    <div class="field-group field-group-last">
+      <button id="createDataTypeBtn" type="submit">Save</button>&nbsp;&nbsp;
+      <button id="abortCreateDataTypeBtn" type="button" (click)="modal.closeModal(); getDataLoaderList();selectedDataType=null;">Cancel</button>
+    </div>
+    </form>
+  </app-modal>
+
+  <app-modal [title]="'Delete Data Type: &quot;' + selectedDataType + '&quot;'" slug="deleteDataType" (modalCall)="callModal($event)" *ngSwitchCase="'deleteDataType'" #modal>
+        
+    <div class="field-group">
+      <p>Are you sure you want to delete this data type? </p>
+    </div>
+    <div class="field-group field-group-last">
+      <button type="button" (click)="modal.closeModal(); deleteDataType()">Ok</button>&nbsp;&nbsp;
+      <button type="button" (click)="modal.closeModal(); selectedDataType=null">Cancel</button>
+    </div>
+    </app-modal>
+
+  <!-- DataLoader Modals start -->
+    <app-modal title="Edit Data Type Loader" slug="editDataLoader" (modalCall)="callModal($event)" *ngSwitchCase="'editDataLoader'" #modal>
+        <form [formGroup]="editDataLoaderForm" (ngSubmit)="editDataLoaderFromModal(modal)">
+        <div class="field-group">
+          <label for="dataTypeNameInput">DataType</label>
+          <select formControlName="dataType">
+            <option *ngFor="let dt of dataTypeList" [value]="dt">{{dt}}</option>
+          </select>
+          <label for="dataTypeEngineInput">Engine</label>
+          <input id="dataTypeEngineInput" formControlName="engine" class="full-width-control" type="text" />
+              <div *ngIf="editDataLoaderSubmitted && editDataLoaderForm.controls['engine'].errors" class="invalid-feedback">
+              <div *ngIf="editDataLoaderForm.controls['engine'].errors['required']">engine is required</div>
+          </div>
+
+          <label for="dataTypeLoaderInput">Loader</label>
+          <textarea id="dataTypeLoaderInput" formControlName="loader" style="width:250px;height:150px;"></textarea>
+
+        <!--  <ngs-code-editor r id="dataTypeLoaderInput"
+            [theme]=theme
+            [codeModel]=loaderCodeModel
+            [options]=options
+          ></ngs-code-editor>-->
+
+          <label for="dataLoaderRequirementsInput">Requirements</label>
+          <textarea id="dataLoaderRequirementsInput" formControlName="requirements" style="width:250px;height:150px;"></textarea>
+          
+        <!--  <ngs-code-editor r id="dataTypeRequirementsInput"
+            [theme]=theme
+            [codeModel]=requirementsModel
+            [options]=options
+          ></ngs-code-editor>    -->
+        </div>
+        <div class="field-group field-group-last">
+          <button id="createDataLoaderBtn" type="submit">Save</button>&nbsp;&nbsp;
+          <button id="abortCreateDataLoaderBtn" type="button" (click)="modal.closeModal(); getDataLoaderList();selectedDataType=null;">Cancel</button>
+        </div>
+        </form>
+      </app-modal>
+
+    <app-modal [title]="'Delete Data Loader: &quot;' + selectedDataType + '&quot;'  + selectedEngine + '&quot;'" slug="deleteDataLoader" (modalCall)="callModal($event)" *ngSwitchCase="'deleteDataLoader'" #modal>
+        
+        <div class="field-group">
+          <p>Are you sure you want to delete this Script? </p>
+        </div>
+        <div class="field-group field-group-last">
+          <button type="button" (click)="modal.closeModal(); deleteDataLoader()">Ok</button>&nbsp;&nbsp;
+          <button type="button" (click)="modal.closeModal(); selectedDataType=null">Cancel</button>
+        </div>
+        </app-modal>
+
+        
+</div>

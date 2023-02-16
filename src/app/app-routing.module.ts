@@ -8,7 +8,8 @@ import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { ImpressComponent } from './impress/impress.component';
 import { ExperimentsComponent } from './experiments/experiments.component';
-import { ModelTypesComponent } from './model-types/model-types.component';
+import { DataTypesComponent } from './data-types/data-types.component';
+import { DataTransformsComponent } from './data-transforms/data-transforms.component';
 import { UserPasswordResetComponent } from './user-password-reset/user-password-reset.component';
 
 const routes: Routes = [
@@ -53,9 +54,14 @@ const routes: Routes = [
     data: { title: 'Experiments' }
   },
   {
-    path: 'model_types',
-    component: ModelTypesComponent,
-    data: { title: 'ModelTypes' }
+    path: 'data_transforms',
+    component: DataTransformsComponent,
+    data: { title: 'Data Transforms' }
+  },
+  {
+    path: 'data_types',
+    component: DataTypesComponent,
+    data: { title: 'Data Types' }
   },
   {
     path: 'user_password_reset',

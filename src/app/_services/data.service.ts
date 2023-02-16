@@ -367,84 +367,171 @@ downloadModel(modelID: string, name: string){
   });
 
 }
-createModelType(name: string, loader: string, requirements: string){
+createDataType(name: string, requirements: string, isModel: string, isProcessed: string, isSkeletonMotion: string, isTimeSeries: string){
   console.log("send post request");
   let user = this.getUser();
-  let body = {token: user.token, name: name, loader:loader, requirements: requirements};
+  let body = {token: user.token, name: name, isModel:isModel, isProcessed:isProcessed, isSkeletonMotion:isSkeletonMotion, isTimeSeries:isTimeSeries, requirements: requirements};
   let bodyStr = JSON.stringify(body);
-  sendRequest(this.getServerURL() + "model_types/add", bodyStr, null, null);
+  return this.http.post<any>(this.getServerURL() + "data_types/add", bodyStr);
 }
 
-editModelType(name: string, loader: string, requirements: string) {
+editDataType(data_type:string, newName: string, requirements: string, isModel: string, isProcessed: string, isSkeletonMotion: string, isTimeSeries: string) {
   let user = this.getUser();
-  let body: any = {token: user.token};
-  if (name != "")body["model_type"] = name;
-  if (loader != "")body["loader"] = loader;
-  if (requirements != "")body["requirements"] = requirements;
+  let body: any = {token: user.token, data_type: data_type};
+  body["name"] = newName;
+  body["isModel"] = isModel;
+  body["isProcessed"] = isProcessed;
+  body["isSkeletonMotion"] = isSkeletonMotion;
+  body["isTimeSeries"] = isTimeSeries;
+  body["requirements"] = requirements;
   let bodyStr = JSON.stringify(body);
  
   //return this.http.post(editUserUrl, bodyStr);
-  return sendRequest(this.getServerURL() + "model_types/edit", bodyStr, null, null);
+  return this.http.post<any>(this.getServerURL() + "data_types/edit", bodyStr);
 }
 
-getModelTypeList(){
+getDataTypeList(){
   let user = this.getUser();
   let body = {token: user.token};
   let bodyStr = JSON.stringify(body);
-  return this.http.post(this.getServerURL() + "model_types", bodyStr);
+  return this.http.post(this.getServerURL() + "data_types", bodyStr);
 }
-deleteModelType(model_type: string) {
+deleteDataType(data_type: string) {
   let user = this.getUser();
-  let body = {token: user.token, model_type: model_type};
+  let body = {token: user.token, data_type: data_type};
   let bodyStr = JSON.stringify(body);
-  sendRequest(this.getServerURL() + "model_types/remove", bodyStr, null, null);
+  return this.http.post<any>(this.getServerURL() + "data_types/remove", bodyStr);
   
 }  
-getModelTypeInfo(model_type: string) {
+getDataTypeInfo(data_type: string) {
   let user = this.getUser();
-  let body = {token: user.token, model_type: model_type};
+  let body = {token: user.token, data_type: data_type};
   let bodyStr = JSON.stringify(body);
-  return this.http.post<any>(this.getServerURL() + "model_types/info", bodyStr);
+  return this.http.post<any>(this.getServerURL() + "data_types/info", bodyStr);
 }  
 
 
 
-createEvalScript(modelType: string, engine: string, loader: string, requirements: string){
+createDataLoader(dataType: string, engine: string, script: string, requirements: string){
   console.log("send post request");
   let user = this.getUser();
-  let body = {token: user.token,engine:engine, modelType: modelType, loader:loader, requirements: requirements};
+  let body = {token: user.token,engine:engine, dataType: dataType, script:script, requirements: requirements};
   let bodyStr = JSON.stringify(body);
-  sendRequest(this.getServerURL() + "eval_scripts/add", bodyStr, null, null);
+  return this.http.post(this.getServerURL() + "data_loaders/add", bodyStr);
 }
 
-editEvalScript(modelType: string, engine: string, loader: string, requirements: string) {
+editDataLoader(dataType: string, engine: string, script: string, requirements: string) {
   let user = this.getUser();
-  let body: any = {token: user.token, model_type: modelType, engine:engine};
-  if (loader != "")body["loader"] = loader;
-  if (requirements != "")body["requirements"] = requirements;
+  let body: any = {token: user.token, data_type: dataType, engine:engine};
+  body["script"] = script;
+  body["requirements"] = requirements;
   let bodyStr = JSON.stringify(body);
  
   //return this.http.post(editUserUrl, bodyStr);
-  return sendRequest(this.getServerURL() + "eval_scripts/edit", bodyStr, null, null);
+  return sendRequest(this.getServerURL() + "data_loaders/edit", bodyStr, null, null);
 }
 
-getEvalScriptList(){
+getDataLoaderList(){
   let user = this.getUser();
   let body = {token: user.token};
   let bodyStr = JSON.stringify(body);
-  return this.http.post(this.getServerURL() + "eval_scripts", bodyStr);
+  return this.http.post(this.getServerURL() + "data_loaders", bodyStr);
 }
-deleteEvalScript(model_type: string, engine: string) {
+deleteDataLoader(data_type: string, engine: string) {
   let user = this.getUser();
-  let body = {token: user.token, model_type: model_type, engine:engine};
+  let body = {token: user.token, data_type: data_type, engine:engine};
   let bodyStr = JSON.stringify(body);
-  sendRequest(this.getServerURL() + "eval_scripts/remove", bodyStr, null, null);
-  
+  return this.http.post(this.getServerURL() + "data_loaders/remove", bodyStr);
+
 }  
-getEvalScriptInfo(model_type: string, engine: string) {
+getDataLoaderInfo(data_type: string, engine: string) {
   let user = this.getUser();
-  let body = {token: user.token, model_type: model_type, engine:engine};
+  let body = {token: user.token, data_type: data_type, engine:engine};
   let bodyStr = JSON.stringify(body);
-  return this.http.post<any>(this.getServerURL() + "eval_scripts/info", bodyStr);
+  return this.http.post<any>(this.getServerURL() + "data_loaders/info", bodyStr);
+}  
+getDataTransformList(){
+  let user = this.getUser();
+  let body = {token: user.token};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post(this.getServerURL() + "data_transforms", bodyStr);
+}
+createDataTransform(name:string, script: string, outputType: string, requirements: string){
+  console.log("send post request");
+  let user = this.getUser();
+  let body = {token: user.token,name:name, outputType: outputType, script:script, requirements: requirements};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post<any>(this.getServerURL() + "data_transforms/add", bodyStr);
+}
+editDataTransform(data_transform_id: string, name:string, script: string, outputType: string, requirements: string) {
+  let user = this.getUser();
+  let body: any = {token: user.token, data_transform_id: data_transform_id};
+  body["script"] = script;
+  body["name"] = name;
+  body["requirements"] = requirements;
+  body["outputType"] = outputType;
+  let bodyStr = JSON.stringify(body);
+ 
+  //return this.http.post(editUserUrl, bodyStr);
+  return this.http.post<any>(this.getServerURL() + "data_transforms/edit", bodyStr);
+}
+getDataTransformInfo(data_transform_id: string) {
+  let user = this.getUser();
+  let body = {token: user.token, data_transform_id: data_transform_id};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post<any>(this.getServerURL() + "data_transforms/info", bodyStr);
+}  
+deleteDataTransform(data_transform_id: string) {
+  let user = this.getUser();
+  let body = {token: user.token, data_transform_id: data_transform_id};
+  let bodyStr = JSON.stringify(body);
+  console.log("delete"+bodyStr);
+  sendRequest(this.getServerURL() + "data_transforms/remove", bodyStr, null, null);
+
+}  
+
+
+getDataTransformInputList(data_transform_id: string){
+  let user = this.getUser();
+  let body = {token: user.token, data_transform_id: data_transform_id};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post(this.getServerURL() + "data_transforms/inputs", bodyStr);
+}
+createDataTransformInput(dataTransformID:string, dataType: string, isCollection: string){
+  console.log("send post request");
+  let user = this.getUser();
+  let body = {token: user.token,dataTransform:dataTransformID, dataType: dataType, isCollection: isCollection};
+  let bodyStr = JSON.stringify(body);
+  sendRequest(this.getServerURL() + "data_transforms/inputs/add", bodyStr, null, null);
+}
+editDataTransformInput(data_transform_input_id: string, dataType:string,  isCollection: string) {
+  let user = this.getUser();
+  let body: any = {token: user.token, data_transform_input_id: data_transform_input_id};
+  body["dataType"] = dataType;
+  body["isCollection"] = isCollection;
+  let bodyStr = JSON.stringify(body);
+ 
+  //return this.http.post(editUserUrl, bodyStr);
+  return this.http.post<any>(this.getServerURL() + "data_transforms/inputs/edit", bodyStr);
+}
+getDataTransformInputInfo(data_transform_input_id: string) {
+  let user = this.getUser();
+  let body = {token: user.token, data_transform_input_id: data_transform_input_id};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post<any>(this.getServerURL() + "data_transforms/inputs/info", bodyStr);
+}  
+deleteAllDataTransformInputs(data_transform_id: string) {
+  let user = this.getUser();
+  let body = {token: user.token, data_transform_id: data_transform_id};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post<any>(this.getServerURL() + "data_transforms/inputs/removeall", bodyStr);
+
+}  
+deleteDataTransformInputs(data_transform_input_id: string) {
+  let user = this.getUser();
+  let body = {token: user.token, data_transform_input_id: data_transform_input_id};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post<any>(this.getServerURL() + "data_transforms/inputs/remove", bodyStr);
+
 }  
 }

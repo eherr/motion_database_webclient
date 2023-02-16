@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ModelTypesComponent } from './model-types.component';
+import { DataTransformsComponent } from './data-transforms.component';
 
-describe('ModelTypesComponent', () => {
-  let component: ModelTypesComponent;
-  let fixture: ComponentFixture<ModelTypesComponent>;
+describe('DataTransformsComponent', () => {
+  let component: DataTransformsComponent;
+  let fixture: ComponentFixture<DataTransformsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ModelTypesComponent ]
+      declarations: [ DataTransformsComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ModelTypesComponent);
+    fixture = TestBed.createComponent(DataTransformsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

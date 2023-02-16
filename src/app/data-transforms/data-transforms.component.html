@@ -1,0 +1,133 @@
+<div class="content-container">
+   
+    <div class="data-transform-list" >
+        <!-- group table start -->
+        <div class="flex-row">
+            <div class="fill-col padded-col">
+               <label>ID</label>
+            </div>
+             <div class="fill-col padded-col">
+                <label>Name</label>
+             </div>
+             <div class="fill-col padded-col">
+             <label>OutputType</label>
+            </div>
+              <div class="fill-col padded-col">
+              <label>Operations</label>
+             </div>
+           </div>
+         <nav id='dataTransformsTable' class="striped-table">
+           <div *ngFor="let e of dataTransformList" class="flex-row">
+             <div class="fill-col padded-col">
+               <a   class="icon-button">{{ e[0] }}</a>
+             </div>
+             <div class="fill-col padded-col">
+               <a class="icon-button">{{ e[1] }}</a>
+             </div>
+             <div class="fill-col padded-col">
+               <a class="icon-button">{{ e[2] }}</a>
+             </div>
+              <div class="fill-col padded-col">
+                <a href="javascript:"  class="icon-button"  (click)="openEditDataTransformModal(e[0]);" ><i class="fas fa-edit"></i></a>
+               <a href="javascript:"  class="icon-button" (click)="callModal('deleteDataTransform'); selectedDataTransform = e[0] "><i class="far fa-trash-alt"></i></a>
+             </div>
+           </div>
+         </nav>
+     </div>
+    </div>
+
+    <div class="tab-action-bar">
+        <button  type="button" (click)="openEditDataTransformModal(null)"><i class="fas fa-plus-circle"></i> Add Data Transform </button>&nbsp;&nbsp;
+    
+    </div>
+
+
+
+<!-- Modals start -->
+<div class="modal-container" [ngSwitch]="activeModal">
+    <app-modal title="Edit Data Transform" slug="editDataTransform" (modalCall)="callModal($event)" *ngSwitchCase="'editDataTransform'" #modal>
+        <form [formGroup]="editDataTransformForm" (ngSubmit)="editDataTransformFromModal(modal)">
+        <div class="field-group">
+          <label for="dataTransformNameInput">Name</label>
+          <input id="dataTypeNameInput" formControlName="name" class="full-width-control" type="text" />
+              <div *ngIf="editDataTransformSubmitted && editDataTransformForm.controls['name'].errors" class="invalid-feedback">
+              <div *ngIf="editDataTransformForm.controls['name'].errors['required']">name is required</div>
+          </div>
+          <label for="dataTransformNameInput">Output Type </label>
+          <input id="outputTypeInput" formControlName="outputType" class="full-width-control" type="text" />
+              <div *ngIf="editDataTransformSubmitted && editDataTransformForm.controls['outputType'].errors" class="invalid-feedback">
+              <div *ngIf="editDataTransformForm.controls['outputType'].errors['required']">output type is required</div>
+          </div>
+
+          <label for="dataTransformScriptInput">Script</label>
+          <textarea id="dataTransformScriptInput" formControlName="dataTransform" style="width:250px;height:150px;"></textarea>
+      <!--      <ngs-code-editor r id="dataTransformScriptInput"
+            [theme]=theme
+            [codeModel]=dataTransformCodeModel
+            [options]=options
+          ></ngs-code-editor>-->
+
+          <label for="dataTransformRequirementsInput">Requirements</label>
+          
+        <!--    <ngs-code-editor r id="dataTransformRequirementsInput"
+            [theme]=theme
+            [codeModel]=requirementsModel
+            [options]=options
+          ></ngs-code-editor>    -->
+        </div>
+
+
+        <div class="field-group">
+            <label for="editDataTransformInput"> DataTransform Input </label>
+             </div>
+            <div class="data-input-container">
+            <div class="data-type-list" >
+                <nav id='dataInputTable' class="striped-table">
+                    <div formArrayName="inputs" *ngFor="let dti of dataInputsControls.controls; let i = index" >
+                        <div [formGroupName]="i" class="flex-row">
+                        <div class="fill-col padded-col">
+                            
+                            <label for="inputDataType">inputDataType </label>
+                            <select formControlName="inputDataType">
+                              <option *ngFor="let dt of dataTypeList" [value]="dt">{{dt}}</option>
+                            </select>
+                        </div>
+
+                        <div class="fill-col padded-col">
+                            
+                            <label for="isCollection">isCollection </label>
+                            <input formControlName="isCollection" class="full-width-control" type="checkbox" />
+                        </div> 
+                        <div class="fill-col padded-col">
+                            <a href="javascript:"  class="icon-button" (click)="removeDataTransformInputInModal(i)"><i class="far fa-trash-alt"></i></a>
+                        </div> 
+                    </div>
+                </div>
+                </nav>
+             </div>
+            <button id="addDataTransformInputBtn" type="button" (click)="addDataTransformInputInModal()">Add Data Input</button>&nbsp;&nbsp;
+             </div>
+
+
+        <div class="field-group field-group-last">
+          <button id="createDataTransformBtn" type="submit">Save</button>&nbsp;&nbsp;
+          <button id="abortCreateDataTransformBtn" type="button" (click)="modal.closeModal(); getDataTransformList();selectedDataTransform=null;">Cancel</button>
+        </div>
+
+
+        </form>
+      </app-modal>
+
+    <app-modal [title]="'Delete Data Transform: &quot;' + selectedDataTransform + '&quot;'" slug="deleteDataTransform" (modalCall)="callModal($event)" *ngSwitchCase="'deleteDataTransform'" #modal>
+        
+        <div class="field-group">
+          <p>Are you sure you want to delete this Script? </p>
+        </div>
+        <div class="field-group field-group-last">
+          <button type="button" (click)="modal.closeModal(); deleteDataTransform()">Ok</button>&nbsp;&nbsp;
+          <button type="button" (click)="modal.closeModal(); selectedDataTransform=null">Cancel</button>
+        </div>
+        </app-modal>
+
+        
+</div>
