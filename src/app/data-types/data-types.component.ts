@@ -17,6 +17,9 @@ export class DataTypesComponent implements OnInit{
   public loaderScripts: any;
   public selectedDataType: any;
   public selectedEngine: any;
+
+  public selectedTagList: any;
+  public allTagsList: any;
   
   public editDataTypeSubmitted: boolean = false;
   public editDataLoaderSubmitted: boolean = false;
@@ -46,16 +49,14 @@ export class DataTypesComponent implements OnInit{
     }
 
    ngOnInit() {
-    this.getDataLoaderList();
+    this.getDataTypeList();
     this.initForms();
   }
   initForms(){
     this.editDataTypeForm = this.formBuilder.group({
       name: ['', Validators.required],
-        isSkeletonMotion: ['', ],
-        isModel: ['', ],
-        isTimeSeries: ['', ],
-        isProcessed: ['', ],
+      assignedTags: ['', ],
+      tagList: ['', ],
         requirements: ['', ],
     });
     this.editDataLoaderForm = this.formBuilder.group({
@@ -67,7 +68,12 @@ export class DataTypesComponent implements OnInit{
 
     
   }
-  getDataLoaderList(){
+  getDataTypeList(){
+    this.dataService.getTagList().subscribe(
+      (tagList: any) => {
+        this.allTagsList = tagList;
+        }
+      );
     this.dataService.getDataTypeList().subscribe(
       (dataTypeList: any) => {
         this.dataTypeList = dataTypeList;
@@ -90,51 +96,60 @@ export class DataTypesComponent implements OnInit{
       (data:any)=>{
         this.editDataTypeForm.controls["name"].setValue(data["name"]);
         this.editDataTypeForm.controls["requirements"].setValue(data["requirements"]);
-        
-        this.editDataTypeForm.controls["isModel"].setValue(data["isModel"]);
-        this.editDataTypeForm.controls["isProcessed"].setValue(data["isProcessed"]);
-        this.editDataTypeForm.controls["isTimeSeries"].setValue(data["isTimeSeries"]);
-        this.editDataTypeForm.controls["isSkeletonMotion"].setValue(data["isSkeletonMotion"]);
       });
     }else{
       this.editDataTypeForm.controls["name"].setValue("");
       this.editDataTypeForm.controls["requirements"].setValue("");
-      this.editDataTypeForm.controls["isModel"].setValue(0);
-      this.editDataTypeForm.controls["isProcessed"].setValue(0);
-      this.editDataTypeForm.controls["isTimeSeries"].setValue(0);
-      this.editDataTypeForm.controls["isSkeletonMotion"].setValue(0);
 
     }
     this.activeModal = "editDataType";
+    this.dataService.getDataTypeTagList(dataType).subscribe(
+      (selectedTagList:any) => {
+        this.selectedTagList = [];
+        for(let i = 0; i < selectedTagList.length; i++){
+          this.selectedTagList.push(selectedTagList.at(i)[0]);
+        }
+      }
+    )
+
   }
   editDataTypeFromModal(modal: any){
     modal.closeModal();
     
     let name = this.editDataTypeForm.controls["name"].value;
     let requirements = this.editDataTypeForm.controls["requirements"].value;
-    let isModel = this.editDataTypeForm.controls["isModel"].value;
-    let isProcessed = this.editDataTypeForm.controls["isProcessed"].value;
-    let isTimeSeries = this.editDataTypeForm.controls["isTimeSeries"].value;
-    let isSkeletonMotion = this.editDataTypeForm.controls["isSkeletonMotion"].value;
-    if (this.selectedDataType == null){
-      this.dataService.createDataType(name, requirements, isModel, isProcessed, isTimeSeries, isSkeletonMotion).subscribe(
+    let dataType = this.selectedDataType;
+    if (dataType == null){
+      this.dataService.createDataType(name, requirements).subscribe(
         (data:any)=>{
+          this.addTagsToDB(dataType);
           this.selectedDataType = null;
-          this.getDataLoaderList();
+          this.getDataTypeList();
         });
     }else{
       
-      this.dataService.editDataType(this.selectedDataType, name, requirements, isModel, isProcessed, isTimeSeries, isSkeletonMotion).subscribe(
+      this.dataService.editDataType(dataType, name, requirements).subscribe(
         (data:any)=>{
           
-          this.selectedDataType = null;
-          this.getDataLoaderList();
+        this.dataService.removeAllDataTypeTags(dataType).subscribe(()=>{
+          this.addTagsToDB(dataType);
+        });
+        this.selectedDataType = null;
+        this.getDataTypeList();
         });
     }
+    
     this.activeModal = "";
-    this.selectedDataType = null;
   }
 
+
+  addTagsToDB(dataType: string){
+    for(let i = 0; i < this.selectedTagList.length; i++){
+      let tagName = this.selectedTagList.at(i)[0];
+      this.dataService.addDataTypeTag(dataType, tagName).subscribe(()=>{
+    });
+  }
+  }
   openEditDataLoaderModal( dataType: any, engine: any){
     console.log("open edit model");
     this.selectedDataType = dataType;
@@ -181,14 +196,14 @@ export class DataTypesComponent implements OnInit{
         (data:any)=>{
           this.selectedDataType = null;
           this.selectedEngine = null;
-          this.getDataLoaderList();
+          this.getDataTypeList();
         });
     }else{
       this.dataService.deleteDataLoader(this.selectedDataType, this.selectedEngine).subscribe(
         (data:any)=>{
         this.dataService.createDataLoader(dataType, engine, loaderText, requirementsText).subscribe(
           (data:any)=>{
-            this.getDataLoaderList();
+            this.getDataTypeList();
           });
       })
     }
@@ -210,7 +225,7 @@ export class DataTypesComponent implements OnInit{
       (data:any)=>{ 
     this.selectedDataType=null; 
     this.selectedEngine=null; 
-    this.getDataLoaderList();
+    this.getDataTypeList();
   })
   }
 
@@ -219,7 +234,39 @@ export class DataTypesComponent implements OnInit{
       (data:any)=>{ 
     this.selectedDataType=null; 
     this.selectedEngine=null; 
-    this.getDataLoaderList();
+    this.getDataTypeList();
   })
+  }
+
+  assignTag(){
+    let selectedTags = this.editDataTypeForm.controls["tagList"].value;
+   
+    for (let newTag of selectedTags){
+      let addTag = true;
+      for (let tag of this.selectedTagList){
+          if(newTag == tag){
+              addTag = false;
+              break;
+          }
+      }
+      if(addTag)this.selectedTagList.push(newTag);
+    }
+  }
+  removeTag(){
+    let selectedTags = this.editDataTypeForm.controls["assignedTags"].value;
+    let newTagList = [];
+    for (let tag of this.selectedTagList){
+        let removeTag = false;
+        for(let idx in selectedTags){
+            if(selectedTags[idx] == tag){
+                removeTag = true;
+                break;
+            }
+        }
+        if(!removeTag){
+          newTagList.push(tag);
+        }
+    }
+    this.selectedTagList = newTagList;
   }
 }

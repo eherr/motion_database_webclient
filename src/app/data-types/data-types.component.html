@@ -29,6 +29,9 @@
       
      
      </div>
+
+
+
 <div><p> Data Type Loaders </p></div>
 
     <div class="data-type-list" >
@@ -78,16 +81,28 @@
       <div *ngIf="editDataTypeSubmitted && editDataTypeForm.controls['name'].errors" class="invalid-feedback">
       <div *ngIf="editDataTypeForm.controls['name'].errors['required']">name is required</div>
   </div>
-  
-    <label for="isSkeletonMotion">isSkeletonMotion </label>
-    <input formControlName="isSkeletonMotion" class="full-width-control" type="checkbox" />
+  <div class="field-group">
+  <label for="assignedTags">Assigned Tags </label>
+</div>
+<div class="field-group">
+    <select multiple formControlName="assignedTags">
+          <option *ngFor="let tag of selectedTagList" [ngValue]="tag">{{tag}} </option>
+      </select>
+    </div>
+    <button id="removeTagBtn" type="button" (click)="removeTag()">Remove Tag</button>&nbsp;&nbsp;
 
+  <div class="field-group">
+    <label for="tagList">Tags </label>
+  </div>
+  <div class="field-group">
+      <select multiple formControlName="tagList">
+        <option *ngFor="let tag of allTagsList" [ngValue]="tag">{{tag}} </option>
+    </select>
     
-    <label for="isModel">isModel </label>
-    <input formControlName="isModel" class="full-width-control" type="checkbox" />
+  <button id="addTagBtn" type="button" (click)="assignTag()">Assign Tag</button>&nbsp;&nbsp;
 
-    <label for="isTimeSeries">isTimeSeries </label>
-    <input formControlName="isTimeSeries" class="full-width-control" type="checkbox" />
+  </div>
+  
 
       <label for="dataTypeRequirementsInput">Requirements</label>
       <textarea id="dataTypeRequirementsInput" formControlName="requirements" style="width:250px;height:150px;"></textarea>
@@ -95,7 +110,7 @@
     </div>
     <div class="field-group field-group-last">
       <button id="createDataTypeBtn" type="submit">Save</button>&nbsp;&nbsp;
-      <button id="abortCreateDataTypeBtn" type="button" (click)="modal.closeModal(); getDataLoaderList();selectedDataType=null;">Cancel</button>
+      <button id="abortCreateDataTypeBtn" type="button" (click)="modal.closeModal(); getDataTypeList();selectedDataType=null;">Cancel</button>
     </div>
     </form>
   </app-modal>
@@ -145,7 +160,7 @@
         </div>
         <div class="field-group field-group-last">
           <button id="createDataLoaderBtn" type="submit">Save</button>&nbsp;&nbsp;
-          <button id="abortCreateDataLoaderBtn" type="button" (click)="modal.closeModal(); getDataLoaderList();selectedDataType=null;">Cancel</button>
+          <button id="abortCreateDataLoaderBtn" type="button" (click)="modal.closeModal(); getDataTypeList();selectedDataType=null;">Cancel</button>
         </div>
         </form>
       </app-modal>

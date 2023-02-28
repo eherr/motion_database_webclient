@@ -367,22 +367,18 @@ downloadModel(modelID: string, name: string){
   });
 
 }
-createDataType(name: string, requirements: string, isModel: string, isProcessed: string, isSkeletonMotion: string, isTimeSeries: string){
+createDataType(name: string, requirements: string){
   console.log("send post request");
   let user = this.getUser();
-  let body = {token: user.token, name: name, isModel:isModel, isProcessed:isProcessed, isSkeletonMotion:isSkeletonMotion, isTimeSeries:isTimeSeries, requirements: requirements};
+  let body = {token: user.token, name: name, requirements: requirements};
   let bodyStr = JSON.stringify(body);
   return this.http.post<any>(this.getServerURL() + "data_types/add", bodyStr);
 }
 
-editDataType(data_type:string, newName: string, requirements: string, isModel: string, isProcessed: string, isSkeletonMotion: string, isTimeSeries: string) {
+editDataType(data_type:string, newName: string, requirements: string) {
   let user = this.getUser();
   let body: any = {token: user.token, data_type: data_type};
   body["name"] = newName;
-  body["isModel"] = isModel;
-  body["isProcessed"] = isProcessed;
-  body["isSkeletonMotion"] = isSkeletonMotion;
-  body["isTimeSeries"] = isTimeSeries;
   body["requirements"] = requirements;
   let bodyStr = JSON.stringify(body);
  
@@ -411,6 +407,57 @@ getDataTypeInfo(data_type: string) {
 }  
 
 
+getTagList(){
+  let user = this.getUser();
+  let body = {token: user.token};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post(this.getServerURL() + "tags", bodyStr);
+}
+
+addDataTag(tag :string){
+  let user = this.getUser();
+  let body = {token: user.token, tag: tag};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post(this.getServerURL() + "tags/add", bodyStr);
+}
+
+removeDataTag(tag :string){
+  let user = this.getUser();
+  let body = {token: user.token, tag: tag};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post(this.getServerURL() + "tags/remove", bodyStr);
+}
+
+getDataTypeTagList(data_type: string){
+  let user = this.getUser();
+  let body = {token: user.token, data_type: data_type};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post(this.getServerURL() + "data_types/tags", bodyStr);
+}
+
+addDataTypeTag(data_type: string, tag :string){
+  let user = this.getUser();
+  let body = {token: user.token, data_type: data_type, tag: tag};
+  let bodyStr = JSON.stringify(body);
+  
+  // sendRequest(this.getServerURL() + "data_types/tags/add", bodyStr, null, null);
+ return this.http.post(this.getServerURL() + "data_types/tags/add", bodyStr);
+}
+
+removeDataTypeTag(data_type: string, tag :string){
+  let user = this.getUser();
+  let body = {token: user.token, data_type: data_type, tag: tag};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post(this.getServerURL() + "data_types/tags/remove", bodyStr);
+}
+
+removeAllDataTypeTags(data_type: string){
+  let user = this.getUser();
+  let body = {token: user.token, data_type: data_type};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post(this.getServerURL() + "data_types/tags/removeall", bodyStr);
+
+}
 
 createDataLoader(dataType: string, engine: string, script: string, requirements: string){
   console.log("send post request");
@@ -534,4 +581,19 @@ deleteDataTransformInputs(data_transform_input_id: string) {
   return this.http.post<any>(this.getServerURL() + "data_transforms/inputs/remove", bodyStr);
 
 }  
+
+runDataTransform(data_transform_id: string, exp_name: string, skeleton_type: string, output_id: string, input_data: Array<Array<string>>, store_log: string, hparams: string){
+  
+  let user = this.getUser();
+  let body: any = {token: user.token, data_transform_id: data_transform_id};
+  body["exp_name"] = exp_name;
+  body["skeleton_type"] = skeleton_type;
+  body["output_id"] = output_id;
+  body["input_data"] = input_data;
+  body["store_log"] = store_log;
+  body["hparams"] = hparams;
+  let bodyStr = JSON.stringify(body);
+  return this.http.post<any>(this.getServerURL() + "data_transforms/run", bodyStr);
+
+}
 }
