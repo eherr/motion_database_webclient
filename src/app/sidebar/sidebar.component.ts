@@ -6,7 +6,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { TreeModule, TreeComponent } from '@circlon/angular-tree-component';
 import Chart from 'chart.js/auto';
-import update from 'node_modules_old/@schematics/update/update';
 
 @Component({
   selector: 'app-sidebar',
@@ -35,7 +34,7 @@ export class SidebarComponent implements OnInit {
   public experimentList: any;
   public graphList: any;
   public characterList: any;
-  
+  public dataTransformList: any;
 
   public uploadedBVHFileList: FileList;
   public skeletonFileList: FileList;
@@ -73,6 +72,7 @@ export class SidebarComponent implements OnInit {
   collectionSubmitted = false;
   bvhSubmitted = false;
   uploadFileSubmitted = false;
+  public runDataTransformSubmitted: boolean = false;
   
   addSkeletonForm: FormGroup;
   editSkeletonForm: FormGroup;
@@ -80,6 +80,7 @@ export class SidebarComponent implements OnInit {
   bvhFileUploadForm: FormGroup;
   uploadFileForm: FormGroup;
   editTagForm: FormGroup;
+  runDataTransformForm: FormGroup;
 
   constructor(public dataService: DataService,
               public msgService: MessageService,
@@ -101,6 +102,7 @@ export class SidebarComponent implements OnInit {
     this.getCharacterModels(this.currentSkeleton);
     this.initForms();
     this.getDataTypeList();
+    this.getDataTransformList();
 
   }
 
@@ -136,6 +138,14 @@ this.editSkeletonForm = this.formBuilder.group({
 });
 this.editTagForm =  this.formBuilder.group({
   name: ['', Validators.required]
+});
+this.runDataTransformForm = this.formBuilder.group({
+  name: [''],
+  skeletonType: [''],
+  storeLog: [''],
+  hparams: [''],
+  dataTransform: [''],
+  inputs: this.formBuilder.array([])
 });
 
   }
@@ -247,7 +257,11 @@ this.editTagForm =  this.formBuilder.group({
       (graphList :any)  => this.graphList = graphList
       );
   }
-
+  getDataTransformList(){
+    this.dataService.getDataTransformList().subscribe(
+      (dataTransformList:any) => {this.dataTransformList = dataTransformList;}
+      );
+  }
   getCharacterModels(skeletonName: string){
     this.dataService.getCharacterModels(skeletonName).subscribe(
         
@@ -573,12 +587,16 @@ this.editTagForm =  this.formBuilder.group({
   openExperimentModal(exp:any){
     this.callModal('plotExperiment');
     this.currentExp = exp;
-    this.plotExperiment(exp);
+    this.plotExperiment(this.currentExp[0]);
   }
 
+  openDeleteExperimentModal(exp:any){
+    this.callModal('deleteExperiment');
+    this.currentExp = exp;
+
+  }
 
   plotExperiment(expId: string){
-    if(expId == "") return;
     this.dataService.getExperimentLog(expId).subscribe(
       (plotData:any) => {this.plotData = plotData;
         console.log(plotData);
@@ -587,8 +605,7 @@ this.editTagForm =  this.formBuilder.group({
       );
   }
   refreshPlotData(){
-    if( this.currentExp == "") return;
-    this.dataService.getExperimentLog( this.currentExp).subscribe(
+    this.dataService.getExperimentLog( this.currentExp[0]).subscribe(
       (plotData:any) => {this.plotData = plotData;
         console.log(plotData);
         this.updateChart(plotData);
@@ -647,5 +664,32 @@ updateChart(data : any){
     }
    
     this.chart.update()
+  }
+
+  openRunDataTransformModal(){
+    
+    if(this.currentCollection == "")return;
+    this.runDataTransformForm.controls["hparams"].setValue("{}");
+    this.activeModal = "runDataTransform";
+  }
+
+  
+  runDataTransformFromModal(modal: any){
+    this.runDataTransformSubmitted = true;
+    let data_transform_id =this.runDataTransformForm.controls["dataTransform"].value
+    let exp_name =  this.runDataTransformForm.controls["name"].value;
+    let skeleton_type = this.runDataTransformForm.controls["skeletonType"].value;
+    let output_id = this.currentCollection;
+    let input_data : Array<Array<string>> = [[this.currentCollection, 'motion', "1"]];
+    let store_log = this.runDataTransformForm.controls["storeLog"].value;
+    let hparamsStr = this.runDataTransformForm.controls["hparams"].value;
+    //let hparamsStr = JSON.stringify(hparams); TODO build form for paramters
+    this.dataService.runDataTransform(data_transform_id, exp_name, skeleton_type, output_id,  input_data, store_log, hparamsStr).subscribe(
+      (values :any) => {}
+  );
+    modal.closeModal();
+    this.activeModal = "";
+    
+    this.runDataTransformSubmitted = false;
   }
 }
