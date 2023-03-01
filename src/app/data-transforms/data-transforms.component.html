@@ -59,15 +59,24 @@
               <div *ngIf="editDataTransformForm.controls['outputType'].errors['required']">output type is required</div>
           </div>
 
+        </div>
+        <div class="field-group">
           <label for="dataTransformScriptInput">Script</label>
+        </div>
+          <div class="field-group">
           <textarea id="dataTransformScriptInput" formControlName="dataTransform" style="width:250px;height:150px;"></textarea>
       <!--      <ngs-code-editor r id="dataTransformScriptInput"
             [theme]=theme
             [codeModel]=dataTransformCodeModel
             [options]=options
           ></ngs-code-editor>-->
-
+        </div>
+        
+        <div class="field-group">
           <label for="dataTransformRequirementsInput">Requirements</label>
+        </div>
+        <div class="field-group">
+          <textarea id="dataTransformRequirementsInput" formControlName="requirements" style="width:250px;height:150px;"></textarea>
           
         <!--    <ngs-code-editor r id="dataTransformRequirementsInput"
             [theme]=theme
@@ -79,7 +88,6 @@
 
         <div class="field-group">
             <label for="editDataTransformInput"> DataTransform Input </label>
-             </div>
             <div class="data-input-container">
             <div class="data-type-list" >
                 <nav id='dataInputTable' class="striped-table">
@@ -107,6 +115,7 @@
              </div>
             <button id="addDataTransformInputBtn" type="button" (click)="addDataTransformInputInModal()">Add Data Input</button>&nbsp;&nbsp;
              </div>
+            </div>
 
 
         <div class="field-group field-group-last">
