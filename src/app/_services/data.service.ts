@@ -84,6 +84,29 @@ export class DataService {
     return this.http.post(this.getServerURL() + "get_skeleton_list", null);
    }
 
+   getFileList(skeletonName: string, collectionID?: string, tags?:Array<string>){
+    
+    let body =  {collection:collectionID, skeleton:skeletonName, tags: tags};
+    let bodyStr = JSON.stringify(body)
+    return this.http.post(this.getServerURL() + "files", bodyStr);
+  }
+
+  addFile(collectionID: string, skeleton: string, name: string, dataType:string,  data: ArrayBuffer){
+    //https://gist.github.com/nuclearglow/ab251744db0ebddd504eea28153eb279    
+    
+    let user = this.getUser();
+    let body = {collection:collectionID, dataType: dataType, user:user.username, token: user.token, name:name, skeleton: skeleton, data: Array.from(new Uint8Array(data))};
+    let bodyStr = JSON.stringify(body);
+    return this.http.post(this.getServerURL() + "files/add", bodyStr);
+  }
+
+  deleteFile(file_id: string){
+    console.log("call delete", file_id);
+    
+    let user = this.getUser();
+    let body = {file_id: file_id,  user:user.username, token:  user.token};
+    return this.http.post(this.getServerURL() + "files/remove", JSON.stringify(body));
+  }
 
   getMotionList(skeletonName: string, collectionID?: string){
     if(collectionID == undefined){
@@ -419,6 +442,13 @@ addDataTag(tag :string){
   let body = {token: user.token, tag: tag};
   let bodyStr = JSON.stringify(body);
   return this.http.post(this.getServerURL() + "tags/add", bodyStr);
+}
+
+renameDataTag(oldTag:string, newTag :string){
+  let user = this.getUser();
+  let body = {token: user.token, old_tag: oldTag, new_tag: newTag};
+  let bodyStr = JSON.stringify(body);
+  return this.http.post(this.getServerURL() + "tags/rename", bodyStr);
 }
 
 removeDataTag(tag :string){

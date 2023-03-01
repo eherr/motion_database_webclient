@@ -27,21 +27,26 @@ export class SidebarComponent implements OnInit {
 	
   };
 
-  public motionList: any;
+  public fileList: any;
   public motionInfo: any;
-  public modelList: any;
+  public tagList: any;
+  public dataTypeList: any;
+  public experimentList: any;
   public graphList: any;
   public characterList: any;
   
 
-  public motionFileList: FileList;
+  public uploadedBVHFileList: FileList;
   public skeletonFileList: FileList;
+  public binaryFileList: FileList;
   public characterFileList: FileList;
 
   public activeTab: string = "tab1";
   public activeModal: string = "none";
   public currentProject: number = 1;
   public currentSkeleton: string = "";
+  public currentTag: string = "";
+  public selectedTagForModal: string = "";
   public selectedSkeleton: string = "";
   public selectedCharacter: string = "";
   public currentCollection: string = "";
@@ -57,14 +62,15 @@ export class SidebarComponent implements OnInit {
 
   skeletonSubmitted = false;
   collectionSubmitted = false;
-  motionSubmitted = false;
-  primitiveSubmitted = false;
+  bvhSubmitted = false;
+  uploadFileSubmitted = false;
   
   addSkeletonForm: FormGroup;
   editSkeletonForm: FormGroup;
   newCollectionForm: FormGroup;
-  motionUploadForm: FormGroup;
-  primitiveUploadForm: FormGroup;
+  bvhFileUploadForm: FormGroup;
+  uploadFileForm: FormGroup;
+  editTagForm: FormGroup;
 
   constructor(public dataService: DataService,
               public msgService: MessageService,
@@ -74,10 +80,12 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit() {
     this.currentSkeleton = "custom";
+    this.currentTag = "clip";
     
     this.currentProject = 1;
     this.getDownloadSettings();
     this.getProjects();
+    this.getTagList();
     this.getSkeletonModels();
     this.initProject();
     this.getGraphList();
@@ -98,13 +106,16 @@ export class SidebarComponent implements OnInit {
       newCollectionType: ['', Validators.required]
   });
 
-  this.motionUploadForm = this.formBuilder.group({
-      motionFiles: ['', Validators.required],
-      skeletonTarget: ['', Validators.required]
+  this.bvhFileUploadForm = this.formBuilder.group({
+      bvhFiles: ['', Validators.required],
+      skeletonTarget: ['', Validators.required],
+      dataType: ['', Validators.required]
   });
 
-  this.primitiveUploadForm = this.formBuilder.group({
-      primitiveFiles: ['', Validators.required]
+  this.uploadFileForm = this.formBuilder.group({
+      files: ['', Validators.required],
+      skeletonTarget: ['', Validators.required],
+      dataType: ['', Validators.required]
   });
   this.addSkeletonForm = this.formBuilder.group({
     skeletonName: ['', Validators.required],
@@ -112,6 +123,9 @@ export class SidebarComponent implements OnInit {
 });
 this.editSkeletonForm = this.formBuilder.group({
   characterFile: ['', Validators.required]
+});
+this.editTagForm =  this.formBuilder.group({
+  name: ['', Validators.required]
 });
 
   }
@@ -139,9 +153,11 @@ this.editSkeletonForm = this.formBuilder.group({
         this.projectInfo = projectInfo;
         this.currentCollection = this.projectInfo["collection"];
       this.getCollections();
-      this.getMotionList();
-      this.getModelList();
-      this.getGraphList();}
+      this.getFileList();
+      this.getDataTypeList();
+      this.getExperimentList();
+      this.getGraphList();
+    }
     );
   }
 
@@ -190,23 +206,33 @@ this.editSkeletonForm = this.formBuilder.group({
       );
   }
 
-  getMotionList(){
-    this.dataService.getMotionList(this.currentSkeleton, this.currentCollection).subscribe(
-      (motionList :any) => {this.motionList = motionList; this.getMotionInfo();}
+  getFileList(){
+    let tagFilterList = [this.currentTag];
+    this.dataService.getFileList(this.currentSkeleton, this.currentCollection, tagFilterList).subscribe(
+      (fileList :any) => {this.fileList = fileList; }
       );
   }
   getMotionInfo(){
-    this.dataService.getMotionInfo(this.motionList).subscribe(
+    this.dataService.getMotionInfo(this.fileList).subscribe(
       (motionInfo :any)  => {this.motionInfo = motionInfo}
     );
   }
-
-  getModelList(){
-    this.dataService.getModelList(this.currentSkeleton, this.currentCollection).subscribe(
-      (modelList :any)  => this.modelList = modelList
+  getExperimentList(){
+    this.dataService.getExperimentList(this.currentCollection).subscribe(
+      (experimentList :any) => {this.experimentList = experimentList}
+      );
+  }
+  getTagList(){
+    this.dataService.getTagList().subscribe(
+      (tagList :any) => {this.tagList = tagList; }
       );
   }
 
+  getDataTypeList(){
+    this.dataService.getDataTypeList().subscribe(
+      (dataTypeList :any) => {this.dataTypeList = dataTypeList; }
+      );
+  }
   getGraphList(){
     this.dataService.getGraphList(this.currentSkeleton).subscribe(
       (graphList :any)  => this.graphList = graphList
@@ -229,14 +255,18 @@ this.editSkeletonForm = this.formBuilder.group({
   selectSkeleton(event: any){
     console.log("Selected Skeleton: " + event);
     this.msgService.sendMessage("AnimationGUI", "SetSourceSkeleton", this.currentSkeleton);
-    this.getMotionList();
-    this.getModelList();
+    this.getFileList();
     this.getGraphList();
   }
 
+  selectTag(event: any){
+    console.log("Selected Tag: " + event);
+    this.getFileList();
+    this.getExperimentList();
+  }
 
   selectProject(event: any){
-    console.log("Selected Skeleton: " + event);
+    console.log("Selected project: " + event);
     this.initProject();
 
   }
@@ -245,20 +275,20 @@ this.editSkeletonForm = this.formBuilder.group({
     this.currentCollection = id;
     this.currentCollectionName = name;
     console.log("Selected Collection: " + id);
-    this.getMotionList();
-    this.getModelList();
+    this.getFileList();
+    this.getExperimentList();
   }
 
   resetSelection(){
     this.currentCollection = "";
     this.currentCollectionName = "";
-    this.motionList = [];
-    this.modelList = [];
+    this.fileList = [];
+    this.experimentList = [];
     this.graphList = [];
   }
 
   motionsFound(){
-    return this.motionList && this.motionList.length > 0;
+    return this.fileList && this.fileList.length > 0;
   }
 
 
@@ -307,10 +337,10 @@ this.editSkeletonForm = this.formBuilder.group({
         });
   }
 
- handleMotionFileInput(target: any) {
+ handleBVHFileInput(target: any) {
     //https://stackoverflow.com/questions/47936183/angular-file-upload
     if (target == null) return;
-    this.motionFileList = target.files;
+    this.uploadedBVHFileList = target.files;
   
   }
   handleSkeletonFileInput(target: any) {
@@ -323,6 +353,10 @@ this.editSkeletonForm = this.formBuilder.group({
     this.characterFileList = target.files;
   }  
   
+  handleBinaryFile(target: any) {
+    if (target == null) return;
+    this.binaryFileList = target.files;
+  }  
   addSkeleton(modal: any){
     this.skeletonSubmitted = true;
 
@@ -362,6 +396,17 @@ this.editSkeletonForm = this.formBuilder.group({
     this.callModal("deleteSkeleton");
   }
 
+
+  openEditTagForm(){
+    this.editTagForm.controls["name"].setValue(this.selectedTagForModal);
+    this.callModal('editTag');
+  }
+
+  deleteTag(){
+    this.callModal("deleteTag");
+  }
+
+
   uploadTextFile(f: any, callback: any){
     //https://developer.mozilla.org/de/docs/Web/API/FileReader/onload
     //https://stackoverflow.com/questions/27254735/filereader-onload-with-result-and-parameter
@@ -396,19 +441,19 @@ this.editSkeletonForm = this.formBuilder.group({
   }
 
 
-  uploadMotionClip(modal: any){
-    this.motionSubmitted = true;
+  importBVHFile(modal: any){
+    this.bvhSubmitted = true;
 
     // stop here if form is invalid
-    if (this.motionUploadForm.invalid) {
+    if (this.bvhFileUploadForm.invalid) {
         return;
     }
 
-    let skeletonName = this.motionUploadForm.controls["skeletonTarget"].value;
+    let skeletonName = this.bvhFileUploadForm.controls["skeletonTarget"].value;
     let collectionID = this.currentCollection;
     let dataService = this.dataService;
-    let updateCallback =  (e: any) => {this.getMotionList();};
-    let inputField = document.getElementById("uploadMotionFilesBtn");
+    let updateCallback =  (e: any) => {this.getFileList();};
+    let inputField = document.getElementById("importBVHFilesBtn");
 
     let backendCall = (name: string, bvhStr: string) => {
       bvhStr = bvhStr.replace(/(\r\n|\n|\r)/gm,"\\n");
@@ -416,8 +461,8 @@ this.editSkeletonForm = this.formBuilder.group({
       dataService.uploadBVHClip(collectionID, skeletonName, name, bvhStr, updateCallback);
     };
 
-    for (var i = 0; i < this.motionFileList.length; i++) {
-        let f = this.motionFileList.item(i);
+    for (var i = 0; i < this.uploadedBVHFileList.length; i++) {
+        let f = this.uploadedBVHFileList.item(i);
         this.uploadTextFile(f, backendCall);
     }
 
@@ -426,14 +471,25 @@ this.editSkeletonForm = this.formBuilder.group({
 
 
   
-  uploadMotionPrimitive(modal: any){
-    this.primitiveSubmitted = true;
-
+  uploadFile(modal: any){
+    this.uploadFileSubmitted = true;
     // stop here if form is invalid
-    if (this.primitiveUploadForm.invalid) {
+    if (this.uploadFileForm.invalid) {
         return;
     }
-
+    let skeleton = this.uploadFileForm.controls["skeletonTarget"].value;
+    let dataType = this.uploadFileForm.controls["dataType"].value;
+    let collectionID = this.currentCollection;
+    let backendCall = (name: string, dataStr: any) => {
+      this.dataService.addFile(collectionID, skeleton, name, dataType, dataStr).subscribe(
+        (e: any)=>{
+          this.getFileList();
+        });
+    };
+    for (var i = 0; i < this.binaryFileList.length; i++) {
+      let f = this.binaryFileList.item(i);
+      this.uploadBinaryFile(f, backendCall);
+  }
     modal.closeModal();
   }
 
@@ -472,13 +528,36 @@ this.editSkeletonForm = this.formBuilder.group({
     this.messageUnityInstance("WebGLHub", "LoadNewScene" ,"rest_interface_client");
   }
 
-  callMotionModel(){
+  callExperiments(){
     this.activeTab ='tab2';
-    this.messageUnityInstance("WebGLHub", "LoadNewScene" ,"rest_interface_client");
+    //this.messageUnityInstance("WebGLHub", "LoadNewScene" ,"rest_interface_client");
   }
 
   callMotionState(){
     this.activeTab ='tab3';
     this.messageUnityInstance("WebGLHub", "LoadNewScene" ,"test");
   }
+
+  editTagFromModal(modal: any){
+    modal.closeModal();
+    
+    let name = this.editTagForm.controls["name"].value;
+    if (this.selectedTagForModal == ""){
+      this.dataService.addDataTag(name).subscribe(
+        (data:any)=>{
+          this.selectedTagForModal = "";
+          this.getTagList();
+        });
+    }else{
+      
+      this.dataService.renameDataTag(this.selectedTagForModal, name).subscribe(
+        (data:any)=>{
+        this.selectedTagForModal = "";
+        this.getTagList();
+        });
+    }
+    
+    this.activeModal = "";
+  }
+
 }

@@ -27,7 +27,7 @@
   flex: 1 1 auto;
   max-height: 550px;
   vertical-align: super;
-  grid-template-rows: 50px 50px 400px;
+  grid-template-rows: 50px 50px 50px 400px;
   grid-template-columns: 250px 660px;
 }
 .project-list{
@@ -44,15 +44,30 @@
   grid-row:2;
   width: 150px;
 }
+.tag-list{
+  grid-column:1;
+  grid-row:3;
+  width: 150px;
+}
 
 
 .tree-view{
   grid-column:1;
-  grid-row:3;
+  grid-row:4;
 }
 .grid-filler{
   grid-column:2;
+  grid-row:1;
+  height: 10px;
+}
+.skeleton-menu{
+  grid-column:2;
   grid-row:2;
+  height: 10px;
+}
+.tag-menu{
+  grid-column:2;
+  grid-row:3;
   height: 10px;
 }
 .box {
@@ -63,7 +78,7 @@
 .tab-content-container{
 
   grid-column:2;
-  grid-row:3;
+  grid-row:4;
   flex: 1 0 auto;
   overflow-y: auto;
   max-height: 550px;
