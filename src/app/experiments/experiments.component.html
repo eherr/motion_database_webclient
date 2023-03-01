@@ -53,13 +53,49 @@
   </div>
 </div>
 <div class="tab-action-bar">
+  <button  type="button" (click)="openRunDataTransformModal();"><i class="fa-solid fa-person-running"></i> Run Data Transform</button>&nbsp;&nbsp;
   <button  type="button" (click)="refreshData();"><i class="fa fa-refres"></i> Refresh </button>&nbsp;&nbsp;
-
+  <p>show labels</p>
+  <input type="checkbox" [(ngModel)]="showLabels" > 
 </div>
 
 
 <!-- Modals start -->
 <div class="modal-container" [ngSwitch]="activeModal">
+  <!-- DataType Modals start -->
+  <app-modal [title]="'Run Data Data Transform in Collection: &quot;' + currentCollection + '&quot;'" slug="runDataTransform" (modalCall)="callModal($event)" *ngSwitchCase="'runDataTransform'" #modal>
+    <form [formGroup]="runDataTransformForm" (ngSubmit)="runDataTransformFromModal(modal)">
+    <div class="field-group">
+      <label for="dataTypeNameInput">Name</label>
+      <input id="dataTypeNameInput" formControlName="name" class="full-width-control" type="text" />
+      <div *ngIf="runDataTransformSubmitted && runDataTransformForm.controls['name'].errors" class="invalid-feedback">
+      <div *ngIf="runDataTransformForm.controls['name'].errors['required']">name is required</div>
+  </div>
+  <div class="field-group">
+  <label for="dataTransform">Data Transform </label>
+  <select formControlName="dataTransform">
+    <option *ngFor="let dt of dataTransformList" [value]="dt[0]">{{dt[1]}}</option>
+  </select>
+  <label for="skeletonType">Skeleton </label>
+  <select formControlName="skeletonType">
+    <option *ngFor="let s of skeletonList" [value]="s[1]">{{s[1]}}</option>
+  </select>
+  <label for="storeLog">Store Log </label>
+  <input formControlName="storeLog" class="full-width-control" type="checkbox" />
+  
+  <label for="dataTransformHParams">Hyper Parameters</label>
+  <input id="dataTransformHParams" formControlName="hparams" class="full-width-control" type="text" />
+</div>
+    </div>
+    <div class="field-group field-group-last">
+      <button id="runDataTransformBtn" type="submit">Run</button>&nbsp;&nbsp;
+      <button id="abortRunDataTransformBtn" type="button" (click)="modal.closeModal(); ">Cancel</button>
+    </div>
+    </form>
+  </app-modal>
+
+
+
 
 <app-modal [title]="'Delete Experiment: &quot;' + selectedExperiment[1] + '&quot;'" slug="deleteExperiment" (modalCall)="callModal($event)" *ngSwitchCase="'deleteExperiment'" #modal>
 <div class="field-group">

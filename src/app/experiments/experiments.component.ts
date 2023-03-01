@@ -2,10 +2,11 @@ import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angu
 import { DataService } from '../_services/data.service';
 import { UserService } from '../_services/user.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import Chart from 'chart.js/auto';
 
 import { TreeModule, TreeComponent } from '@circlon/angular-tree-component';
+
 
 @Component({
   selector: 'app-experiments',
@@ -18,10 +19,14 @@ export class ExperimentsComponent implements OnInit {
   @ViewChild('tree', {static: false}) treeComponent: TreeComponent;
   public projectList: any;
   public projectInfo: any;
+  public dataTransformList: any;
+  public skeletonList: any;
   public experimentList: any;
   public selectedExperiment: any;
   public collections: any[] = [];
 
+  runDataTransformForm: FormGroup;
+  public runDataTransformSubmitted: boolean = false;
   
   public currentCollection: string=  "";
   
@@ -29,6 +34,7 @@ export class ExperimentsComponent implements OnInit {
   public activeModal: string = "none";
   public currentExp: string = "";
   public colors: any = ["red","green",  "blue", "purple", "orange"]
+  public showLabels : boolean = false;
 
   public chart: Chart;
   public plotData : any;
@@ -40,11 +46,27 @@ export class ExperimentsComponent implements OnInit {
               }
 
   ngOnInit() {
+    this.getDataTransformList();
+    this.getSkeletonList();
     this.getProjects();
+    this.initForms();
     this.selectProject(null);
     this.createChart();
 
   }
+
+  initForms(){
+    this.runDataTransformForm = this.formBuilder.group({
+      name: [''],
+      skeletonType: [''],
+      storeLog: [''],
+      hparams: [''],
+      dataTransform: [''],
+      inputs: this.formBuilder.array([])
+    });
+
+  }
+  
   ngAfterInit() {
  
     let firstNode = this.treeComponent.treeModel.getFirstRoot();
@@ -82,9 +104,10 @@ export class ExperimentsComponent implements OnInit {
         return;
       }
       if(data["field_names"][i] == labelKey){
-        
-        for(let j = 0; j <data["log_data"].length; j++ ){
-          this.chart.data.labels.push(data["log_data"][j][i]);
+        if (this.showLabels){
+          for(let j = 0; j <data["log_data"].length; j++ )this.chart.data.labels.push(data["log_data"][j][i]);
+        }else{
+          for(let j = 0; j <data["log_data"].length; j++ )this.chart.data.labels.push(j);
         }
       }else{
         let values = [];
@@ -112,6 +135,18 @@ export class ExperimentsComponent implements OnInit {
   getExperimentList(collectionID: string){
     this.dataService.getExperimentList(collectionID).subscribe(
       (experimentList:any) => {this.experimentList = experimentList;}
+      );
+  }
+
+  
+  getSkeletonList(){
+    this.dataService.getSkeletonModels().subscribe(
+      (skeletonList:any) => {this.skeletonList = skeletonList;}
+      );
+  }
+  getDataTransformList(){
+    this.dataService.getDataTransformList().subscribe(
+      (dataTransformList:any) => {this.dataTransformList = dataTransformList;}
       );
   }
   openDeleteExperimentModal(experiment: any){
@@ -205,6 +240,49 @@ export class ExperimentsComponent implements OnInit {
         this.treeComponent.treeModel.update();
       }
     );
-		
+	
+  }
+
+  
+  openRunDataTransformModal(){
+    if(this.currentCollection == "")return;
+    this.runDataTransformForm.controls["hparams"].setValue("{}");
+    this.activeModal = "runDataTransform";
+  }
+
+
+  
+  runDataTransformFromModal(modal: any){
+    let data_transform_id =this.runDataTransformForm.controls["dataTransform"].value
+    let exp_name =  this.runDataTransformForm.controls["name"].value;
+    let skeleton_type = this.runDataTransformForm.controls["skeletonType"].value;
+    let output_id = this.currentCollection;
+    let input_data : Array<Array<string>> = [[this.currentCollection, 'motion', "1"]];
+    let store_log = this.runDataTransformForm.controls["storeLog"].value;
+    let hparamsStr = this.runDataTransformForm.controls["hparams"].value;
+    //let hparamsStr = JSON.stringify(hparams); TODO build form for paramters
+    this.dataService.runDataTransform(data_transform_id, exp_name, skeleton_type, output_id,  input_data, store_log, hparamsStr).subscribe(
+      (values :any) => {}
+  );
+    modal.closeModal();
+    this.activeModal = "";
+  }
+  addDataInputFormGroup(): FormGroup {
+    return this.formBuilder.group({
+      inputDataType: [""],
+      isCollection: [""],
+    });
+  }  
+  
+  get dataInputsControls(): FormArray {
+    return this.runDataTransformForm.get('inputs') as FormArray;
+  }
+
+  addDataTransformInputInModal(){
+    this.dataInputsControls.push(this.addDataInputFormGroup());
+  }
+  removeDataTransformInputInModal(idx: number){
+    console.log("remove"+idx);
+    this.dataInputsControls.removeAt(idx);
   }
 }
