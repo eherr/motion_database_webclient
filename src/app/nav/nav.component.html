@@ -8,7 +8,6 @@
         <a *ngIf="userService.IsAdmin()" class="nav-link nav-link-highlight" routerLink="/admin"><i class="icon-user"></i> Admin</a>
         <a *ngIf="userService.IsAdmin()" class="nav-link nav-link-highlight" routerLink="/data_types"><i class="icon-user"></i> Data Types</a>
         <a *ngIf="userService.IsAdmin()" class="nav-link nav-link-highlight" routerLink="/data_transforms"><i class="icon-user"></i> Data Transforms</a>
-        <a *ngIf="userService.IsAdmin()" class="nav-link nav-link-highlight" routerLink="/experiments"><i class="icon-user"></i> Experiments</a>
         <a *ngIf="userService.IsLoggedIn()" class="nav-link nav-link-highlight" (click)="userService.logout()"><i class="fas fa-power-off"></i> Logout</a>
     </div> 
 	

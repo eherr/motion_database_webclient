@@ -6,7 +6,7 @@
     <li><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab2'"
             rel="tab2" (click)="callExperiments()">Experiments </a></li>
     <li *ngIf="user.currentUser"><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab3'"
-              rel="tab3" (click)="callMotionState()">Motion State Graph</a></li>
+              rel="tab3" (click)="callMotionModelGraph()">Motion Model Graph</a></li>
   </ul>
       
   <div class="content-container">
@@ -116,9 +116,9 @@
                     <div class="fill-col padded-col">
                       <a href="javascript:" class="icon-button" >{{ m[1] }}</a>
                     </div>
-                    <!--<div *ngIf="user.currentUser || enable_download" class="padded-col align-middle"> messageUnityInstance("AnimationGUI", "GetRandomSample",  m[0]) ;
-                      <a href="javascript:" class="icon-button" (click)="downloadSample(m[0],m[1]);"><i class="fas fa-download"></i></a>
-                    </div>-->
+                    <div  class="padded-col align-middle"><!-- messageUnityInstance("AnimationGUI", "GetRandomSample",  m[0]) ;-->
+                      <a href="javascript:" class="icon-button" (click)="openExperimentModal(m[0]);"><i class="fas fa-download"></i></a>
+                    </div>
                   </div>
                 </nav>
             
@@ -351,6 +351,19 @@
     <div class="field-group field-group-last">
       <button type="button" (click)="modal.closeModal(); dataService.removeDataTag(currentTag); getTagList(); getFileList()">Ok</button>&nbsp;&nbsp;
       <button type="button" (click)="modal.closeModal(); ">Cancel</button>
+    </div>
+  </app-modal>
+
+
+  <app-modal [title]="'Plot Experiment: &quot;' + currentExp + '&quot;'" slug="plotExperiment" (modalCall)="callModal($event)" *ngSwitchCase="'plotExperiment'" #modal>
+    <div class="field-group">
+      <div class="chart-container">
+        <canvas id="MyChart"></canvas>
+        </div>
+    </div>
+    <div class="field-group field-group-last">
+      <button type="button" (click)="refreshPlotData()">Refresh</button>&nbsp;&nbsp;
+      <button type="button" (click)="modal.closeModal(); ">Close</button>
     </div>
   </app-modal>
   <!-- modals end -->

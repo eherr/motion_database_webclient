@@ -5,7 +5,8 @@ import { MessageService } from '../_services/message.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { TreeModule, TreeComponent } from '@circlon/angular-tree-component';
-
+import Chart from 'chart.js/auto';
+import update from 'node_modules_old/@schematics/update/update';
 
 @Component({
   selector: 'app-sidebar',
@@ -58,6 +59,14 @@ export class SidebarComponent implements OnInit {
       this.queuedClip = newClip;
     }
 
+
+
+    public currentExp: string = "";
+    public colors: any = ["red","green",  "blue", "purple", "orange"]
+    public showLabels : boolean = false;
+  public chart: any;
+    public plotData : any;
+
   error = '';
 
   skeletonSubmitted = false;
@@ -91,6 +100,7 @@ export class SidebarComponent implements OnInit {
     this.getGraphList();
     this.getCharacterModels(this.currentSkeleton);
     this.initForms();
+    this.getDataTypeList();
 
   }
 
@@ -154,7 +164,6 @@ this.editTagForm =  this.formBuilder.group({
         this.currentCollection = this.projectInfo["collection"];
       this.getCollections();
       this.getFileList();
-      this.getDataTypeList();
       this.getExperimentList();
       this.getGraphList();
     }
@@ -533,7 +542,7 @@ this.editTagForm =  this.formBuilder.group({
     //this.messageUnityInstance("WebGLHub", "LoadNewScene" ,"rest_interface_client");
   }
 
-  callMotionState(){
+  callMotionModelGraph(){
     this.activeTab ='tab3';
     this.messageUnityInstance("WebGLHub", "LoadNewScene" ,"test");
   }
@@ -560,4 +569,83 @@ this.editTagForm =  this.formBuilder.group({
     this.activeModal = "";
   }
 
+  
+  openExperimentModal(exp:any){
+    this.callModal('plotExperiment');
+    this.currentExp = exp;
+    this.plotExperiment(exp);
+  }
+
+
+  plotExperiment(expId: string){
+    if(expId == "") return;
+    this.dataService.getExperimentLog(expId).subscribe(
+      (plotData:any) => {this.plotData = plotData;
+        console.log(plotData);
+        this.renderChart(plotData);
+      }
+      );
+  }
+  refreshPlotData(){
+    if( this.currentExp == "") return;
+    this.dataService.getExperimentLog( this.currentExp).subscribe(
+      (plotData:any) => {this.plotData = plotData;
+        console.log(plotData);
+        this.updateChart(plotData);
+      }
+      );
+  }
+  
+  renderChart(data : any)
+  {
+    
+    this.chart = new Chart("MyChart", {
+      type: 'line', //this denotes tha type of chart
+
+      data: {// values on X-Axis
+        labels: [ ], 
+	       datasets: []
+      },
+      options: {
+        aspectRatio:2.5
+      }
+      
+    });
+    this.updateChart(data);
+  }
+updateChart(data : any){
+    if (data == null || data["log_data"] == null || data["field_names"] == null) return;
+    this.chart.data.labels =[];
+    let labelKey = 'time/total_timesteps';
+    if(data["label_key"] !=null){
+      labelKey =data["label_key"];
+    }
+    this.chart.data.datasets = [];
+    for(let i = 0; i <data["field_names"].length; i++ ){
+      if(i >= this.colors.length){
+        console.log("Error index outside of colors array");
+        return;
+      }
+      if(data["field_names"][i] == labelKey){
+        if (this.showLabels){
+          for(let j = 0; j <data["log_data"].length; j++ )this.chart.data.labels.push(data["log_data"][j][i]);
+        }else{
+          for(let j = 0; j <data["log_data"].length; j++ )this.chart.data.labels.push(j);
+        }
+      }else{
+        let values = [];
+        for(let j = 0; j <data["log_data"].length; j++ ){
+          values.push(data["log_data"][j][i]);
+        }
+        let dataset = {
+          label: data["field_names"][i],
+          data: values,
+          borderColor: this.colors[i]
+        };
+        this.chart.data.datasets.push(dataset);
+      }
+    }
+   
+    this.chart.update()
+  }
 }
