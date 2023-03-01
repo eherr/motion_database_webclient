@@ -98,15 +98,18 @@
       <select multiple formControlName="tagList">
         <option *ngFor="let tag of allTagsList" [ngValue]="tag">{{tag}} </option>
     </select>
-    
+    <div class="field-group">
   <button id="addTagBtn" type="button" (click)="assignTag()">Assign Tag</button>&nbsp;&nbsp;
-
+</div>
   </div>
   
 
+  <div class="field-group">
       <label for="dataTypeRequirementsInput">Requirements</label>
+    </div>
+    <div class="field-group">
       <textarea id="dataTypeRequirementsInput" formControlName="requirements" style="width:250px;height:150px;"></textarea>
-      
+    </div>
     </div>
     <div class="field-group field-group-last">
       <button id="createDataTypeBtn" type="submit">Save</button>&nbsp;&nbsp;
@@ -134,13 +137,17 @@
           <select formControlName="dataType">
             <option *ngFor="let dt of dataTypeList" [value]="dt">{{dt}}</option>
           </select>
+          </div>
+          <div class="field-group">
           <label for="dataTypeEngineInput">Engine</label>
           <input id="dataTypeEngineInput" formControlName="engine" class="full-width-control" type="text" />
               <div *ngIf="editDataLoaderSubmitted && editDataLoaderForm.controls['engine'].errors" class="invalid-feedback">
               <div *ngIf="editDataLoaderForm.controls['engine'].errors['required']">engine is required</div>
           </div>
-
+          <div class="field-group">
           <label for="dataTypeLoaderInput">Loader</label>
+        </div>
+        <div class="field-group">
           <textarea id="dataTypeLoaderInput" formControlName="loader" style="width:250px;height:150px;"></textarea>
 
         <!--  <ngs-code-editor r id="dataTypeLoaderInput"
@@ -148,8 +155,11 @@
             [codeModel]=loaderCodeModel
             [options]=options
           ></ngs-code-editor>-->
-
+        </div>
+          <div class="field-group">
           <label for="dataLoaderRequirementsInput">Requirements</label>
+        </div>
+        <div class="field-group">
           <textarea id="dataLoaderRequirementsInput" formControlName="requirements" style="width:250px;height:150px;"></textarea>
           
         <!--  <ngs-code-editor r id="dataTypeRequirementsInput"
@@ -157,6 +167,7 @@
             [codeModel]=requirementsModel
             [options]=options
           ></ngs-code-editor>    -->
+        </div>
         </div>
         <div class="field-group field-group-last">
           <button id="createDataLoaderBtn" type="submit">Save</button>&nbsp;&nbsp;
