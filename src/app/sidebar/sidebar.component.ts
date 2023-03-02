@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { TreeModule, TreeComponent } from '@circlon/angular-tree-component';
 import Chart from 'chart.js/auto';
+import { StringLiteral } from 'node_modules_old/typescript/lib/typescript';
 
 @Component({
   selector: 'app-sidebar',
@@ -53,11 +54,7 @@ export class SidebarComponent implements OnInit {
 
   public currentCollectionName: string = "";
 
-  public queuedClip: any;
-    setQueuedClip(newClip: any){
-      this.queuedClip = newClip;
-    }
-
+  public queuedFile: any;
 
 
     public currentExp: string = "";
@@ -319,18 +316,37 @@ this.runDataTransformForm = this.formBuilder.group({
     this.callModal("newCollection");
   }
 
-  removeCollection(){
+  openRemoveCollectionModal(){
     console.log("Click event fired: remove action");
     this.callModal("removeCollection");
   }
 
-  deleteClip(name: string, id: number){
-    this.queuedClip = {id: id, name: name};
-    this.callModal("deleteClip");
+  removeCollection(collectionID: string){
+    this.dataService.removeCollection(collectionID).subscribe(
+      (data:any)=>{
+        this.getCollections();
+      }
+    ); 
   }
 
-  downloadClip(clipID: string, name: string){
-    this.dataService.downloadClipAsBVH(clipID, name);
+  openDeleteFileModal(name: string, id: number){
+    this.queuedFile = {id: id, name: name};
+    this.callModal("deleteFile");
+  }
+
+  deleteFile(fileID:string){
+    this.dataService.deleteFile(fileID).subscribe(
+      (data:any)=>{this.getFileList();}
+    ); 
+    
+  }
+
+  downloadFile(fileID: string, name: string, dataType: string){
+    if(dataType== "motion"){
+        this.dataService.downloadClipAsBVH(fileID, name);
+    }else{
+      this.dataService.downloadFile(fileID, name+"."+dataType);
+    }
   }
 
   downloadSample(modelID: string, name: string){

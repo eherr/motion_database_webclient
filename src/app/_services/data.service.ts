@@ -162,9 +162,9 @@ export class DataService {
   removeCollection(collectionID: string){
     let user = this.getUser();
     let body = {id: collectionID,  user:user.username, token:  user.token};
-    let c = undefined
-    sendRequest(this.getServerURL() + "remove_collection", JSON.stringify(body), c, null);
-    //return this.http.post(this.getServerURL() + "remove_collection", JSON.stringify(body));
+    //let c = undefined
+    //sendRequest(this.getServerURL() + "remove_collection", JSON.stringify(body), c, null);
+    return this.http.post(this.getServerURL() + "remove_collection", JSON.stringify(body));
   }
 
   createCollection(parentID: string, collectionName: string, collectionType: string){
@@ -190,6 +190,13 @@ export class DataService {
 
   downloadSampleAsBVH(modelID: string, name: string){
     sendRequest(this.getServerURL() + "download_sample_as_bvh", '{"model_id":"'+modelID+'"}', saveToFile, name+"_sample.bvh");
+  }
+
+  downloadFile(fileID: string, name: string){
+    
+    let user = this.getUser();
+    let body = {file_id: fileID,  user:user.username, token:  user.token};
+    sendRequest(this.getServerURL() + "files/download", JSON.stringify(body), saveToFile, name);
   }
 
   uploadSkeleton(skeletonName: string, input_data: string, callback: any){
