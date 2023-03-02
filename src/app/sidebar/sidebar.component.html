@@ -156,8 +156,8 @@
     <button *ngIf="user.currentUser" type="button" (click)="openCollectionForm()"><i class="fas fa-plus-circle"></i> Add Collection</button>&nbsp;&nbsp;
     <button *ngIf="user.currentUser && currentCollection" type="button" (click)="openRemoveCollectionModal()"><i class="fas fa-trash"></i> Remove Collection</button>&nbsp;&nbsp;
     <button *ngIf="user.currentUser && currentCollection  && activeTab == 'tab1'" id="showUploadFileModalBtn" type="button" (click)="callModal('importBVHFile')"><i class="fas fa-upload"></i> Import BVH File</button>&nbsp;&nbsp;
-  <button *ngIf="user.currentUser && activeTab == 'tab1'" id="showUploadFileModalBtn" type="button" (click)="callModal('uploadFile')"><i class="fas fa-upload"></i> Upload File</button>
-  <button *ngIf="user.currentUser && currentCollection  && activeTab == 'tab2'" type="button" (click)="openRunDataTransformModal();"><i class="fa-solid fa-person-running"></i> Run Data Transform</button>
+  <button *ngIf="user.currentUser && activeTab == 'tab1'" id="showUploadFileModalBtn" type="button" (click)="callModal('uploadFile')"><i class="fas fa-upload"></i> Upload File</button>&nbsp;&nbsp;
+  <button *ngIf="user.currentUser && currentCollection  && activeTab == 'tab1'" type="button" (click)="openRunDataTransformModal();"><i class="fa-solid fa-person-running"></i> Run Data Transform</button>
   </div>
   
   <div  *ngIf="!user.currentUser" class="sidebar-footer field-group text-align-center">
@@ -383,7 +383,7 @@
   </app-modal>
 
 
-  <app-modal [title]="'Run Data Data Transform in Collection: &quot;' + currentCollection + '&quot;'" slug="runDataTransform" (modalCall)="callModal($event)" *ngSwitchCase="'runDataTransform'" #modal>
+  <app-modal [title]="'Run Data Transform in Collection: &quot;' + currentCollection + '&quot;'" slug="runDataTransform" (modalCall)="callModal($event)" *ngSwitchCase="'runDataTransform'" #modal>
     <form [formGroup]="runDataTransformForm" (ngSubmit)="runDataTransformFromModal(modal)">
     <div class="field-group">
       <label for="dataTypeNameInput">Name</label>
@@ -393,7 +393,7 @@
   </div>
   <div class="field-group">
   <label for="dataTransform">Data Transform </label>
-  <select formControlName="dataTransform">
+  <select formControlName="dataTransform" (ngModelChange)="selectDataTransform($event)" >
     <option *ngFor="let dt of dataTransformList" [value]="dt[0]">{{dt[1]}}</option>
   </select>
   </div>
@@ -409,9 +409,12 @@
 </div>
 
 <div class="field-group">
-  <label for="dataTransformHParams">Hyper Parameters</label>
-  <input id="dataTransformHParams" formControlName="hparams" class="full-width-control" type="text" />
+  <label for="dataTransformHParams">Parameters</label>
+  <textarea id="dataTransformHParams" formControlName="parameters" style="width:450px;height:150px;"></textarea>
+          
 </div>
+
+
 </div>
     <div class="field-group field-group-last">
       <button id="runDataTransformBtn" type="submit">Run</button>&nbsp;&nbsp;
