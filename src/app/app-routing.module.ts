@@ -7,7 +7,6 @@ import { EditUserComponent } from './edit-user/edit-user.component';
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { ImpressComponent } from './impress/impress.component';
-import { ExperimentsComponent } from './experiments/experiments.component';
 import { DataTypesComponent } from './data-types/data-types.component';
 import { DataTransformsComponent } from './data-transforms/data-transforms.component';
 import { UserPasswordResetComponent } from './user-password-reset/user-password-reset.component';
@@ -47,11 +46,6 @@ const routes: Routes = [
     path: 'impress',
     component: ImpressComponent,
     data: { title: 'Impress' }
-  },
-  {
-    path: 'experiments',
-    component: ExperimentsComponent,
-    data: { title: 'Experiments' }
   },
   {
     path: 'data_transforms',

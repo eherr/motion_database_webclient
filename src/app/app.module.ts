@@ -21,7 +21,6 @@ import { ImpressComponent } from './impress/impress.component';
 
 import { BasicAuthInterceptor } from './_helpers/basic-auth.interceptor';
 import { ErrorInterceptor } from './_helpers/error.interceptor';
-import { ExperimentsComponent } from './experiments/experiments.component';
 import { UserPasswordResetComponent } from './user-password-reset/user-password-reset.component';
 import { DataTypesComponent } from './data-types/data-types.component';
 //import { CodeEditorModule } from '@ngstack/code-editor';
@@ -41,7 +40,6 @@ import { DataTransformsComponent } from './data-transforms/data-transforms.compo
     LoginComponent,
     RegistrationComponent,
     ImpressComponent,
-    ExperimentsComponent,
     UserPasswordResetComponent,
     DataTypesComponent,
     DataTransformsComponent,
