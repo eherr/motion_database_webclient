@@ -619,7 +619,7 @@ deleteDataTransformInputs(data_transform_input_id: string) {
 
 }  
 
-runDataTransform(data_transform_id: string, exp_name: string, skeleton_type: string, output_id: string, input_data: Array<Array<string>>, store_log: string, hparams: string){
+runDataTransform(data_transform_id: string, exp_name: string, skeleton_type: string, output_id: string, input_data: Array<Array<string>>, store_log: string, hparams: any){
   
   let user = this.getUser();
   let body: any = {token: user.token, data_transform_id: data_transform_id};

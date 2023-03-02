@@ -698,9 +698,9 @@ updateChart(data : any){
     let output_id = this.currentCollection;
     let input_data : Array<Array<string>> = [[this.currentCollection, 'motion', "1"]];
     let store_log = this.runDataTransformForm.controls["storeLog"].value;
-    let hparamsStr = this.runDataTransformForm.controls["hparams"].value;
+    let hparams = JSON.parse(this.runDataTransformForm.controls["hparams"].value);
     //let hparamsStr = JSON.stringify(hparams); TODO build form for paramters
-    this.dataService.runDataTransform(data_transform_id, exp_name, skeleton_type, output_id,  input_data, store_log, hparamsStr).subscribe(
+    this.dataService.runDataTransform(data_transform_id, exp_name, skeleton_type, output_id,  input_data, store_log, hparams).subscribe(
       (values :any) => {}
   );
     modal.closeModal();
