@@ -50,6 +50,7 @@ public options = {
       outputType: ['', Validators.required],
       dataTransform: ['', ],
       requirements: ['',],
+      parameters: ['',],
       inputs: this.formBuilder.array([])
     });
 
@@ -64,6 +65,9 @@ public options = {
   }
   get requirementsModel(): FormControl {
     return this.editDataTransformForm.get('requirements') as FormControl;
+  }
+  get parametersModel(): FormControl{
+    return this.editDataTransformForm.get('parameters') as FormControl
   }
   getDataTransformList(){
     this.dataService.getDataTypeList().subscribe(
@@ -93,6 +97,7 @@ public options = {
           this.editDataTransformForm.controls["outputType"].setValue(data["outputType"]);
           this.dataTransformCodeModel.setValue(data["script"]);
           this.requirementsModel.setValue(data["requirements"]);
+          this.parametersModel.setValue(data["parameters"]);
           //this.requirementsModel.value = data["requirements"];
           
           this.activeModal = "editDataTransform";
@@ -115,7 +120,7 @@ public options = {
     } else{
       this.editDataTransformForm.controls["name"].setValue("");
       this.editDataTransformForm.controls["outputType"].setValue("");
-   
+      this.editDataTransformForm.controls["parameters"].setValue("{}");
       this.activeModal = "editDataTransform";
     }
   }
@@ -133,9 +138,10 @@ public options = {
     let outputType = this.editDataTransformForm.controls["outputType"].value;
     let scriptText = this.dataTransformCodeModel.value;
     let requirementsText = this.requirementsModel.value;
+    let parametersText = this.parametersModel.value;
 
     if (this.selectedDataTransform == null){
-      this.dataService.createDataTransform(name, scriptText,outputType, requirementsText).subscribe(
+      this.dataService.createDataTransform(name, scriptText,outputType, requirementsText, parametersText).subscribe(
         (result: any)=>{
           let dtID = result["id"];
           this.addDataTransformInputsToDB(dtID);
@@ -147,7 +153,7 @@ public options = {
         (result: any)=>{
         }
       );
-      this.dataService.editDataTransform(this.selectedDataTransform, name, scriptText, outputType, requirementsText).subscribe(
+      this.dataService.editDataTransform(this.selectedDataTransform, name, scriptText, outputType, requirementsText, parametersText).subscribe(
         (result: any)=>{
         }
       );

@@ -540,20 +540,21 @@ getDataTransformList(){
   let bodyStr = JSON.stringify(body);
   return this.http.post(this.getServerURL() + "data_transforms", bodyStr);
 }
-createDataTransform(name:string, script: string, outputType: string, requirements: string){
+createDataTransform(name:string, script: string, outputType: string, requirements: string, parameters: string){
   console.log("send post request");
   let user = this.getUser();
-  let body = {token: user.token,name:name, outputType: outputType, script:script, requirements: requirements};
+  let body = {token: user.token,name:name, outputType: outputType, script:script, requirements: requirements, parameters:parameters};
   let bodyStr = JSON.stringify(body);
   return this.http.post<any>(this.getServerURL() + "data_transforms/add", bodyStr);
 }
-editDataTransform(data_transform_id: string, name:string, script: string, outputType: string, requirements: string) {
+editDataTransform(data_transform_id: string, name:string, script: string, outputType: string, requirements: string, parameters: string) {
   let user = this.getUser();
   let body: any = {token: user.token, data_transform_id: data_transform_id};
   body["script"] = script;
   body["name"] = name;
   body["requirements"] = requirements;
   body["outputType"] = outputType;
+  body["parameters"] = parameters;
   let bodyStr = JSON.stringify(body);
  
   //return this.http.post(editUserUrl, bodyStr);
