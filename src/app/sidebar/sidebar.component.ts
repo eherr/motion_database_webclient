@@ -682,6 +682,17 @@ updateChart(data : any){
     this.chart.update()
   }
 
+  openImportBVHFileModal(){
+    
+    this.bvhFileUploadForm.controls["skeletonTarget"].setValue(this.currentSkeleton);
+    this.callModal('importBVHFile')
+  }
+
+  openUploadFileModal(){
+    
+    this.uploadFileForm.controls["skeletonTarget"].setValue(this.currentSkeleton);
+    this.callModal('uploadFile')
+  }
   openRunDataTransformModal(){
     
     if(this.currentCollection == "")return;

@@ -34,7 +34,7 @@
           </div>&nbsp;
   
           <div id="tagList" class="tag-list">
-          <label for="tag">Tag</label>
+          <label for="tag">Data Type Tag</label>
           <select [(ngModel)]="currentTag" (ngModelChange)="selectTag($event)" id="tag" class="full-width-control">
             <option *ngFor="let t of tagList" 
                     (click)="getFileList()"  value="{{ t[0] }}">{{ t[0] }}</option>
@@ -85,7 +85,6 @@
   
                 <nav id="motionClipTable" class="striped-table">
                   <!-- m[0]: id, m[1]: name -->
-                  <label>Motions</label>
                   <p *ngIf="!currentSkeleton" class="text-align-center field-group"><i class="far fa-hand-pointer"></i> Select a skeleton.</p>
                   <p *ngIf="currentSkeleton && !currentCollection" class="text-align-center field-group"><i class="far fa-hand-pointer"></i> Select a collection to display motion clips.</p>
                   <!-- motion table start -->
@@ -126,7 +125,7 @@
                 </nav>
             
                 
-              </div>-->
+              </div>
             
               <div id="tab3" class="tab-body" *ngSwitchCase="'tab3'">
                 <p *ngIf="!currentSkeleton || !currentCollection" class="text-align-center"><i class="far fa-hand-pointer field-group"></i> Select a skeleton and Action first.</p>
@@ -155,8 +154,8 @@
   <div class="tab-action-bar">
     <button *ngIf="user.currentUser" type="button" (click)="openCollectionForm()"><i class="fas fa-plus-circle"></i> Add Collection</button>&nbsp;&nbsp;
     <button *ngIf="user.currentUser && currentCollection" type="button" (click)="openRemoveCollectionModal()"><i class="fas fa-trash"></i> Remove Collection</button>&nbsp;&nbsp;
-    <button *ngIf="user.currentUser && currentCollection  && activeTab == 'tab1'" id="showUploadFileModalBtn" type="button" (click)="callModal('importBVHFile')"><i class="fas fa-upload"></i> Import BVH File</button>&nbsp;&nbsp;
-  <button *ngIf="user.currentUser && activeTab == 'tab1'" id="showUploadFileModalBtn" type="button" (click)="callModal('uploadFile')"><i class="fas fa-upload"></i> Upload File</button>&nbsp;&nbsp;
+    <button *ngIf="user.currentUser && currentCollection  && activeTab == 'tab1'" id="showUploadFileModalBtn" type="button" (click)="openImportBVHFileModal()"><i class="fas fa-upload"></i> Import BVH File</button>&nbsp;&nbsp;
+  <button *ngIf="user.currentUser && activeTab == 'tab1'" id="showUploadFileModalBtn" type="button" (click)="openUploadFileModal()"><i class="fas fa-upload"></i> Upload File</button>&nbsp;&nbsp;
   <button *ngIf="user.currentUser && currentCollection  && activeTab == 'tab1'" type="button" (click)="openRunDataTransformModal();"><i class="fa-solid fa-person-running"></i> Run Data Transform</button>
   </div>
   
@@ -273,12 +272,7 @@
   
   <app-modal title="Import BVH File" slug="importBVHFile" (modalCall)="callModal($event)" *ngSwitchCase="'importBVHFile'" #modal>
     <form [formGroup]="bvhFileUploadForm" (ngSubmit)="importBVHFile(modal)">
-    <div class="field-group">
-        <input id="importBVHFilesBtn" formControlName="bvhFiles" class="full-width-control" (change)="handleBVHFileInput($event.target)" type="file" multiple />
-        <div *ngIf="bvhSubmitted && bvhFileUploadForm.controls['bvhFiles'].errors" class="invalid-feedback">
-            <div *ngIf="bvhFileUploadForm.controls['bvhFiles'].errors['required']">Select at least one BVH file.</div>
-        </div>
-    </div>
+  
     <div id='skeletonModelList' class="field-group">
       <label for="skeletonModel">Skeleton</label>
       <select id='skeletonModel' formControlName="skeletonTarget" class="full-width-control">
@@ -289,7 +283,12 @@
           <div *ngIf="bvhFileUploadForm.controls['skeletonTarget'].errors['required']">Select a skeleton</div>
       </div>
       </div>
-
+      <div class="field-group">
+        <input id="importBVHFilesBtn" formControlName="bvhFiles" class="full-width-control" (change)="handleBVHFileInput($event.target)" type="file" multiple />
+        <div *ngIf="bvhSubmitted && bvhFileUploadForm.controls['bvhFiles'].errors" class="invalid-feedback">
+            <div *ngIf="bvhFileUploadForm.controls['bvhFiles'].errors['required']">Select at least one BVH file.</div>
+        </div>
+    </div>
     <div class="field-group field-group-last">
       <button type="button" type="submit">Upload</button>&nbsp;&nbsp;
       <button id="abortUploadMotionBtn" type="button" (click)="modal.closeModal()">Cancel</button>
@@ -300,21 +299,18 @@
   <app-modal title="Upload File" slug="uploadFile" (modalCall)="callModal($event)" *ngSwitchCase="'uploadFile'" #modal>
     <form [formGroup]="uploadFileForm" (ngSubmit)="uploadFile(modal)">
     <div class="field-group">
-      <input id="uploadFileBtn" class="full-width-control" formControlName="files" name="files[]" type="file"  (change)="handleBinaryFile($event.target)" />
-      <div *ngIf="uploadFileSubmitted && uploadFileForm.controls['files'].errors" class="invalid-feedback">
-          <div *ngIf="uploadFileForm.controls['files'].errors['required']">Select a file</div>
-      </div>
-    </div>
-    <div id='skeletonModelList' class="field-group">
-      <label for="skeletonModel">Skeleton</label>
-      <select id='skeletonModel' formControlName="skeletonTarget" class="full-width-control">
-        <option *ngFor="let skeleton of skeletonList"
-          value="{{ skeleton[1] }}">{{ skeleton[1] }}</option>
-      </select>
-      <div *ngIf="uploadFileSubmitted && uploadFileForm.controls['skeletonTarget'].errors" class="invalid-feedback">
-          <div *ngIf="uploadFileForm.controls['skeletonTarget'].errors['required']">Select a skeleton</div>
-      </div>
-      </div>
+
+      <div id='skeletonModelList' class="field-group">
+        <label for="skeletonModel">Skeleton</label>
+        <select id='skeletonModel' formControlName="skeletonTarget" class="full-width-control">
+          <option *ngFor="let skeleton of skeletonList"
+            value="{{ skeleton[1] }}">{{ skeleton[1] }}</option>
+        </select>
+        <div *ngIf="uploadFileSubmitted && uploadFileForm.controls['skeletonTarget'].errors" class="invalid-feedback">
+            <div *ngIf="uploadFileForm.controls['skeletonTarget'].errors['required']">Select a skeleton</div>
+        </div>
+        </div>
+        
     <div id='dataTypeList' class="field-group">
       <label for="dataType">Data Type</label>
       <select id='dataType' formControlName="dataType" class="full-width-control">
@@ -325,6 +321,13 @@
           <div *ngIf="uploadFileForm.controls['dataType'].errors['required']">Select a data type</div>
       </div>
       </div>
+      
+      <input id="uploadFileBtn" class="full-width-control" formControlName="files" name="files[]" type="file"  (change)="handleBinaryFile($event.target)" />
+      <div *ngIf="uploadFileSubmitted && uploadFileForm.controls['files'].errors" class="invalid-feedback">
+          <div *ngIf="uploadFileForm.controls['files'].errors['required']">Select a file</div>
+      </div>
+    </div>
+    
     <div class="field-group field-group-last">
       <button type="button" type="submit">Upload</button>&nbsp;&nbsp;
       <button id="abortUploadFileBtn" type="button" (click)="modal.closeModal()">Cancel</button>
@@ -410,7 +413,7 @@
 
 <div class="field-group">
   <label for="dataTransformHParams">Parameters</label>
-  <textarea id="dataTransformHParams" formControlName="parameters" style="width:450px;height:150px;"></textarea>
+  <textarea id="dataTransformHParams" formControlName="parameters" style="width:850px;height:250px;"></textarea>
           
 </div>
 
