@@ -142,7 +142,9 @@ this.runDataTransformForm = this.formBuilder.group({
   storeLog: [''],
   parameters: [''],
   dataTransform: [''],
-  inputs: this.formBuilder.array([])
+  runOnCluster: [''],
+  clusterUser: [''],
+  clusterPassword: [''],
 });
 
   }
@@ -699,10 +701,23 @@ updateChart(data : any){
     this.runDataTransformForm.controls["parameters"].setValue("{}");
     this.runDataTransformForm.controls["skeletonType"].setValue(this.currentSkeleton);
     this.runDataTransformForm.controls["skeletonType"].disable();
+    this.runDataTransformForm.controls["clusterUser"].disable();
+    this.runDataTransformForm.controls["clusterPassword"].disable();
+    this.runDataTransformForm.controls["runOnCluster"].setValue(false);
     this.activeModal = "runDataTransform";
   }
 
-  
+  runOnClusterChanged(){
+    if (this.runDataTransformForm.controls["runOnCluster"].value){
+      this.runDataTransformForm.controls["clusterUser"].enable();
+      this.runDataTransformForm.controls["clusterPassword"].enable();
+    }else{
+      this.runDataTransformForm.controls["clusterUser"].disable();
+      this.runDataTransformForm.controls["clusterPassword"].disable(); 
+    }
+
+  }
+
   runDataTransformFromModal(modal: any){
     this.runDataTransformSubmitted = true;
     let data_transform_id =this.runDataTransformForm.controls["dataTransform"].value

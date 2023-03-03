@@ -416,7 +416,21 @@
   <textarea id="dataTransformHParams" formControlName="parameters" style="width:850px;height:250px;"></textarea>
           
 </div>
-
+<div class="field-group">
+  <label for="runOnCluster">Run On Cluster </label>
+  <input formControlName="runOnCluster" class="full-width-control" type="checkbox"  (change)="runOnClusterChanged()"/>
+</div>
+<div class="field-group">
+<div class="field-group">
+  <label for="clusterUser">User</label>
+  <input id="clusterUser" formControlName="clusterUser" class="full-width-control" type="text" />
+ 
+</div>
+<div class="field-group">
+  <label for="clusterPassword">Password</label>
+  <input id="clusterPassword" formControlName="clusterPassword" class="full-width-control" type="password" />
+ 
+</div></div>
 
 </div>
     <div class="field-group field-group-last">

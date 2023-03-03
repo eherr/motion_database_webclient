@@ -620,7 +620,7 @@ deleteDataTransformInputs(data_transform_input_id: string) {
 
 }  
 
-runDataTransform(data_transform_id: string, exp_name: string, skeleton_type: string, output_id: string, input_data: Array<Array<string>>, store_log: string, hparams: any){
+runDataTransform(data_transform_id: string, exp_name: string, skeleton_type: string, output_id: string, input_data: Array<Array<string>>, store_log: string, hparams: any, cluster_config?: any){
   
   let user = this.getUser();
   let body: any = {token: user.token, data_transform_id: data_transform_id};
@@ -630,6 +630,9 @@ runDataTransform(data_transform_id: string, exp_name: string, skeleton_type: str
   body["input_data"] = input_data;
   body["store_log"] = store_log;
   body["hparams"] = hparams;
+  if(cluster_config!=null){
+    body["cluster_config"] = cluster_config;
+  }
   let bodyStr = JSON.stringify(body);
   return this.http.post<any>(this.getServerURL() + "data_transforms/run", bodyStr);
 
