@@ -145,6 +145,8 @@ this.runDataTransformForm = this.formBuilder.group({
   runOnCluster: [''],
   clusterUser: [''],
   clusterPassword: [''],
+  clusterURL: [''],
+  clusterImage: ['']
 });
 
   }
@@ -706,6 +708,8 @@ updateChart(data : any){
     this.runDataTransformForm.controls["skeletonType"].disable();
     this.runDataTransformForm.controls["clusterUser"].disable();
     this.runDataTransformForm.controls["clusterPassword"].disable();
+    this.runDataTransformForm.controls["clusterURL"].disable();
+    this.runDataTransformForm.controls["clusterImage"].disable(); 
     this.runDataTransformForm.controls["runOnCluster"].setValue(false);
     this.activeModal = "runDataTransform";
   }
@@ -714,9 +718,13 @@ updateChart(data : any){
     if (this.runDataTransformForm.controls["runOnCluster"].value){
       this.runDataTransformForm.controls["clusterUser"].enable();
       this.runDataTransformForm.controls["clusterPassword"].enable();
+      this.runDataTransformForm.controls["clusterURL"].enable();
+      this.runDataTransformForm.controls["clusterImage"].enable(); 
     }else{
       this.runDataTransformForm.controls["clusterUser"].disable();
       this.runDataTransformForm.controls["clusterPassword"].disable(); 
+      this.runDataTransformForm.controls["clusterURL"].disable();
+      this.runDataTransformForm.controls["clusterImage"].disable(); 
     }
 
   }
@@ -730,6 +738,15 @@ updateChart(data : any){
     let store_log = this.runDataTransformForm.controls["storeLog"].value;
     let parameters = JSON.parse(this.runDataTransformForm.controls["parameters"].value);
 
+    let run_on_cluster = this.runDataTransformForm.controls["runOnCluster"].value;    
+    let cluster_config:any = null;
+    if (run_on_cluster){
+        let clusterUser = this.runDataTransformForm.controls["clusterUser"].value;    
+        let clusterPassword = this.runDataTransformForm.controls["clusterPassword"].value;
+        let clusterURL = this.runDataTransformForm.controls["clusterURL"].value;    
+        let clusterImage = this.runDataTransformForm.controls["clusterImage"].value;
+        cluster_config = {user: clusterUser, password: clusterPassword, image: clusterImage, url: clusterURL}
+    }
     this.dataService.getDataTransformInputList(data_transform_id).subscribe(
       (dataTransformInputs: any)=>{
         let input_data : Array<Array<string>> =[];
@@ -738,7 +755,7 @@ updateChart(data : any){
         }
 
         this.dataService.runDataTransform(data_transform_id, exp_name, skeleton_type, output_id, input_data,
-                                         store_log, parameters).subscribe((values :any) => {});
+                                         store_log, parameters, cluster_config).subscribe((values :any) => {});
       }
 
 

@@ -390,7 +390,7 @@
     <form [formGroup]="runDataTransformForm" (ngSubmit)="runDataTransformFromModal(modal)">
     <div class="field-group">
       <label for="dataTypeNameInput">Name</label>
-      <input id="dataTypeNameInput" formControlName="name" class="full-width-control" type="text" />
+      <input id="dataTypeNameInput" formControlName="name" type="text" />
       <div *ngIf="runDataTransformSubmitted && runDataTransformForm.controls['name'].errors" class="invalid-feedback">
       <div *ngIf="runDataTransformForm.controls['name'].errors['required']">name is required</div>
   </div>
@@ -408,7 +408,7 @@
   </div>
   <div class="field-group">
   <label for="storeLog">Store Log </label>
-  <input formControlName="storeLog" class="full-width-control" type="checkbox" />
+  <input formControlName="storeLog"  type="checkbox" />
 </div>
 
 <div class="field-group">
@@ -418,20 +418,29 @@
 </div>
 <div class="field-group">
   <label for="runOnCluster">Run On Cluster </label>
-  <input formControlName="runOnCluster" class="full-width-control" type="checkbox"  (change)="runOnClusterChanged()"/>
+  <input formControlName="runOnCluster" type="checkbox"  (change)="runOnClusterChanged()"/>
 </div>
 <div class="field-group">
 <div class="field-group">
   <label for="clusterUser">User</label>
-  <input id="clusterUser" formControlName="clusterUser" class="full-width-control" type="text" />
+  <input id="clusterUser" formControlName="clusterUser"  type="text" />
  
 </div>
 <div class="field-group">
   <label for="clusterPassword">Password</label>
-  <input id="clusterPassword" formControlName="clusterPassword" class="full-width-control" type="password" />
+  <input id="clusterPassword" formControlName="clusterPassword" type="password" />
  
 </div></div>
-
+<div class="field-group">
+  <label for="clusterURL">URL</label>
+  <input id="clusterURL" formControlName="clusterURL"  type="text" />
+ 
+</div>
+<div class="field-group">
+  <label for="clusterImage">Image</label>
+  <input id="clusterImage" formControlName="clusterImage"  type="text" />
+ 
+</div>
 </div>
     <div class="field-group field-group-last">
       <button id="runDataTransformBtn" type="submit">Run</button>&nbsp;&nbsp;
