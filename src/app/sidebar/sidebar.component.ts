@@ -426,6 +426,9 @@ this.runDataTransformForm = this.formBuilder.group({
     modal.closeModal();
   }
   
+  loadFileInViewer(fileID: string, name: string, dataType: string){
+    this.messageUnityInstance("AnimationGUI", "GetMotionByID", fileID);
+  }
 
   openEditSkeletonForm(){
     this.getCharacterModels(this.currentSkeleton);

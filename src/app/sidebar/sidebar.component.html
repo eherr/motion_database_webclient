@@ -92,7 +92,7 @@
                 
                   <div *ngFor="let m of fileList" class="flex-row">
                     <div class="fill-col padded-col">
-                      <a href="javascript:" (click)='messageUnityInstance("AnimationGUI", "GetMotionByID", m[0]);'>{{ m[1] }}</a>
+                      <a href="javascript:" (click)='loadFileInViewer(m[0], m[1], m[2])'>{{ m[1] }}</a>
                     </div>
                     <div *ngIf="motionInfo != undefined &&  motionInfo[m[0]] != undefined">{{ motionInfo[m[0]]["numFrames"] }}</div>
                     <div *ngIf="user.currentUser || enable_download || (motionInfo != undefined && motionInfo[m[0]] != undefined && motionInfo[m[0]]['public'] == 1)" class="padded-col align-middle">
