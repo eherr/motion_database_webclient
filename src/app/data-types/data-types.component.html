@@ -41,7 +41,7 @@
               <label>Data Type</label>
            </div>
            <div class="fill-col padded-col">
-           <label>Engine</label>
+           <label>Context</label>
           </div>
             <div class="fill-col padded-col">
             <label>Operations</label>
@@ -61,11 +61,11 @@
            </div>
          </div>
        </nav>
+       <div class="tab-action-bar">
+         <button  type="button" (click)="openEditDataLoaderModal(null, null)"><i class="fas fa-plus-circle"></i> Add Data Loader Script </button>&nbsp;&nbsp;
+      
+      </div>
    </div>
-   <div class="tab-action-bar">
-     <button  type="button" (click)="openEditDataLoaderModal(null, null)"><i class="fas fa-plus-circle"></i> Add Data Loader Script </button>&nbsp;&nbsp;
-  
-  </div>
   </div>
 
       
@@ -108,7 +108,7 @@
       <label for="dataTypeRequirementsInput">Requirements</label>
     </div>
     <div class="field-group">
-      <textarea id="dataTypeRequirementsInput" formControlName="requirements" style="width:900px;height:250px;"></textarea>
+      <textarea id="dataTypeRequirementsInput" formControlName="requirements" style="width:900px;height:150px;"></textarea>
     </div>
     </div>
     <div class="field-group field-group-last">
@@ -139,7 +139,7 @@
           </select>
           </div>
           <div class="field-group">
-          <label for="dataTypeEngineInput">Engine</label>
+          <label for="dataTypeEngineInput">Context</label>
           <input id="dataTypeEngineInput" formControlName="engine" class="full-width-control" type="text" />
               <div *ngIf="editDataLoaderSubmitted && editDataLoaderForm.controls['engine'].errors" class="invalid-feedback">
               <div *ngIf="editDataLoaderForm.controls['engine'].errors['required']">engine is required</div>
@@ -160,7 +160,7 @@
           <label for="dataLoaderRequirementsInput">Requirements</label>
         </div>
         <div class="field-group">
-          <textarea id="dataLoaderRequirementsInput" formControlName="requirements" style="width:900px;height:250px;"></textarea>
+          <textarea id="dataLoaderRequirementsInput" formControlName="requirements" style="width:900px;height:50px;"></textarea>
           
         <!--  <ngs-code-editor r id="dataTypeRequirementsInput"
             [theme]=theme

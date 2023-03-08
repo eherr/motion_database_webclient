@@ -2,7 +2,7 @@ import { Component, OnInit,ViewChild } from '@angular/core';
 import { DataService } from '../_services/data.service';
 import { UserService } from '../_services/user.service';
 import { MessageService } from '../_services/message.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 
 import { TreeModule, TreeComponent } from '@circlon/angular-tree-component';
 import Chart from 'chart.js/auto';
@@ -138,7 +138,8 @@ this.editTagForm =  this.formBuilder.group({
 });
 this.runDataTransformForm = this.formBuilder.group({
   name: [''],
-  skeletonType: [''],
+  inputSkeleton: [''],
+  outputSkeleton: [''],
   storeLog: [''],
   parameters: [''],
   dataTransform: [''],
@@ -704,8 +705,9 @@ updateChart(data : any){
     
     if(this.currentCollection == "")return;
     this.runDataTransformForm.controls["parameters"].setValue("{}");
-    this.runDataTransformForm.controls["skeletonType"].setValue(this.currentSkeleton);
-    this.runDataTransformForm.controls["skeletonType"].disable();
+    this.runDataTransformForm.controls["inputSkeleton"].setValue(this.currentSkeleton);
+    this.runDataTransformForm.controls["inputSkeleton"].disable();
+    this.runDataTransformForm.controls["outputSkeleton"].setValue(this.currentSkeleton);
     this.runDataTransformForm.controls["clusterUser"].disable();
     this.runDataTransformForm.controls["clusterPassword"].disable();
     this.runDataTransformForm.controls["clusterURL"].disable();
@@ -733,7 +735,8 @@ updateChart(data : any){
     this.runDataTransformSubmitted = true;
     let data_transform_id =this.runDataTransformForm.controls["dataTransform"].value
     let exp_name =  this.runDataTransformForm.controls["name"].value;
-    let skeleton_type = this.runDataTransformForm.controls["skeletonType"].value;
+    let input_skeleton = this.runDataTransformForm.controls["inputSkeleton"].value;
+    let output_skeleton = this.runDataTransformForm.controls["outputSkeleton"].value;
     let output_id = this.currentCollection;
     let store_log = this.runDataTransformForm.controls["storeLog"].value;
     let parameters = JSON.parse(this.runDataTransformForm.controls["parameters"].value);
@@ -754,8 +757,8 @@ updateChart(data : any){
           input_data.push([this.currentCollection, dataTransformInputs[i][1], dataTransformInputs[i][2]]);
         }
 
-        this.dataService.runDataTransform(data_transform_id, exp_name, skeleton_type, output_id, input_data,
-                                         store_log, parameters, cluster_config).subscribe((values :any) => {});
+        this.dataService.runDataTransform(data_transform_id, exp_name, input_skeleton, output_id, input_data,
+                                          output_skeleton, store_log, parameters, cluster_config).subscribe((values :any) => {});
       }
 
 

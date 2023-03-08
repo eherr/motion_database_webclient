@@ -620,12 +620,13 @@ deleteDataTransformInputs(data_transform_input_id: string) {
 
 }  
 
-runDataTransform(data_transform_id: string, exp_name: string, skeleton_type: string, output_id: string, input_data: Array<Array<string>>, store_log: string, hparams: any, cluster_config?: any){
+runDataTransform(data_transform_id: string, exp_name: string, input_skeleton: string, output_id: string, input_data: Array<Array<string>>, output_skeleton: string, store_log: string, hparams: any, cluster_config?: any){
   
   let user = this.getUser();
   let body: any = {token: user.token, data_transform_id: data_transform_id};
   body["exp_name"] = exp_name;
-  body["skeleton_type"] = skeleton_type;
+  body["input_skeleton"] = input_skeleton;
+  body["output_skeleton"] = output_skeleton;
   body["output_id"] = output_id;
   body["input_data"] = input_data;
   body["store_log"] = store_log;

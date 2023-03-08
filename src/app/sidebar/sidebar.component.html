@@ -386,7 +386,7 @@
   </app-modal>
 
 
-  <app-modal [title]="'Run Data Transform in Collection: &quot;' + currentCollection + '&quot;'" slug="runDataTransform" (modalCall)="callModal($event)" *ngSwitchCase="'runDataTransform'" #modal>
+  <app-modal [title]="'Run Data Transform in Collection: &quot;' + currentCollectionName + '&quot;'" slug="runDataTransform" (modalCall)="callModal($event)" *ngSwitchCase="'runDataTransform'" #modal>
     <form [formGroup]="runDataTransformForm" (ngSubmit)="runDataTransformFromModal(modal)">
     <div class="field-group">
       <label for="dataTypeNameInput">Name</label>
@@ -401,8 +401,14 @@
   </select>
   </div>
   <div class="field-group">
-  <label for="skeletonType">Skeleton </label>
-  <select formControlName="skeletonType">
+  <label for="inputSkeleton">Input Skeleton </label>
+  <select formControlName="inputSkeleton">
+    <option *ngFor="let s of skeletonList" [value]="s[1]">{{s[1]}}</option>
+  </select>
+  </div>
+  <div class="field-group">
+  <label for="outputSkeleton">Output Skeleton </label>
+  <select formControlName="outputSkeleton">
     <option *ngFor="let s of skeletonList" [value]="s[1]">{{s[1]}}</option>
   </select>
   </div>
@@ -413,7 +419,7 @@
 
 <div class="field-group">
   <label for="dataTransformHParams">Parameters</label>
-  <textarea id="dataTransformHParams" formControlName="parameters" style="width:850px;height:250px;"></textarea>
+  <textarea id="dataTransformHParams" formControlName="parameters" style="width:850px;height:50px;"></textarea>
           
 </div>
 <div class="field-group">

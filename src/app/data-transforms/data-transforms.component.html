@@ -34,11 +34,11 @@
            </div>
          </nav>
      </div>
-    </div>
 
-    <div class="tab-action-bar">
-        <button  type="button" (click)="openEditDataTransformModal(null)"><i class="fas fa-plus-circle"></i> Add Data Transform </button>&nbsp;&nbsp;
-    
+     <div class="tab-action-bar">
+         <button  type="button" (click)="openEditDataTransformModal(null)"><i class="fas fa-plus-circle"></i> Add Data Transform </button>&nbsp;&nbsp;
+     
+     </div>
     </div>
 
 
@@ -53,10 +53,11 @@
               <div *ngIf="editDataTransformSubmitted && editDataTransformForm.controls['name'].errors" class="invalid-feedback">
               <div *ngIf="editDataTransformForm.controls['name'].errors['required']">name is required</div>
           </div>
-          <label for="dataTransformNameInput">Output Type </label>
-          <input id="outputTypeInput" formControlName="outputType" class="full-width-control" type="text" />
-              <div *ngIf="editDataTransformSubmitted && editDataTransformForm.controls['outputType'].errors" class="invalid-feedback">
-              <div *ngIf="editDataTransformForm.controls['outputType'].errors['required']">output type is required</div>
+          <div class="field-group">
+          <label for="outputType">Output Type </label>
+          <select formControlName="outputType">
+            <option *ngFor="let dt of dataTypeList" [value]="dt">{{dt}}</option>
+          </select>
           </div>
 
         </div>
@@ -76,7 +77,7 @@
           <label for="dataTransformRequirementsInput">Requirements</label>
         </div>
         <div class="field-group">
-          <textarea id="dataTransformRequirementsInput" formControlName="requirements" style="width:900px;height:250px;"></textarea>
+          <textarea id="dataTransformRequirementsInput" formControlName="requirements" style="width:900px;height:50px;"></textarea>
           
         <!--    <ngs-code-editor r id="dataTransformRequirementsInput"
             [theme]=theme
@@ -89,7 +90,7 @@
           <label for="dataTransformParametersInput">Parameters</label>
         </div>
         <div class="field-group">
-          <textarea id="dataTransformParametersInput" formControlName="parameters" style="width:900px;height:250px;"></textarea>
+          <textarea id="dataTransformParametersInput" formControlName="parameters" style="width:900px;height:50px;"></textarea>
           
         </div>
 
