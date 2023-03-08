@@ -7,7 +7,6 @@ import { MessageService } from '../_services/message.service';
   styleUrls: ['./game-window.component.less']
 })
 export class GameWindowComponent implements OnInit {
-  @Input() title: string = "";
   @Input() appLocation: string = "";
   @Input() appWidth: string = "";
   @Input() appHeight: string = "";
