@@ -95,7 +95,7 @@
                       <a href="javascript:" (click)='loadFileInViewer(m[0], m[1], m[2])'>{{ m[1] }}</a>
                     </div>
                     <div *ngIf="motionInfo != undefined &&  motionInfo[m[0]] != undefined">{{ motionInfo[m[0]]["numFrames"] }}</div>
-                    <div *ngIf="user.currentUser || enable_download || (motionInfo != undefined && motionInfo[m[0]] != undefined && motionInfo[m[0]]['public'] == 1)" class="padded-col align-middle">
+                    <div *ngIf="user.currentUser || enableDownload || (motionInfo != undefined && motionInfo[m[0]] != undefined && motionInfo[m[0]]['public'] == 1)" class="padded-col align-middle">
                       <a href="javascript:" class="icon-button" (click)="downloadFile(m[0], m[1], m[2]);"><i class="fas fa-download"></i></a>
                     </div>
                     <div *ngIf="user.currentUser" class="padded-col align-middle">
@@ -156,7 +156,7 @@
     <button *ngIf="user.currentUser && currentCollection" type="button" (click)="openRemoveCollectionModal()"><i class="fas fa-trash"></i> Remove Collection</button>&nbsp;&nbsp;
     <button *ngIf="user.currentUser && currentCollection  && activeTab == 'tab1'" id="showUploadFileModalBtn" type="button" (click)="openImportBVHFileModal()"><i class="fas fa-upload"></i> Import BVH File</button>&nbsp;&nbsp;
   <button *ngIf="user.currentUser && activeTab == 'tab1'" id="showUploadFileModalBtn" type="button" (click)="openUploadFileModal()"><i class="fas fa-upload"></i> Upload File</button>&nbsp;&nbsp;
-  <button *ngIf="user.currentUser && currentCollection  && activeTab == 'tab1'" type="button" (click)="openRunDataTransformModal();"><i class="fa-solid fa-person-running"></i> Run Data Transform</button>
+  <button *ngIf=" enableDataTransforms && user.currentUser && currentCollection  && activeTab == 'tab1'" type="button" (click)="openRunDataTransformModal();"><i class="fa-solid fa-person-running"></i> Run Data Transform</button>
   </div>
   
   <div  *ngIf="!user.currentUser" class="sidebar-footer field-group text-align-center">

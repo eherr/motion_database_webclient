@@ -15,7 +15,8 @@ import { StringLiteral } from 'node_modules_old/typescript/lib/typescript';
   host: {'class': 'padded-col fill-col', 'id': 'sidebar'}
 })
 export class SidebarComponent implements OnInit {
-  public enable_download = false;
+  public enableDownload = false;
+  public enableDataTransforms = false;
 
   public projectList: any;
   public projectInfo: any;
@@ -155,7 +156,8 @@ this.runDataTransformForm = this.formBuilder.group({
   getDownloadSettings(){
     this.dataService.getMetaInformation().subscribe(
       (metaData:any) => {
-        this.enable_download = metaData['enable_download']
+        this.enableDownload = metaData['enable_download']
+        this.enableDataTransforms = metaData['enable_data_transforms']
       }
     );
   }
