@@ -3,6 +3,7 @@ import { DataService } from '../_services/data.service';
 import { UserService } from '../_services/user.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormArray, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { DataTransformService } from '../_services/data_transform.service';
 //import { CodeModel } from '@ngstack/code-editor';
 
 @Component({
@@ -36,6 +37,7 @@ public options = {
 	
 };
   constructor(public dataService: DataService,
+    public dataTransformService: DataTransformService,
     public formBuilder: FormBuilder,
     public router: Router,
     public user : UserService) {
@@ -75,7 +77,7 @@ public options = {
         this.dataTypeList = dataTypeList;
         }
       );
-    this.dataService.getDataTransformList().subscribe(
+    this.dataTransformService.getDataTransformList().subscribe(
       (dataTransforms: any) => {
         this.dataTransformList = dataTransforms;
         console.log(dataTransforms);
@@ -91,7 +93,7 @@ public options = {
     this.selectedDataTransform = dataTransform;
     while(this.dataInputsControls.length > 0)this.dataInputsControls.removeAt(0);
     if (dataTransform != null){
-      this.dataService.getDataTransformInfo(dataTransform).subscribe(
+      this.dataTransformService.getDataTransformInfo(dataTransform).subscribe(
         (data:any)=>{
           this.editDataTransformForm.controls["name"].setValue(data["name"]);
           this.editDataTransformForm.controls["outputType"].setValue(data["outputType"]);
@@ -103,7 +105,7 @@ public options = {
           this.activeModal = "editDataTransform";
         })
         
-        this.dataService.getDataTransformInputList(dataTransform).subscribe(
+        this.dataTransformService.getDataTransformInputList(dataTransform).subscribe(
           (dataTransformInputs: any)=>{
             this.dataTransformInputs = dataTransformInputs;
            
@@ -141,7 +143,7 @@ public options = {
     let parametersText = this.parametersModel.value;
 
     if (this.selectedDataTransform == null){
-      this.dataService.createDataTransform(name, scriptText,outputType, requirementsText, parametersText).subscribe(
+      this.dataTransformService.createDataTransform(name, scriptText,outputType, requirementsText, parametersText).subscribe(
         (result: any)=>{
           let dtID = result["id"];
           this.addDataTransformInputsToDB(dtID);
@@ -149,11 +151,11 @@ public options = {
       );
     }else{
       
-      this.dataService.deleteAllDataTransformInputs(this.selectedDataTransform).subscribe(
+      this.dataTransformService.deleteAllDataTransformInputs(this.selectedDataTransform).subscribe(
         (result: any)=>{
         }
       );
-      this.dataService.editDataTransform(this.selectedDataTransform, name, scriptText, outputType, requirementsText, parametersText).subscribe(
+      this.dataTransformService.editDataTransform(this.selectedDataTransform, name, scriptText, outputType, requirementsText, parametersText).subscribe(
         (result: any)=>{
         }
       );
@@ -170,7 +172,7 @@ public options = {
     for(let i = 0; i < this.dataInputsControls.length; i++){
       let inputDataType = this.dataInputsControls.at(i).get("inputDataType")?.value;
       let isCollection = this.dataInputsControls.at(i).get("isCollection")?.value;
-      this.dataService.createDataTransformInput(dataTransformID, inputDataType, isCollection);
+      this.dataTransformService.createDataTransformInput(dataTransformID, inputDataType, isCollection);
   }
   }
 
@@ -192,8 +194,8 @@ public options = {
   }
 
   deleteDataTransform(){
-    this.dataService.deleteDataTransform(this.selectedDataTransform); 
-    this.dataService.deleteAllDataTransformInputs(this.selectedDataTransform).subscribe(
+    this.dataTransformService.deleteDataTransform(this.selectedDataTransform); 
+    this.dataTransformService.deleteAllDataTransformInputs(this.selectedDataTransform).subscribe(
       (result: any)=>{
       }
     );

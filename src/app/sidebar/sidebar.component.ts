@@ -7,6 +7,7 @@ import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { TreeModule, TreeComponent } from '@circlon/angular-tree-component';
 import Chart from 'chart.js/auto';
 import { StringLiteral } from 'node_modules_old/typescript/lib/typescript';
+import { DataTransformService } from '../_services/data_transform.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -81,6 +82,7 @@ export class SidebarComponent implements OnInit {
   runDataTransformForm: FormGroup;
 
   constructor(public dataService: DataService,
+              public dataTransformService: DataTransformService,
               public msgService: MessageService,
               public formBuilder: FormBuilder,
               public user: UserService) {
@@ -262,7 +264,7 @@ this.runDataTransformForm = this.formBuilder.group({
       );
   }
   getDataTransformList(){
-    this.dataService.getDataTransformList().subscribe(
+    this.dataTransformService.getDataTransformList().subscribe(
       (dataTransformList:any) => {this.dataTransformList = dataTransformList;}
       );
   }
@@ -752,14 +754,14 @@ updateChart(data : any){
         let clusterImage = this.runDataTransformForm.controls["clusterImage"].value;
         cluster_config = {user: clusterUser, password: clusterPassword, image: clusterImage, url: clusterURL}
     }
-    this.dataService.getDataTransformInputList(data_transform_id).subscribe(
+    this.dataTransformService.getDataTransformInputList(data_transform_id).subscribe(
       (dataTransformInputs: any)=>{
         let input_data : Array<Array<string>> =[];
         for(let i = 0; i < dataTransformInputs.length; i++){
           input_data.push([this.currentCollection, dataTransformInputs[i][1], dataTransformInputs[i][2]]);
         }
 
-        this.dataService.runDataTransform(data_transform_id, exp_name, input_skeleton, output_id, input_data,
+        this.dataTransformService.runDataTransform(data_transform_id, exp_name, input_skeleton, output_id, input_data,
                                           output_skeleton, store_log, parameters, cluster_config).subscribe((values :any) => {});
       }
 
@@ -775,7 +777,7 @@ updateChart(data : any){
   selectDataTransform(event: any){
     let data_transform_id =this.runDataTransformForm.controls["dataTransform"].value
     
-    this.dataService.getDataTransformInfo(data_transform_id).subscribe(
+    this.dataTransformService.getDataTransformInfo(data_transform_id).subscribe(
       (data:any)=>{
         this.runDataTransformForm.controls["parameters"].setValue(data["parameters"]);
       })
