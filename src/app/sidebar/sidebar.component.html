@@ -152,14 +152,14 @@
   
   
   <div class="tab-action-bar">
-    <button *ngIf="user.currentUser" type="button" (click)="openCollectionForm()"><i class="fas fa-plus-circle"></i> Add Collection</button>&nbsp;&nbsp;
-    <button *ngIf="user.currentUser && currentCollection" type="button" (click)="openRemoveCollectionModal()"><i class="fas fa-trash"></i> Remove Collection</button>&nbsp;&nbsp;
-    <button *ngIf="user.currentUser && currentCollection  && activeTab == 'tab1'" id="showUploadFileModalBtn" type="button" (click)="openImportBVHFileModal()"><i class="fas fa-upload"></i> Import BVH File</button>&nbsp;&nbsp;
-  <button *ngIf="user.currentUser && activeTab == 'tab1'" id="showUploadFileModalBtn" type="button" (click)="openUploadFileModal()"><i class="fas fa-upload"></i> Upload File</button>&nbsp;&nbsp;
-  <button *ngIf=" enableDataTransforms && user.currentUser && currentCollection  && activeTab == 'tab1'" type="button" (click)="openRunDataTransformModal();"><i class="fa-solid fa-person-running"></i> Run Data Transform</button>
+    <button *ngIf="user.IsLoggedIn()" type="button" (click)="openCollectionForm()"><i class="fas fa-plus-circle"></i> Add Collection</button>&nbsp;&nbsp;
+    <button *ngIf="user.IsLoggedIn() && currentCollection" type="button" (click)="openRemoveCollectionModal()"><i class="fas fa-trash"></i> Remove Collection</button>&nbsp;&nbsp;
+    <button *ngIf="user.IsLoggedIn() && currentCollection  && activeTab == 'tab1'" id="showUploadFileModalBtn" type="button" (click)="openImportBVHFileModal()"><i class="fas fa-upload"></i> Import BVH File</button>&nbsp;&nbsp;
+  <button *ngIf="user.IsLoggedIn() && activeTab == 'tab1'" id="showUploadFileModalBtn" type="button" (click)="openUploadFileModal()"><i class="fas fa-upload"></i> Upload File</button>&nbsp;&nbsp;
+  <button *ngIf=" enableDataTransforms && user.IsLoggedIn() && currentCollection  && activeTab == 'tab1'" type="button" (click)="openRunDataTransformModal();"><i class="fa-solid fa-person-running"></i> Run Data Transform</button>
   </div>
   
-  <div  *ngIf="!user.currentUser" class="sidebar-footer field-group text-align-center">
+  <div  *ngIf="!user.IsLoggedIn()" class="sidebar-footer field-group text-align-center">
     <hr />
     <br />
   
