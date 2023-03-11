@@ -3,9 +3,9 @@
 <ul id="sidebarButtonNav">
     <li><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab1'"
             rel="tab1" (click)="callMotionClips()">Motion Files</a></li>
-    <li><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab2'"
+    <li *ngIf="user.IsLoggedIn()"><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab2'"
             rel="tab2" (click)="callExperiments()">Experiments </a></li>
-    <li *ngIf="user.currentUser"><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab3'"
+    <li *ngIf="user.IsLoggedIn()"><a class='sidebar-button' [class.sidebar-button-active]="activeTab == 'tab3'"
               rel="tab3" (click)="callMotionModelGraph()">Motion Model Graph</a></li>
   </ul>
       
@@ -45,13 +45,13 @@
         <div id="filler" class="skeleton-menu">
 
           <div class="box">
-            <div *ngIf="user.currentUser" class="padded-col align-middle">
+            <div *ngIf="user.IsLoggedIn()" class="padded-col align-middle">
               <a href="javascript:" class="icon-button" (click)="callModal('addSkeleton')"><i class="fas fa-upload"></i></a>
             </div>
-              <div *ngIf="user.currentUser" class="padded-col align-middle">
+              <div *ngIf="user.IsLoggedIn()" class="padded-col align-middle">
               <a href="javascript:" class="icon-button" (click)="openEditSkeletonForm()"><i class="fas fa-edit"></i></a>
             </div>
-            <div *ngIf="user.currentUser" class="padded-col align-middle">
+            <div *ngIf="user.IsLoggedIn()" class="padded-col align-middle">
               <a href="javascript:" class="icon-button" (click)="deleteSkeleton();"><i class="far fa-trash-alt"></i></a>
             </div>
             &nbsp;
@@ -60,13 +60,13 @@
         <div id="filler" class="tag-menu">
 
           <div class="box">
-            <div *ngIf="user.currentUser" class="padded-col align-middle">
+            <div *ngIf="user.IsLoggedIn()" class="padded-col align-middle">
               <a href="javascript:" class="icon-button" (click)="selectedTagForModal=''; openEditTagForm()"><i class="fas fa-plus-circle"></i></a>
             </div>
-              <div *ngIf="user.currentUser" class="padded-col align-middle">
+              <div *ngIf="user.IsLoggedIn()" class="padded-col align-middle">
               <a href="javascript:" class="icon-button" (click)="selectedTagForModal=currentTag; openEditTagForm()"><i class="fas fa-edit"></i></a>
             </div>
-            <div *ngIf="user.currentUser" class="padded-col align-middle">
+            <div *ngIf="user.IsLoggedIn()" class="padded-col align-middle">
               <a href="javascript:" class="icon-button" (click)="selectedTagForModal=currentTag; deleteTag();"><i class="far fa-trash-alt"></i></a>
             </div>
             &nbsp;
@@ -95,10 +95,10 @@
                       <a href="javascript:" (click)='loadFileInViewer(m[0], m[1], m[2])'>{{ m[1] }}</a>
                     </div>
                     <div *ngIf="motionInfo != undefined &&  motionInfo[m[0]] != undefined">{{ motionInfo[m[0]]["numFrames"] }}</div>
-                    <div *ngIf="user.currentUser || enableDownload || (motionInfo != undefined && motionInfo[m[0]] != undefined && motionInfo[m[0]]['public'] == 1)" class="padded-col align-middle">
+                    <div *ngIf="user.IsLoggedIn() || enableDownload || (motionInfo != undefined && motionInfo[m[0]] != undefined && motionInfo[m[0]]['public'] == 1)" class="padded-col align-middle">
                       <a href="javascript:" class="icon-button" (click)="downloadFile(m[0], m[1], m[2]);"><i class="fas fa-download"></i></a>
                     </div>
-                    <div *ngIf="user.currentUser" class="padded-col align-middle">
+                    <div *ngIf="user.IsLoggedIn()" class="padded-col align-middle">
                       <a href="javascript:" class="icon-button" (click)="openDeleteFileModal(m[1], m[0]);"><i class="far fa-trash-alt"></i></a>
                     </div>
                   </div>
