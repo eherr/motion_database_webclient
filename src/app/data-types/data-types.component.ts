@@ -145,7 +145,7 @@ export class DataTypesComponent implements OnInit{
 
   addTagsToDB(dataType: string){
     for(let i = 0; i < this.selectedTagList.length; i++){
-      let tagName = this.selectedTagList.at(i)[0];
+      let tagName = this.selectedTagList.at(i);
       this.dataService.addDataTypeTag(dataType, tagName).subscribe(()=>{
     });
   }
@@ -249,7 +249,7 @@ export class DataTypesComponent implements OnInit{
               break;
           }
       }
-      if(addTag)this.selectedTagList.push(newTag);
+      if(addTag)this.selectedTagList.push(newTag[0]);
     }
   }
   removeTag(){
