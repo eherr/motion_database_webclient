@@ -43,9 +43,9 @@ const routes: Routes = [
     data: { title: 'Register User' }
   },
   {
-    path: 'impress',
+    path: 'imprint',
     component: ImpressComponent,
-    data: { title: 'Impress' }
+    data: { title: 'Imprint' }
   },
   {
     path: 'data_transforms',
