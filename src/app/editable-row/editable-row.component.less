@@ -1,0 +1,55 @@
+@import "../../less/colors";
+@import "../../less/grid";
+
+
+.sidebar-footer{
+  width: 100%;
+}
+
+.hidden-button{
+  display: none;
+}
+
+.striped-table{
+  .flex-row{
+      &:nth-child(2n){
+        background-color: @accent-bg;
+      }
+  }
+}
+
+.content-container{
+  display: grid;
+  flex: 1 1 auto;
+  max-height: 550px;
+  vertical-align: super;
+  grid-template-rows: 50px 50px 50px 400px;
+  grid-template-columns: 250px 660px;
+}
+
+a.button {
+  border: none;
+  border-bottom: 5px solid @accent-bg; /* grey */
+  color: lighten(@secondary-text, 20%);
+  padding: 12px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  font-size: 1.1em;
+  cursor: pointer;
+
+  &:hover{
+    border-color: darken(@accent-bg, 40%);
+  }
+
+  &-active{
+    border-color: @accent-color; /* black */
+    color: @primary-text;
+
+    &:hover{
+      border-color: lighten(#000, 25%);
+    }
+  }
+}
+
+

@@ -338,25 +338,7 @@ this.runDataTransformForm = this.formBuilder.group({
     ); 
   }
 
-  openDeleteFileModal(name: string, id: number){
-    this.queuedFile = {id: id, name: name};
-    this.callModal("deleteFile");
-  }
 
-  deleteFile(fileID:string){
-    this.dataService.deleteFile(fileID).subscribe(
-      (data:any)=>{this.getFileList();}
-    ); 
-    
-  }
-
-  downloadFile(fileID: string, name: string, dataType: string){
-    if(dataType== "motion"){
-        this.dataService.downloadClipAsBVH(fileID, name);
-    }else{
-      this.dataService.downloadFile(fileID, name+"."+dataType);
-    }
-  }
 
   downloadSample(modelID: string, name: string){
     this.dataService.downloadSampleAsBVH(modelID, name);
@@ -611,7 +593,11 @@ this.runDataTransformForm = this.formBuilder.group({
     this.activeModal = "";
   }
 
-  
+  onRefreshEvent(event: any){
+    console.log("refresh");
+    this.getFileList();
+
+  }
   openExperimentModal(exp:any){
     this.callModal('plotExperiment');
     this.currentExp = exp;

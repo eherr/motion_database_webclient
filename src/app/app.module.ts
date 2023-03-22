@@ -25,6 +25,7 @@ import { UserPasswordResetComponent } from './user-password-reset/user-password-
 import { DataTypesComponent } from './data-types/data-types.component';
 //import { CodeEditorModule } from '@ngstack/code-editor';
 import { DataTransformsComponent } from './data-transforms/data-transforms.component';
+import { EditableRowComponent } from './editable-row/editable-row.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { DataTransformsComponent } from './data-transforms/data-transforms.compo
     UserPasswordResetComponent,
     DataTypesComponent,
     DataTransformsComponent,
+    EditableRowComponent,
   ],
   imports: [
     BrowserModule,

@@ -221,7 +221,7 @@ export class AdminComponent implements OnInit {
       let userData = this.userTableForm.get("user"+String(userID));
       if(userData == null) return;
       let role = userData.value;
-      this.dataService.editUser("", "", "", role, null, userID);
+      this.dataService.editUser(userID, undefined, undefined, undefined, role);
   }
   
 }

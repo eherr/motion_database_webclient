@@ -99,6 +99,18 @@ export class DataService {
     return this.http.post(this.getServerURL() + "files/add", bodyStr);
   }
 
+  replaceFile(file_id: string, collectionID?: string, skeleton?: string, name?: string, dataType?:string, data?: ArrayBuffer){
+    let user = this.getUser();
+    let body: any = {file_id: file_id,token: user.token};
+    if (name != undefined)body["name"] = name;
+    if (collectionID != undefined)body["collectionID"] = collectionID;
+    if (skeleton != undefined)body["skeleton"] = skeleton;
+    if (dataType != undefined)body["dataType"] = dataType;
+    if (data!== undefined)body["data"] = Array.from(new Uint8Array(data));
+    let bodyStr = JSON.stringify(body);
+    return this.http.post(this.getServerURL() + "files/replace", bodyStr);
+  }
+
   deleteFile(file_id: string){
     console.log("call delete", file_id);
     
@@ -270,16 +282,15 @@ export class DataService {
       return this.http.post<any>(createUserUrl, { name, password, role, email });
   }
 
-  editUser(name: string, password: string, email: string, role: string, project_list: any, user_id : string) {
+  editUser(user_id : string, name?: string, password?: string, email?: string, role?: string, project_list?: any) {
     let editUserUrl = this.getServerURL() + "users/edit"
     let user = this.getUser();
-    let body: any = {token: user.token};
-    if (name != "")body["name"] = name;
-    if (email != "")body["email"] = email;
-    if (role != "")body["role"] = role;
-    if (password != "")body["password"] = password;
-    if (project_list != null)body["project_list"] = project_list;
-    if (user_id  != "")body["user_id"] = user_id ; 
+    let body: any = {user_id: user_id, token: user.token};
+    if (name != undefined)body["name"] = name;
+    if (email != undefined)body["email"] = email;
+    if (role != undefined)body["role"] = role;
+    if (password != undefined)body["password"] = password;
+    if (project_list != undefined)body["project_list"] = project_list;
     let bodyStr = JSON.stringify(body);
    
     //return this.http.post(editUserUrl, bodyStr);
