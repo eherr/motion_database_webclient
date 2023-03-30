@@ -1,0 +1,34 @@
+
+<div class="content-container">
+
+<div id="collectionList" class="tree-view">
+    <label for="collections">Collections</label>
+     <tree-root #tree  [nodes]="collections"  (activate)="onSelectNode($event)" ></tree-root>
+  
+    </div>
+
+    
+  <div class="tab-content-container" >
+        <nav id="motionClipTable" class="striped-table">
+        <!-- m[0]: id, m[1]: name -->
+        <p *ngIf="!currentSkeleton" class="text-align-center field-group"><i class="far fa-hand-pointer"></i> Select a skeleton.</p>
+        <p *ngIf="currentSkeleton && !currentCollection" class="text-align-center field-group"><i class="far fa-hand-pointer"></i> Select a collection to display files.</p>
+        <!-- motion table start -->
+        <p *ngIf="(currentSkeleton && currentCollection) && !filesFound()" class="text-align-center field-group">No models the selected parameters found</p>
+        
+        
+        <div *ngFor="let m of fileList" class="flex-row">
+            <div class="fill-col padded-col">
+                <a class="icon-button" >{{ m[1] }}</a>
+              </div>
+              <div  class="padded-col ">
+                <a  class="icon-button" (click)="selectFile(m);"><i class="fa-solid fa-circle-plus"></i></a>
+              </div>
+              
+
+        </div>
+        </nav>
+          <!-- motion table end -->
+      
+    </div>
+</div>

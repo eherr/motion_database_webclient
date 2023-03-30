@@ -153,9 +153,21 @@ export class DataService {
     }
   }
 
-  getGraphList(skeletonName: string){
-      return this.http.post(this.getServerURL() + "get_graph_list",
-          '{"skeleton":"'+skeletonName+'"}');
+  getModelGraphList(skeletonName: string, projectID: number){
+    let body = {skeleton: skeletonName,  project_id:projectID,};
+      return this.http.post(this.getServerURL() + "model_graphs",JSON.stringify(body));
+  }
+
+  removeModelGraph(graphID: string){
+    let user = this.getUser();
+    let body = {id: graphID,  user:user.username, token:  user.token};
+    return this.http.post(this.getServerURL() + "model_graphs/remove", JSON.stringify(body));
+  }
+
+  getModelGraph(graphID: string){
+    let user = this.getUser();
+    let body = {id: graphID,  user:user.username, token:  user.token};
+    return this.http.post(this.getServerURL() + "model_graphs/download", JSON.stringify(body));
   }
 
   deleteClip(clipID: string){

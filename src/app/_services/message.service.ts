@@ -16,7 +16,7 @@ export class MessageService {
 
 
   
-  public updateGameInstance(appLocation: string){
+  public initGameInstance(appLocation: string){
     this.appLocation = appLocation;
 	
 	/* https://stackoverflow.com/questions/47229867/prevent-emscripten-compiled-javascript-from-blocking-certain-key-inputs */

@@ -26,7 +26,8 @@ import { DataTypesComponent } from './data-types/data-types.component';
 //import { CodeEditorModule } from '@ngstack/code-editor';
 import { DataTransformsComponent } from './data-transforms/data-transforms.component';
 import { EditableRowComponent } from './editable-row/editable-row.component';
-
+import { ModelGraphEditorComponent } from './model-graph-editor/model-graph-editor.component';
+import { CollectionBrowserComponent } from './collection-browser/collection-browser.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,6 +46,8 @@ import { EditableRowComponent } from './editable-row/editable-row.component';
     DataTypesComponent,
     DataTransformsComponent,
     EditableRowComponent,
+    ModelGraphEditorComponent,
+    CollectionBrowserComponent,
   ],
   imports: [
     BrowserModule,

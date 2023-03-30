@@ -1,0 +1,117 @@
+
+<div class="content-container">
+
+    
+        <!-- project list start -->
+        <div id="projectList" class="project-list">
+            <label for="projects">Project</label>
+            <select [(ngModel)]="currentProject" (ngModelChange)="selectProject($event)" id="projects" class="full-width-control">
+              <option *ngFor="let p of projectList"
+                      (click)="initProject()"  value="{{ p[0] }}">{{ p[1] }}</option>
+            </select>
+            
+          </div>&nbsp;
+    <div id="skeletonList" class="skeleton-list">
+        <label for="skeletons">Skeleton</label>
+        <select [(ngModel)]="currentSkeleton" (ngModelChange)="selectSkeleton($event)" id="skeletons" class="full-width-control">
+          <option *ngFor="let s of skeletonList" value="{{ s[1] }}">{{ s[1] }}</option>
+        </select>
+
+     
+      </div>
+
+<div><p> Model Graph List </p></div>
+    <div class="model-graph-list" >
+        <!-- group table start -->
+                 <div class="flex-row">
+             <div class="fill-col padded-col">
+                <label>Name</label>
+             </div>
+              <div class="fill-col padded-col">
+              <label>Operations</label>
+             </div>
+           </div>
+         <nav id='modelGraphTable' class="striped-table">
+           <div *ngFor="let e of modelGraphList" class="flex-row">
+             <div class="fill-col padded-col">
+               <a   class="icon-button">{{ e[1] }}</a>
+             </div>
+              <div class="fill-col padded-col">
+                <a href="javascript:"  class="icon-button"  (click)="openEditGraphModal(e[0], e[1]);"><i class="fas fa-edit"></i></a>
+               <a href="javascript:"  class="icon-button" (click)="callModal('removeModelGraph'); selectedModelGraph =e[0]; selectedModelGraphName=e[1]" ><i class="far fa-trash-alt"></i></a>
+             </div>
+           </div>
+         </nav>
+     </div>
+     <div class="tab-action-bar">
+       <button  type="button" (click)="openEditGraphModal(null, null)"><i class="fas fa-plus-circle"></i> Add Model Graph </button>&nbsp;&nbsp;
+      
+     
+    </div>
+</div>
+
+
+
+
+      
+      
+
+  <!--  Modals start -->
+<div class="modal-container" [ngSwitch]="activeModal">
+  <app-modal title="Edit Model Graph" slug="editModelGraph" (modalCall)="callModal($event)" *ngSwitchCase="'editModelGraph'" #modal>
+    <form [formGroup]="editModelGraphForm" (ngSubmit)="editModelGraphFromModal(modal)">
+      <div class="field-group">
+         <label for="modelGraphEngineInput">Model Graph</label>
+            <input id="modelGraphEngineInput" formControlName="name" class="full-width-control" type="text" />
+          <div *ngIf="editModelGraphSubmitted && editModelGraphForm.controls['name'].errors" class="invalid-feedback">
+          <div *ngIf="editModelGraphForm.controls['name'].errors['required']">name is required</div>
+      </div>
+        <div class="field-group">
+            <div id="mynetwork"  #mynetwork></div>
+
+        </div> <!-- -->
+        <div class="field-group">
+          <label for="nodeName">Node Name</label>
+          <input id="nodeName" formControlName="nodeName" class="full-width-control" type="text" />
+      </div>
+        <div class="field-group">
+            <label for="nodeType">Node Type</label>
+            <select formControlName="nodeType">
+              <option *ngFor="let dt of nodeTypes" [value]="dt">{{dt}}</option>
+            </select>
+        </div>
+        <div class="field-group">
+          <button id="addActionBtn" type="button" (click)="setStartNode()">Set Start Node</button>&nbsp;&nbsp;
+          <button id="addActionBtn" type="button" (click)="addActionNode()">Add Action Node</button>&nbsp;&nbsp;
+            <button id="updateNodeBtn" type="button" (click)="updateNode()">Update Selected Node</button>&nbsp;&nbsp;
+            <button id="deleteNodeBtn" type="button" (click)="deleteGraphNode()">Delete Selected Node</button>&nbsp;&nbsp; 
+          </div>
+            <div class="field-group">
+            <button id="addTransitionBtn" type="button" (click)="addTransiton()">Add Transition</button>&nbsp;&nbsp;
+            <button id="deleteNodeBtn" type="button" (click)="deleteGraphEdge()">Delete Selected Transition</button>&nbsp;&nbsp;
+          </div>
+
+      <app-collection-browser (selectFileEvent)="onSelectFile($event)" [currentSkeleton]='currentSkeleton' [currentTag]='currentTag' [rootCollection]='rootCollection' ></app-collection-browser>
+
+    </div>
+    <div class="field-group field-group-last">
+      <button id="createModelGraphBtn" type="submit">Save</button>&nbsp;&nbsp;
+      <button id="abortCreateModelGraphBtn" type="button" (click)="modal.closeModal(); getModelGraphList();selectedModelGraph=null;">Cancel</button>
+    </div>
+    
+    </form>
+  </app-modal>
+
+<app-modal [title]="'Delete Model Graph: &quot;' + selectedModelGraphName + '&quot;'" slug="removeModelGraph" (modalCall)="callModal($event)" *ngSwitchCase="'removeModelGraph'" #modal>
+    
+    <div class="field-group">
+      <p>Are you sure you want to delete this Model Graph? </p>
+    </div>
+    <div class="field-group field-group-last">
+      <button type="button" (click)="modal.closeModal(); removeModelGraph()">Ok</button>&nbsp;&nbsp;
+      <button type="button" (click)="modal.closeModal(); selectedModelGraph=null">Cancel</button>
+    </div>
+    </app-modal>
+
+    
+</div>

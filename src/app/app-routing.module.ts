@@ -10,6 +10,8 @@ import { ImpressComponent } from './impress/impress.component';
 import { DataTypesComponent } from './data-types/data-types.component';
 import { DataTransformsComponent } from './data-transforms/data-transforms.component';
 import { UserPasswordResetComponent } from './user-password-reset/user-password-reset.component';
+import { ModelGraphEditorComponent } from './model-graph-editor/model-graph-editor.component';
+
 
 const routes: Routes = [
   {
@@ -61,6 +63,11 @@ const routes: Routes = [
     path: 'user_password_reset',
     component: UserPasswordResetComponent,
     data: { title: 'Reset User' }
+  },
+  {
+    path: 'model_graph_editor',
+    component: ModelGraphEditorComponent,
+    data: { title: 'Model Graph Editor' }
   },
 ];
 

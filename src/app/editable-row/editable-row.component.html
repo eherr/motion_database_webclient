@@ -4,6 +4,9 @@
  #contentWrapper>
  <a href="javascript:" (click)='loadFileInViewer(fileId, name, dataType)'> {{ name }}  </a>
 </div>
+<div class="padded-col">
+{{ dataType }} 
+</div>
 <div *ngIf="user.IsLoggedIn()" class="padded-col align-middle">
 <a href="javascript:" class="hidden-button" (click)="cancelEdit()"  #cancelRenameButton><i class="fa-solid fa-xmark"></i></a>
 </div>
