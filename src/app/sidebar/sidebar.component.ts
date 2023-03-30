@@ -98,7 +98,7 @@ export class SidebarComponent implements OnInit {
     this.getTagList();
     this.getSkeletonModels();
     this.initProject();
-    this.getGraphList();
+    this.getModelGraphList();
     this.getCharacterModels(this.currentSkeleton);
     this.initForms();
     this.getDataTypeList();
@@ -181,7 +181,7 @@ this.runDataTransformForm = this.formBuilder.group({
       this.getCollections();
       this.getFileList();
       this.getExperimentList();
-      this.getGraphList();
+      this.getModelGraphList();
     }
     );
   }
@@ -258,8 +258,8 @@ this.runDataTransformForm = this.formBuilder.group({
       (dataTypeList :any) => {this.dataTypeList = dataTypeList; }
       );
   }
-  getGraphList(){
-    this.dataService.getGraphList(this.currentSkeleton).subscribe(
+  getModelGraphList(){
+    this.dataService.getModelGraphList(this.currentSkeleton, this.currentProject).subscribe(
       (graphList :any)  => this.graphList = graphList
       );
   }
@@ -285,7 +285,7 @@ this.runDataTransformForm = this.formBuilder.group({
     console.log("Selected Skeleton: " + event);
     this.msgService.sendMessage("AnimationGUI", "SetSourceSkeleton", this.currentSkeleton);
     this.getFileList();
-    this.getGraphList();
+    this.getModelGraphList();
   }
 
   selectTag(event: any){
