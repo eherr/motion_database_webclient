@@ -373,6 +373,16 @@ export class ModelGraphEditorComponent implements OnInit {
 
   }
   setStartNode(){
-
+    let selectedNodes = this.network.getSelectedNodes();
+    if(this.modelGraphDict != null && selectedNodes.length > 0){
+      let currentNode :string = selectedNodes[0].toString();
+      if  ( currentNode.indexOf('Root') == -1 && currentNode.indexOf(':') > -1){
+        let action = currentNode.split(":")[0];
+        let model = currentNode.split(":")[1];
+        this.modelGraphDict["startNode"] = [action, model];
+        console.log("set start node",this.modelGraphDict["startNode"]);
+      }
   }
+}
+
 }
