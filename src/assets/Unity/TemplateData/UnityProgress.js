@@ -28,9 +28,4 @@ function InitPlayer(gameInstance){
   gameInstance.SendMessage("AnimationGUI", "SetURL", window.location.hostname);
   gameInstance.SendMessage("AnimationGUI", "SetSourceSkeleton", "custom");//performs setup of skeleton
   //gameInstance.SendMessage("AnimationGUI", "GetSkeleton"); 
-  let data = JSON.parse(localStorage.getItem('currentUser'));
-  if(data == null) {
-    gameInstance.SendMessage("AnimationGUI", "NotLoggedIn");
-    console.log("User not registered");
-  }
 }
