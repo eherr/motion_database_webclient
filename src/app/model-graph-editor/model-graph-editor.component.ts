@@ -83,7 +83,7 @@ export class ModelGraphEditorComponent implements OnInit {
 
     removeModelGraph(){
       this.dataService.removeModelGraph(this.selectedModelGraph).subscribe(
-        () => {
+        (data:any)=> {
           this.getModelGraphList();
           }
         );
@@ -128,16 +128,16 @@ export class ModelGraphEditorComponent implements OnInit {
     
     let newName = this.editModelGraphForm.controls["name"].value;
     if(this.selectedModelGraph != null){
-    this.dataService.editModelGraph(this.selectedModelGraph, newName, this.modelGraphDict).subscribe(()=>{
+    this.dataService.editModelGraph(this.selectedModelGraph, newName, this.modelGraphDict).subscribe((data:any)=>{
       modal.closeModal();
       this.editModelGraphSubmitted= false;
 
     });
   }else{
-    this.dataService.addModelGraph(newName, this.currentProject, this.currentSkeleton,this.modelGraphDict).subscribe(()=>{
+    this.dataService.addModelGraph(newName, this.currentProject, this.currentSkeleton,this.modelGraphDict).subscribe((data:any)=>{
       modal.closeModal();
       this.editModelGraphSubmitted= false;
-
+      this.getModelGraphList();
     });
   }
 
