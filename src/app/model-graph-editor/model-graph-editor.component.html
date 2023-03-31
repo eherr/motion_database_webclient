@@ -58,7 +58,7 @@
 
   <!--  Modals start -->
 <div class="modal-container" [ngSwitch]="activeModal">
-  <app-modal title="Edit Model Graph" slug="editModelGraph" (modalCall)="callModal($event)" *ngSwitchCase="'editModelGraph'" #modal>
+  <app-modal title="Edit Model Graph" slug="editModelGraph" (modalCall)="callModal($event)" (afterInitEvent)="initGraph($event)"  *ngSwitchCase="'editModelGraph'" #modal>
     <form [formGroup]="editModelGraphForm" (ngSubmit)="editModelGraphFromModal(modal)">
       <div class="field-group">
          <label for="modelGraphEngineInput">Model Graph</label>

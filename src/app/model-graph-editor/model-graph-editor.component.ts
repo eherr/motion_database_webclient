@@ -1,3 +1,6 @@
+
+// https://visjs.github.io/vis-network/examples/
+// https://visjs.github.io/vis-network/examples/network/events/interactionEvents.html
 import { Component, OnInit, ViewChild,ElementRef } from '@angular/core';
 import { DataService } from '../_services/data.service';
 import { UserService } from '../_services/user.service';
@@ -96,6 +99,7 @@ export class ModelGraphEditorComponent implements OnInit {
   }
 
   openEditGraphModal(modelGraphID: any, modelGraphName:any){
+    this.activeModal = "editModelGraph";
     this.selectedModelGraph = modelGraphID;
     this.selectedModelGraphName = modelGraphName;
     this.editModelGraphSubmitted= false;
@@ -107,27 +111,46 @@ export class ModelGraphEditorComponent implements OnInit {
         console.log(data);
         this.modelGraphDict = data;
         console.log(this.modelGraphDict);
-      this.createGraph();
+        this.updateGraph();
       });
     }else{
-      this.modelGraphDict = null;
-      this.createGraph();
-
+      this.modelGraphDict = {"nodes":{}, "startNode": []};
+      
+      this.dataService.getSkeletonModels().subscribe(
+        (skeletons :any)  =>{this.updateGraph();}
+        );
     }
 
-    this.activeModal = "editModelGraph";
   }
 
   editModelGraphFromModal(modal: any){
     
-    modal.close();
-    this.editModelGraphSubmitted= false;
+    
+    let newName = this.editModelGraphForm.controls["name"].value;
+    if(this.selectedModelGraph != null){
+    this.dataService.editModelGraph(this.selectedModelGraph, newName, this.modelGraphDict).subscribe(()=>{
+      modal.closeModal();
+      this.editModelGraphSubmitted= false;
+
+    });
+  }else{
+    this.dataService.addModelGraph(newName, this.currentProject, this.currentSkeleton,this.modelGraphDict).subscribe(()=>{
+      modal.closeModal();
+      this.editModelGraphSubmitted= false;
+
+    });
+  }
+
 
   }
-  createGraph(){
-    // https://visjs.github.io/vis-network/examples/
-    // https://visjs.github.io/vis-network/examples/network/events/interactionEvents.html
+
+  initGraph(event:any){
+    this.updateGraph();
+  }
+
+  updateGraph(){
     console.log("create");
+    
     console.log(this.networkWrapper);
     this.nodes = [{ id: "Root", label: "Root"}];
     this.edges= [];
@@ -147,7 +170,6 @@ export class ModelGraphEditorComponent implements OnInit {
           this.edges.push(edge);
         }
     }
-
     
     for (let action in this.modelGraphDict["nodes"]) {
       for (let node_id in this.modelGraphDict["nodes"][action]) {
@@ -159,21 +181,9 @@ export class ModelGraphEditorComponent implements OnInit {
           this.edges.push(edge);
         }
         }
+      }
     }
-  }
- /*  this.nodes = [{ id: 1, label: "Node 1" },
-    { id: 2, label: "Node 2" },
-    { id: 3, label: "Node 3" },
-    { id: 4, label: "Node 4" },
-    { id: 5, label: "Node 5" }];
-    // create an array with edges
-    this.edges= [{ from: 1, to: 3 },
-      { from: 1, to: 2 },
-      { from: 2, to: 4 },
-      { from: 2, to: 5 },
-      { from: 3, to: 3 }];   */
     
-   // var data : Data= {nodes:this.nodes, edges:  this.edges};
     // create a network
     this.options = {height: "600", width: "800", manipulation:{enabled: true}, physics:{ "repulsion":{nodeDistance:80}} };
      console.log(this.networkWrapper);
@@ -189,8 +199,6 @@ export class ModelGraphEditorComponent implements OnInit {
     });
     
   }
-
-  
   
   getProjects(){
     this.dataService.getProjectList().subscribe(
@@ -237,7 +245,7 @@ export class ModelGraphEditorComponent implements OnInit {
           //this.edges.push(edge);
           //this.network.setData({nodes:this.nodes, edges:  this.edges})
           //this.network.addNodeMode();
-          this.createGraph();
+          this.updateGraph();
     }
   }
 
@@ -266,7 +274,7 @@ export class ModelGraphEditorComponent implements OnInit {
 
 
       }
-      this.createGraph();
+      this.updateGraph();
      // this.network.deleteSelected();
       //this.network.setData({nodes:this.nodes, edges:  this.edges})
     }
@@ -316,17 +324,11 @@ export class ModelGraphEditorComponent implements OnInit {
         self.editModelGraphForm.controls["nodeType"].setValue(nodeType);
       }
     }
-    //read node name
-    //read node type
-    //disable node type for action
   }
 
   onDeselectNode(self:any, params: any){
     self.editModelGraphForm.controls["nodeName"].setValue("");
     self.editModelGraphForm.controls["nodeType"].setValue("");
-    //read node name
-    //read node type
-    //disable node type for action
   }
 
   addTransitionToGraph(fromKey: string, toKey: string){
@@ -341,7 +343,6 @@ export class ModelGraphEditorComponent implements OnInit {
       let newTransiton = {action_name: toAction, model_id: parseInt(toNodeID), model_name: toModel};
       this.modelGraphDict["nodes"][fromAction][fromNodeID]["transitions"][toKey] = newTransiton;
       console.log("created transition");
-      //this.createGraph();
       return true;
     }
     return false;
@@ -357,7 +358,7 @@ export class ModelGraphEditorComponent implements OnInit {
       success = self.addTransitionToGraph(fromKey, toKey);
 
     }
-    self.createGraph();
+    self.updateGraph();
   }
 
   addActionNode(){
@@ -366,7 +367,7 @@ export class ModelGraphEditorComponent implements OnInit {
       this.modelGraphDict["nodes"][nodeName] = {}
       
 
-      this.createGraph();
+      this.updateGraph();
     }
   }
 
@@ -399,7 +400,7 @@ export class ModelGraphEditorComponent implements OnInit {
 
 
       }
-      this.createGraph();
+      this.updateGraph();
     }
 
 

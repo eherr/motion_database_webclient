@@ -169,6 +169,19 @@ export class DataService {
     let body = {id: graphID,  user:user.username, token:  user.token};
     return this.http.post(this.getServerURL() + "model_graphs/download", JSON.stringify(body));
   }
+  addModelGraph(name: string, project: number,skeleton: string, data: any){
+    let user = this.getUser();
+    let body = {name:name, project:project, skeleton:skeleton, data: data, user:user.username, token:  user.token};
+    return this.http.post(this.getServerURL() + "model_graphs/add", JSON.stringify(body));
+
+  }
+
+  editModelGraph(graphID: string, name: string, data: any){
+    let user = this.getUser();
+    let body = {id: graphID,  name:name, data: data, user:user.username, token:  user.token};
+    return this.http.post(this.getServerURL() + "model_graphs/edit", JSON.stringify(body));
+
+  }
 
   deleteClip(clipID: string){
     console.log("call delete", clipID);

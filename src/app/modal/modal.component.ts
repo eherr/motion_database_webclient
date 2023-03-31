@@ -11,10 +11,14 @@ export class ModalComponent implements OnInit {
   @Input() isActive: boolean = false;
 
   @Output() modalCall = new EventEmitter<string>();
+  @Output() afterInitEvent = new EventEmitter<string>();
 
   constructor() { }
 
   ngOnInit() {
+  }
+  ngAfterInit() {
+    this.afterInitEvent.emit("");
   }
 
   closeModal(){
