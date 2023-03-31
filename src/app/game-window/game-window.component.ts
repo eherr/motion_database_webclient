@@ -13,7 +13,7 @@ export class GameWindowComponent implements OnInit {
   constructor(public msgService : MessageService) { }
   
   ngOnInit() {
-    this.msgService.updateGameInstance(this.appLocation);
+    this.msgService.initGameInstance(this.appLocation);
   }
 
 }
