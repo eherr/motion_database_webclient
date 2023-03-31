@@ -181,9 +181,13 @@ export class ModelGraphEditorComponent implements OnInit {
     this.network.on("selectNode", (event: any) => {
         this.onSelectNode(this, event);
       });
-      this.network.on("deselectNode", (event: any) => {
-          this.onDeselectNode(this, event);
-        });
+    this.network.on("deselectNode", (event: any) => {
+        this.onDeselectNode(this, event);
+      });
+    this.network.on("controlNodeDragEnd", (event: any) => {
+      this.onControlNodeDragEnd(this, event);
+    });
+    
   }
 
   
@@ -293,7 +297,7 @@ export class ModelGraphEditorComponent implements OnInit {
 
   }
   onSelectNode(self:any, params: any){
-    console.log("selectNode Evendasdadt:", params);
+    console.log("selectNode Event:", params);
     let nodeName :string = params["nodes"][0].toString();
     if(nodeName.indexOf('Root') > -1){
       return; //root node allow creating actions
@@ -323,6 +327,37 @@ export class ModelGraphEditorComponent implements OnInit {
     //read node name
     //read node type
     //disable node type for action
+  }
+
+  addTransitionToGraph(fromKey: string, toKey: string){
+    
+    let fromAction = fromKey.split(":")[0];
+    let fromModel = fromKey.split(":")[1];
+    let fromNodeID = this.findModelIDByName(fromAction, fromModel);
+    let toAction = toKey.split(":")[0];
+    let toModel = toKey.split(":")[1];
+    let toNodeID = this.findModelIDByName(toAction, toModel);
+    if (fromNodeID !="" && toNodeID != ""){
+      let newTransiton = {action_name: toAction, model_id: parseInt(toNodeID), model_name: toModel};
+      this.modelGraphDict["nodes"][fromAction][fromNodeID]["transitions"][toKey] = newTransiton;
+      console.log("created transition");
+      //this.createGraph();
+      return true;
+    }
+    return false;
+  }
+
+  onControlNodeDragEnd(self:any, params: any){
+    console.log(params);
+    if(params["controlEdge"].from == undefined || params["controlEdge"].to == undefined)return;
+    let fromKey = params["controlEdge"].from.toString();
+    let toKey = params["controlEdge"].to.toString();
+    let success = false;
+    if (fromKey.indexOf(':') >-1 && toKey.indexOf(':') >-1){
+      success = self.addTransitionToGraph(fromKey, toKey);
+
+    }
+    self.createGraph();
   }
 
   addActionNode(){
@@ -370,6 +405,8 @@ export class ModelGraphEditorComponent implements OnInit {
 
   }
   addTransiton(){
+    this.network.enableEditMode();
+    this.network.addEdgeMode();
 
   }
   setStartNode(){
