@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DataService } from '../_services/data.service';
+import { ConfigurationService } from '../_services/configuration.service';
 
 import { User } from '../_models/user';
 
@@ -11,7 +11,7 @@ export class AuthenticationService {
     private currentUserSubject: BehaviorSubject<User>;
     public currentUser: Observable<User>;
 
-    constructor(private http: HttpClient,private dataService: DataService) {
+    constructor(private http: HttpClient,private configService: ConfigurationService) {
        let userData = localStorage.getItem('currentUser');
        let user : User = new User();
        if(userData != null) {
@@ -30,7 +30,7 @@ export class AuthenticationService {
 
     login(username: string, password: string) {
 		
-        let authenticateUrl = this.dataService.getServerURL() + "authenticate"
+        let authenticateUrl = this.configService.getServerURL() + "authenticate"
         return this.http.post<any>(authenticateUrl, { username, password })
             .pipe(map(user => {
                 console.log("check response");
@@ -49,10 +49,11 @@ export class AuthenticationService {
         // remove user from local storage to log user out
         localStorage.removeItem('currentUser');
         //this.currentUserSubject.next(null);//TODO FIX
+        
     }
 
     reset_password(email: string) {
-        let resetPasswordUrl = this.dataService.getServerURL() + "users/reset_password"
+        let resetPasswordUrl = this.configService.getServerURL() + "users/reset_password"
         return this.http.post<any>(resetPasswordUrl, { email })
             .pipe(map(user => {
                 if (user && user.token) {

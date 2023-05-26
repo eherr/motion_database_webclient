@@ -28,8 +28,7 @@ export class AppComponent {
   }
 
   ngOnInit():void{
-    console.log(this.dataService.getServerURL());
-    const appTitle = this.titleService.getTitle();
+      const appTitle = this.titleService.getTitle();
   
       // add meta tags
       this.getMetaInformation();
