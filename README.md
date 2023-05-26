@@ -7,14 +7,20 @@ https://medium.com/@ryanchenkie_40935/angular-authentication-using-route-guards-
   
 ## Setup Instructions
 
-1. Install [Node.js](https://nodejs.org)
+1. Install the Node Version Manager according to this guide: https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/
 
-2. Install [Angular JS](https://angular.io/)
+2. Install the NodeJS version using nvm.
 ```bat
-npm install @angular/cli @angular/core @angular-devkit/build-angular
+nvm install 18.10.0
+nvm use 18.10.0
 ```
 
-3. Go into repository directory and build or debug the application.
+3. Go into repository directory and install the requirements.
+```bat
+npm install
+```
+
+4.  Build or debug the application using angular cli.
 ```bat
 ng build/serve
 ```
