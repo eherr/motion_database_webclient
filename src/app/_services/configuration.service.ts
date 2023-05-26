@@ -4,12 +4,24 @@ import { User } from '../_models/user';
 import { HttpClient } from '@angular/common/http';
 
 
+declare var $ :any;
 @Injectable({ providedIn: 'root' })
 export class ConfigurationService {
     public config: Configuration;
 
     constructor(private http: HttpClient){
         this.config = new Configuration();
+        try{
+            let port = $('meta[name=port]').attr("content");
+            if(port){
+                this.config.port = parseInt(port);
+            }
+            let activatePortForwardingStr = $('meta[name=activatePortForwarding]').attr("content");
+            if(activatePortForwardingStr){
+                this.config.activatePortForwarding = activatePortForwardingStr== "True";
+            }
+        }catch(exception){
+        }
     }
 
     public getServerURL(): string{
@@ -36,7 +48,6 @@ export class ConfigurationService {
     this.http.post(this.getServerURL() + "get_meta_data", null).subscribe(
       (config: any) => {
         this.config.enableDownload = config['enable_download'];
-        this.config.activatePortForwarding = config['activate_port_forwarding'];
         this.config.enableDataTransforms = config['enable_data_transforms']
       }
     );
