@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import {Configuration} from '../_models/configuration';
 import { User } from '../_models/user';
+import { HttpClient } from '@angular/common/http';
 
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationService {
     public config: Configuration;
 
-    constructor(){
+    constructor(private http: HttpClient){
         this.config = new Configuration();
     }
 
@@ -30,4 +31,14 @@ export class ConfigurationService {
         user.role = userDict["role"];
         return user;
     }
+    
+   public updateConfiguration(){
+    this.http.post(this.getServerURL() + "get_meta_data", null).subscribe(
+      (config: any) => {
+        this.config.enableDownload = config['enable_download'];
+        this.config.activatePortForwarding = config['activate_port_forwarding'];
+        this.config.enableDataTransforms = config['enable_data_transforms']
+      }
+    );
+  }
 }

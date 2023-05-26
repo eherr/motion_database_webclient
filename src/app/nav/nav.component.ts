@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { DataService } from '../_services/data.service';
 import { UserService } from '../_services/user.service';
+import { ConfigurationService } from '../_services/configuration.service';
 
 @Component({
   selector: 'app-nav',
@@ -8,20 +8,11 @@ import { UserService } from '../_services/user.service';
   styleUrls: ['./nav.component.less']
 })
 export class NavComponent {
-  public enableDataTransforms: boolean = false;
   constructor(
-    public userService:UserService,
-    public dataService:DataService
-  ) { 
-    this.getMetaInformation();
+    public userService: UserService,
+    public configService: ConfigurationService
+  ) {
   }
 
   
-  getMetaInformation(){
-    this.dataService.getMetaInformation().subscribe(
-      (metaData:any) => {
-        this.enableDataTransforms = metaData['enable_data_transforms']
-      }
-    );
-  }
 }

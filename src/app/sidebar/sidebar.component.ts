@@ -8,6 +8,7 @@ import { TreeModule, TreeComponent } from '@circlon/angular-tree-component';
 import Chart from 'chart.js/auto';
 import { StringLiteral } from 'node_modules_old/typescript/lib/typescript';
 import { DataTransformService } from '../_services/data_transform.service';
+import { ConfigurationService } from '../_services/configuration.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -16,8 +17,6 @@ import { DataTransformService } from '../_services/data_transform.service';
   host: {'class': 'padded-col fill-col', 'id': 'sidebar'}
 })
 export class SidebarComponent implements OnInit {
-  public enableDownload = false;
-  public enableDataTransforms = false;
 
   public projectList: any;
   public projectInfo: any;
@@ -59,11 +58,11 @@ export class SidebarComponent implements OnInit {
   public queuedFile: any;
 
 
-    public currentExp: string = "";
-    public colors: any = ["red","green",  "blue", "purple", "orange"]
-    public showLabels : boolean = false;
+  public currentExp: string = "";
+  public colors: any = ["red","green",  "blue", "purple", "orange"]
+  public showLabels : boolean = false;
   public chart: any;
-    public plotData : any;
+  public plotData : any;
 
   error = '';
 
@@ -85,7 +84,8 @@ export class SidebarComponent implements OnInit {
               public dataTransformService: DataTransformService,
               public msgService: MessageService,
               public formBuilder: FormBuilder,
-              public user: UserService) {
+              public user: UserService,
+              public configService: ConfigurationService) {
               }
 
   ngOnInit() {
@@ -93,7 +93,6 @@ export class SidebarComponent implements OnInit {
     this.currentTag = "clip";
     
     this.currentProject = 1;
-    this.getDownloadSettings();
     this.getProjects();
     this.getTagList();
     this.getSkeletonModels();
@@ -153,16 +152,8 @@ this.runDataTransformForm = this.formBuilder.group({
   clusterImage: ['']
 });
 
-  }
+}
 
-  getDownloadSettings(){
-    this.dataService.getMetaInformation().subscribe(
-      (metaData:any) => {
-        this.enableDownload = metaData['enable_download']
-        this.enableDataTransforms = metaData['enable_data_transforms']
-      }
-    );
-  }
 
   getProjects(){
     this.dataService.getProjectList().subscribe(
@@ -767,7 +758,6 @@ updateChart(data : any){
       (data:any)=>{
         this.runDataTransformForm.controls["parameters"].setValue(data["parameters"]);
       })
-
   }
 
 

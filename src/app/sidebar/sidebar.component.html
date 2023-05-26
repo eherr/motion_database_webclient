@@ -90,7 +90,7 @@
                   <!-- motion table start -->
                   <p *ngIf="(currentSkeleton && currentCollection) && !motionsFound()" class="text-align-center field-group">No motion clips for the selected parameters found</p>
                 
-                  <app-editable-row  *ngFor="let m of fileList"  (refreshEvent)="onRefreshEvent($event)" [name]="m[1]" [fileId]="m[0]" [dataType]="m[2]" [enableDownload]="user.IsLoggedIn() || enableDownload"  class="flex-row"></app-editable-row>
+                  <app-editable-row  *ngFor="let m of fileList"  (refreshEvent)="onRefreshEvent($event)" [name]="m[1]" [fileId]="m[0]" [dataType]="m[2]" [enableDownload]="user.IsLoggedIn() || configService.config.enableDownload"  class="flex-row"></app-editable-row>
                      
                 </nav>
                 <!-- motion table end -->
@@ -146,7 +146,7 @@
     <button *ngIf="user.IsLoggedIn() && currentCollection" type="button" (click)="openRemoveCollectionModal()"><i class="fas fa-trash"></i> Remove Collection</button>&nbsp;&nbsp;
     <button *ngIf="user.IsLoggedIn() && currentCollection  && activeTab == 'tab1'" id="showUploadFileModalBtn" type="button" (click)="openImportBVHFileModal()"><i class="fas fa-upload"></i> Import BVH File</button>&nbsp;&nbsp;
   <button *ngIf="user.IsLoggedIn() && activeTab == 'tab1'" id="showUploadFileModalBtn" type="button" (click)="openUploadFileModal()"><i class="fas fa-upload"></i> Upload File</button>&nbsp;&nbsp;
-  <button *ngIf=" enableDataTransforms && user.IsLoggedIn() && currentCollection  && activeTab == 'tab1'" type="button" (click)="openRunDataTransformModal();"><i class="fa-solid fa-person-running"></i> Run Data Transform</button>
+  <button *ngIf=" configService.config.enableDataTransforms && user.IsLoggedIn() && currentCollection  && activeTab == 'tab1'" type="button" (click)="openRunDataTransformModal();"><i class="fa-solid fa-person-running"></i> Run Data Transform</button>
   </div>
   
   <div  *ngIf="!user.IsLoggedIn()" class="sidebar-footer field-group text-align-center">

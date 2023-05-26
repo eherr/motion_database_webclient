@@ -4,26 +4,8 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { CollectionNode } from '../_models/collections'
 import { saveAs } from 'file-saver';
 import {ConfigurationService} from '../_services/configuration.service';
+import { sendRequest } from '../_helpers/legacy';
 
-
-//src: https://stackoverflow.com/questions/36975619/how-to-call-a-rest-web-service-api-from-javascript
-function sendRequest(url : string, data : any, callback?: any, callbackData?: any){
-  var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-           if (this.readyState == 4 && this.status == 200) {
-              if (callback == undefined){
-                  console.log(this.responseText);  
-               }else{
-                  callback(this.responseText, callbackData);
-              }
-           }
-      };
-
-  xhttp.open("POST", url, true);
-  xhttp.setRequestHeader( 'Access-Control-Allow-Origin', '*');
-  xhttp.setRequestHeader("Content-type", "application/json");
-  xhttp.send(data);
-}
 
 
 
@@ -32,6 +14,8 @@ function saveToFile(responseText: string, motionName: string){
   var data = new Blob([responseText], {type: "application/text"});
   saveAs(data, motionName);
 }
+
+
 declare var jquery:any;
 declare var $ :any;
 @Injectable({
@@ -41,16 +25,6 @@ export class DataService {
 
   constructor(private http: HttpClient, private configService: ConfigurationService) { }
 
-
-
-
-
-  getMetaInformation(){
-    return this.http.post(this.configService.getServerURL() + "get_meta_data", null);
-  }
-
-  
-  
   queryCollectionList(parentID: string){
     let user = this.configService.getUser();
     let parentIDStr = String(parentID);
